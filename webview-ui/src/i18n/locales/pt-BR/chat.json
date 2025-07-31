@@ -1,0 +1,329 @@
+{
+	"greeting": "Bem-vindo ao WeCoder",
+	"task": {
+		"title": "Tarefa",
+		"seeMore": "Ver mais",
+		"seeLess": "Ver menos",
+		"tokens": "Tokens:",
+		"cache": "Cache:",
+		"apiCost": "Custo da API:",
+		"contextWindow": "Janela de contexto:",
+		"closeAndStart": "Fechar tarefa e iniciar nova",
+		"export": "Exportar histórico de tarefas",
+		"delete": "Excluir tarefa (Shift + Clique para pular confirmação)",
+		"condenseContext": "Condensar contexto de forma inteligente",
+		"share": "Compartilhar tarefa",
+		"shareWithOrganization": "Compartilhar com organização",
+		"shareWithOrganizationDescription": "Apenas membros da sua organização podem acessar",
+		"sharePublicly": "Compartilhar publicamente",
+		"sharePubliclyDescription": "Qualquer pessoa com o link pode acessar",
+		"connectToCloud": "Conectar ao Cloud",
+		"connectToCloudDescription": "Entre no WeCoder Cloud para compartilhar tarefas",
+		"sharingDisabledByOrganization": "Compartilhamento desabilitado pela organização",
+		"shareSuccessOrganization": "Link da organização copiado para a área de transferência",
+		"shareSuccessPublic": "Link público copiado para a área de transferência"
+	},
+	"unpin": "Desfixar",
+	"pin": "Fixar",
+	"tokenProgress": {
+		"availableSpace": "Espaço disponível: {{amount}} tokens",
+		"tokensUsed": "Tokens usados: {{used}} de {{total}}",
+		"reservedForResponse": "Reservado para resposta do modelo: {{amount}} tokens"
+	},
+	"retry": {
+		"title": "Tentar novamente",
+		"tooltip": "Tentar a operação novamente"
+	},
+	"startNewTask": {
+		"title": "Iniciar nova tarefa",
+		"tooltip": "Começar uma nova tarefa"
+	},
+	"proceedAnyways": {
+		"title": "Prosseguir mesmo assim",
+		"tooltip": "Continuar enquanto o comando executa"
+	},
+	"save": {
+		"title": "Salvar",
+		"tooltip": "Salvar as alterações da mensagem"
+	},
+	"reject": {
+		"title": "Rejeitar",
+		"tooltip": "Rejeitar esta ação"
+	},
+	"completeSubtaskAndReturn": "Completar subtarefa e retornar",
+	"approve": {
+		"title": "Aprovar",
+		"tooltip": "Aprovar esta ação"
+	},
+	"runCommand": {
+		"title": "Executar comando",
+		"tooltip": "Executar este comando"
+	},
+	"proceedWhileRunning": {
+		"title": "Prosseguir durante execução",
+		"tooltip": "Continuar apesar dos avisos"
+	},
+	"killCommand": {
+		"title": "Interromper Comando",
+		"tooltip": "Interromper o comando atual"
+	},
+	"resumeTask": {
+		"title": "Retomar tarefa",
+		"tooltip": "Continuar a tarefa atual"
+	},
+	"terminate": {
+		"title": "Terminar",
+		"tooltip": "Encerrar a tarefa atual"
+	},
+	"cancel": {
+		"title": "Cancelar",
+		"tooltip": "Cancelar a operação atual"
+	},
+	"scrollToBottom": "Rolar para o final do chat",
+	"about": "Gere, refatore e depure código com assistência de IA. Confira nossa <DocsLink>documentação</DocsLink> para saber mais.",
+	"onboarding": "<strong>Sua lista de tarefas neste espaço de trabalho está vazia.</strong> Comece digitando uma tarefa abaixo. Não sabe como começar? Leia mais sobre o que o WeCoder pode fazer por você nos <DocsLink>documentos</DocsLink>.",
+	"rooTips": {
+		"boomerangTasks": {
+			"title": "Orquestração de Tarefas",
+			"description": "Divida as tarefas em partes menores e gerenciáveis."
+		},
+		"stickyModels": {
+			"title": "Modos Fixos",
+			"description": "Cada modo lembra o seu último modelo usado"
+		},
+		"tools": {
+			"title": "Ferramentas",
+			"description": "Permita que a IA resolva problemas navegando na web, executando comandos e muito mais."
+		},
+		"customizableModes": {
+			"title": "Modos personalizáveis",
+			"description": "Personas especializadas com comportamentos próprios e modelos atribuídos"
+		}
+	},
+	"selectMode": "Selecionar modo de interação",
+	"selectApiConfig": "Selecionar configuração da API",
+	"enhancePrompt": "Aprimorar prompt com contexto adicional",
+	"addImages": "Adicionar imagens à mensagem",
+	"sendMessage": "Enviar mensagem",
+	"stopTts": "Parar conversão de texto em fala",
+	"typeMessage": "Digite uma mensagem...",
+	"typeTask": "Digite sua tarefa aqui...",
+	"addContext": "@ para adicionar contexto, / para alternar modos",
+	"dragFiles": "segure shift para arrastar arquivos",
+	"dragFilesImages": "segure shift para arrastar arquivos/imagens",
+	"enhancePromptDescription": "O botão 'Aprimorar prompt' ajuda a melhorar seu pedido fornecendo contexto adicional, esclarecimentos ou reformulações. Tente digitar um pedido aqui e clique no botão novamente para ver como funciona.",
+	"modeSelector": {
+		"title": "Modos",
+		"marketplace": "Marketplace de Modos",
+		"settings": "Configurações de Modos",
+		"description": "Personas especializadas que adaptam o comportamento do WeCoder."
+	},
+	"errorReadingFile": "Erro ao ler arquivo:",
+	"noValidImages": "Nenhuma imagem válida foi processada",
+	"separator": "Separador",
+	"edit": "Editar...",
+	"forNextMode": "para o próximo modo",
+	"forPreviousMode": "para o modo anterior",
+	"error": "Erro",
+	"diffError": {
+		"title": "Edição mal-sucedida"
+	},
+	"troubleMessage": "WeCoder está tendo problemas...",
+	"apiRequest": {
+		"title": "Requisição API",
+		"failed": "Requisição API falhou",
+		"streaming": "Requisição API...",
+		"cancelled": "Requisição API cancelada",
+		"streamingFailed": "Streaming API falhou"
+	},
+	"checkpoint": {
+		"initial": "Ponto de verificação inicial",
+		"regular": "Ponto de verificação",
+		"initializingWarning": "Ainda inicializando ponto de verificação... Se isso demorar muito, você pode desativar os pontos de verificação nas <settingsLink>configurações</settingsLink> e reiniciar sua tarefa.",
+		"menu": {
+			"viewDiff": "Ver diferenças",
+			"restore": "Restaurar ponto de verificação",
+			"restoreFiles": "Restaurar arquivos",
+			"restoreFilesDescription": "Restaura os arquivos do seu projeto para um snapshot feito neste ponto.",
+			"restoreFilesAndTask": "Restaurar arquivos e tarefa",
+			"confirm": "Confirmar",
+			"cancel": "Cancelar",
+			"cannotUndo": "Esta ação não pode ser desfeita.",
+			"restoreFilesAndTaskDescription": "Restaura os arquivos do seu projeto para um snapshot feito neste ponto e exclui todas as mensagens após este ponto."
+		},
+		"current": "Atual"
+	},
+	"instructions": {
+		"wantsToFetch": "WeCoder quer buscar instruções detalhadas para ajudar com a tarefa atual"
+	},
+	"fileOperations": {
+		"wantsToRead": "WeCoder quer ler este arquivo:",
+		"wantsToReadOutsideWorkspace": "WeCoder quer ler este arquivo fora do espaço de trabalho:",
+		"didRead": "WeCoder leu este arquivo:",
+		"wantsToEdit": "WeCoder quer editar este arquivo:",
+		"wantsToEditOutsideWorkspace": "WeCoder quer editar este arquivo fora do espaço de trabalho:",
+		"wantsToEditProtected": "WeCoder quer editar um arquivo de configuração protegido:",
+		"wantsToCreate": "WeCoder quer criar um novo arquivo:",
+		"wantsToSearchReplace": "WeCoder quer realizar busca e substituição neste arquivo:",
+		"didSearchReplace": "WeCoder realizou busca e substituição neste arquivo:",
+		"wantsToInsert": "WeCoder quer inserir conteúdo neste arquivo:",
+		"wantsToInsertWithLineNumber": "WeCoder quer inserir conteúdo neste arquivo na linha {{lineNumber}}:",
+		"wantsToInsertAtEnd": "WeCoder quer adicionar conteúdo ao final deste arquivo:",
+		"wantsToReadAndXMore": "WeCoder quer ler este arquivo e mais {{count}}:",
+		"wantsToReadMultiple": "WeCoder deseja ler múltiplos arquivos:",
+		"wantsToApplyBatchChanges": "WeCoder quer aplicar alterações a múltiplos arquivos:"
+	},
+	"directoryOperations": {
+		"wantsToViewTopLevel": "WeCoder quer visualizar os arquivos de nível superior neste diretório:",
+		"didViewTopLevel": "WeCoder visualizou os arquivos de nível superior neste diretório:",
+		"wantsToViewRecursive": "WeCoder quer visualizar recursivamente todos os arquivos neste diretório:",
+		"didViewRecursive": "WeCoder visualizou recursivamente todos os arquivos neste diretório:",
+		"wantsToViewDefinitions": "WeCoder quer visualizar nomes de definição de código-fonte usados neste diretório:",
+		"didViewDefinitions": "WeCoder visualizou nomes de definição de código-fonte usados neste diretório:",
+		"wantsToSearch": "WeCoder quer pesquisar neste diretório por <code>{{regex}}</code>:",
+		"didSearch": "WeCoder pesquisou neste diretório por <code>{{regex}}</code>:",
+		"wantsToSearchOutsideWorkspace": "WeCoder quer pesquisar neste diretório (fora do espaço de trabalho) por <code>{{regex}}</code>:",
+		"didSearchOutsideWorkspace": "WeCoder pesquisou neste diretório (fora do espaço de trabalho) por <code>{{regex}}</code>:",
+		"wantsToViewTopLevelOutsideWorkspace": "WeCoder quer visualizar os arquivos de nível superior neste diretório (fora do espaço de trabalho):",
+		"didViewTopLevelOutsideWorkspace": "WeCoder visualizou os arquivos de nível superior neste diretório (fora do espaço de trabalho):",
+		"wantsToViewRecursiveOutsideWorkspace": "WeCoder quer visualizar recursivamente todos os arquivos neste diretório (fora do espaço de trabalho):",
+		"didViewRecursiveOutsideWorkspace": "WeCoder visualizou recursivamente todos os arquivos neste diretório (fora do espaço de trabalho):",
+		"wantsToViewDefinitionsOutsideWorkspace": "WeCoder quer visualizar nomes de definição de código-fonte usados neste diretório (fora do espaço de trabalho):",
+		"didViewDefinitionsOutsideWorkspace": "WeCoder visualizou nomes de definição de código-fonte usados neste diretório (fora do espaço de trabalho):"
+	},
+	"commandOutput": "Saída do comando",
+	"response": "Resposta",
+	"arguments": "Argumentos",
+	"mcp": {
+		"wantsToUseTool": "WeCoder quer usar uma ferramenta no servidor MCP {{serverName}}:",
+		"wantsToAccessResource": "WeCoder quer acessar um recurso no servidor MCP {{serverName}}:"
+	},
+	"modes": {
+		"wantsToSwitch": "WeCoder quer mudar para o modo <code>{{mode}}</code>",
+		"wantsToSwitchWithReason": "WeCoder quer mudar para o modo <code>{{mode}}</code> porque: {{reason}}",
+		"didSwitch": "WeCoder mudou para o modo <code>{{mode}}</code>",
+		"didSwitchWithReason": "WeCoder mudou para o modo <code>{{mode}}</code> porque: {{reason}}"
+	},
+	"subtasks": {
+		"wantsToCreate": "WeCoder quer criar uma nova subtarefa no modo <code>{{mode}}</code>:",
+		"wantsToFinish": "WeCoder quer finalizar esta subtarefa",
+		"newTaskContent": "Instruções da subtarefa",
+		"completionContent": "Subtarefa concluída",
+		"resultContent": "Resultados da subtarefa",
+		"defaultResult": "Por favor, continue com a próxima tarefa.",
+		"completionInstructions": "Subtarefa concluída! Você pode revisar os resultados e sugerir correções ou próximos passos. Se tudo parecer bom, confirme para retornar o resultado à tarefa principal."
+	},
+	"questions": {
+		"hasQuestion": "WeCoder tem uma pergunta:"
+	},
+	"taskCompleted": "Tarefa concluída",
+	"powershell": {
+		"issues": "Parece que você está tendo problemas com o Windows PowerShell, por favor veja este"
+	},
+	"autoApprove": {
+		"title": "Aprovação automática:",
+		"none": "Nenhuma",
+		"description": "A aprovação automática permite que o WeCoder execute ações sem pedir permissão. Ative apenas para ações nas quais você confia totalmente. Configuração mais detalhada disponível nas <settingsLink>Configurações</settingsLink>.",
+		"selectOptionsFirst": "Selecione pelo menos uma opção abaixo para ativar a aprovação automática",
+		"toggleAriaLabel": "Alternar aprovação automática",
+		"disabledAriaLabel": "Aprovação automática desativada - selecione as opções primeiro"
+	},
+	"reasoning": {
+		"thinking": "Pensando",
+		"seconds": "{{count}}s"
+	},
+	"contextCondense": {
+		"title": "Contexto condensado",
+		"condensing": "Condensando contexto...",
+		"errorHeader": "Falha ao condensar contexto",
+		"tokens": "tokens"
+	},
+	"followUpSuggest": {
+		"copyToInput": "Copiar para entrada (ou Shift + clique)",
+		"autoSelectCountdown": "Seleção automática em {{count}}s",
+		"countdownDisplay": "{{count}}s"
+	},
+	"announcement": {
+		"title": "🎉 WeCoder {{version}} Lançado",
+		"description": "WeCoder {{version}} traz novos recursos poderosos e melhorias significativas para aprimorar seu fluxo de trabalho de desenvolvimento.",
+		"whatsNew": "O que há de novo",
+		"feature1": "<bold>Indexação de Base de Código Graduada do Experimental</bold>: A indexação completa da base de código agora é estável e pronta para uso em produção com busca aprimorada e compreensão de contexto.",
+		"feature2": "<bold>Nova Funcionalidade de Lista de Tarefas</bold>: Mantenha suas tarefas no caminho certo com gerenciamento integrado de tarefas que ajuda você a se manter organizado e focado em seus objetivos de desenvolvimento.",
+		"feature3": "<bold>Transições Aprimoradas de Arquiteto para Código</bold>: Transferências suaves do planejamento no modo Arquiteto para implementação no modo Código.",
+		"hideButton": "Ocultar anúncio",
+		"detailsDiscussLinks": "Obtenha mais detalhes e participe da discussão no <discordLink>Discord</discordLink> e <redditLink>Reddit</redditLink> 🚀"
+	},
+	"browser": {
+		"rooWantsToUse": "WeCoder quer usar o navegador:",
+		"consoleLogs": "Logs do console",
+		"noNewLogs": "(Sem novos logs)",
+		"screenshot": "Captura de tela do navegador",
+		"cursor": "cursor",
+		"navigation": {
+			"step": "Passo {{current}} de {{total}}",
+			"previous": "Anterior",
+			"next": "Próximo"
+		},
+		"sessionStarted": "Sessão do navegador iniciada",
+		"actions": {
+			"title": "Ação do navegador: ",
+			"launch": "Iniciar navegador em {{url}}",
+			"click": "Clique ({{coordinate}})",
+			"type": "Digitar \"{{text}}\"",
+			"scrollDown": "Rolar para baixo",
+			"scrollUp": "Rolar para cima",
+			"close": "Fechar navegador"
+		}
+	},
+	"codeblock": {
+		"tooltips": {
+			"expand": "Expandir bloco de código",
+			"collapse": "Recolher bloco de código",
+			"enable_wrap": "Ativar quebra de linha",
+			"disable_wrap": "Desativar quebra de linha",
+			"copy_code": "Copiar código"
+		}
+	},
+	"systemPromptWarning": "AVISO: Substituição personalizada de instrução do sistema ativa. Isso pode comprometer gravemente a funcionalidade e causar comportamento imprevisível.",
+	"profileViolationWarning": "O perfil atual não é compatível com as configurações da sua organização",
+	"shellIntegration": {
+		"title": "Aviso de execução de comando",
+		"description": "Seu comando está sendo executado sem a integração de shell do terminal VSCode. Para suprimir este aviso, você pode desativar a integração de shell na seção <strong>Terminal</strong> das <settingsLink>configurações do WeCoder</settingsLink> ou solucionar problemas de integração do terminal VSCode usando o link abaixo.",
+		"troubleshooting": "Clique aqui para a documentação de integração de shell."
+	},
+	"ask": {
+		"autoApprovedRequestLimitReached": {
+			"title": "Limite de Solicitações Auto-aprovadas Atingido",
+			"description": "WeCoder atingiu o limite auto-aprovado de {{count}} solicitação(ões) de API. Deseja redefinir a contagem e prosseguir com a tarefa?",
+			"button": "Redefinir e Continuar"
+		}
+	},
+	"codebaseSearch": {
+		"wantsToSearch": "WeCoder quer pesquisar na base de código por <code>{{query}}</code>:",
+		"wantsToSearchWithPath": "WeCoder quer pesquisar na base de código por <code>{{query}}</code> em <code>{{path}}</code>:",
+		"didSearch_one": "Encontrado 1 resultado",
+		"didSearch_other": "Encontrados {{count}} resultados",
+		"resultTooltip": "Pontuação de similaridade: {{score}} (clique para abrir o arquivo)"
+	},
+	"read-batch": {
+		"approve": {
+			"title": "Aprovar tudo"
+		},
+		"deny": {
+			"title": "Negar tudo"
+		}
+	},
+	"indexingStatus": {
+		"ready": "Índice pronto",
+		"indexing": "Indexando {{percentage}}%",
+		"indexed": "Indexado",
+		"error": "Erro do índice",
+		"status": "Status do índice"
+	},
+	"versionIndicator": {
+		"ariaLabel": "Versão {{version}} - Clique para ver as notas de lançamento"
+	},
+	"editMessage": {
+		"placeholder": "Edite sua mensagem..."
+	}
+}

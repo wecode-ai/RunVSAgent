@@ -1,0 +1,236 @@
+<extraction_workflow>
+  <mode_overview>
+    The Docs Extractor mode analyzes features to generate documentation.
+    It extracts technical details, business logic, and user workflows
+    for different audiences.
+  </mode_overview>
+
+  <initialization_phase>
+    <step number="1">
+      <title>Parse Request</title>
+      <actions>
+        <action>Identify the feature or component in the user's request.</action>
+        <action>Determine if the request is for a review or to generate new documentation.</action>
+        <action>Default to user-friendly docs unless technical output is requested.</action>
+        <action>Note any specific areas to emphasize.</action>
+      </actions>
+      <note>The initial request determines the workflow path (review vs. generation).</note>
+    </step>
+
+    <step number="2">
+      <title>Discover Feature</title>
+      <actions>
+        <action>Find related code with semantic search.</action>
+        <action>Identify entry points and components.</action>
+        <action>Map the high-level architecture.</action>
+      </actions>
+      <tool_use><![CDATA[
+<codebase_search>
+<query>[feature name] implementation main entry point</query>
+</codebase_search>
+      ]]></tool_use>
+    </step>
+  </initialization_phase>
+
+  <analysis_phases>
+    <phase name="code_analysis">
+      <title>Code Analysis</title>
+      <steps>
+        <step>
+          <action>Analyze code structure</action>
+          <details>
+            - Identify classes, functions, modules
+            - Extract method signatures, parameters
+            - Document return types, data structures
+            - Map inheritance and composition
+          </details>
+        </step>
+        <step>
+          <action>Extract APIs</action>
+          <details>
+            - REST endpoints
+            - GraphQL schemas
+            - WebSocket events
+            - RPC interfaces
+          </details>
+        </step>
+        <step>
+          <action>Document configuration</action>
+          <details>
+            - Environment variables
+            - Config files and schemas
+            - Feature flags
+            - Runtime parameters
+          </details>
+        </step>
+      </steps>
+    </phase>
+
+    <phase name="business_logic_analysis">
+      <title>Business Logic Extraction</title>
+      <steps>
+        <step>
+          <action>Map workflows</action>
+          <details>
+            - User journey
+            - Decision points and branching
+            - State transitions
+            - Roles and permissions
+          </details>
+        </step>
+        <step>
+          <action>Document business rules</action>
+          <details>
+            - Validation logic
+            - Formulas and algorithms
+            - Business process implementations
+            - Compliance requirements
+          </details>
+        </step>
+        <step>
+          <action>Identify use cases</action>
+          <details>
+            - Primary use cases
+            - Edge cases
+            - Error scenarios
+            - Performance factors
+          </details>
+        </step>
+      </steps>
+    </phase>
+
+    <phase name="integration_analysis">
+      <title>Dependency Analysis</title>
+      <steps>
+        <step>
+          <action>Map dependencies</action>
+          <details>
+            - Third-party libraries
+            - External services and APIs
+            - Database connections
+            - Message queues
+          </details>
+        </step>
+        <step>
+          <action>Document integration points</action>
+          <details>
+            - Incoming webhooks
+            - Outgoing API calls
+            - Event publishers/subscribers
+            - Shared data stores
+          </details>
+        </step>
+        <step>
+          <action>Analyze data flow</action>
+          <details>
+            - Data sources and formats
+            - Data transformations
+            - Output formats and destinations
+            - Data retention policies
+          </details>
+        </step>
+      </steps>
+    </phase>
+
+    <phase name="quality_analysis">
+      <title>Test Analysis</title>
+      <steps>
+        <step>
+          <action>Assess test coverage</action>
+          <details>
+            - Unit test coverage
+            - Integration test scenarios
+            - End-to-end test flows
+            - Performance test results
+          </details>
+        </step>
+        <step>
+          <action>Document error handling</action>
+          <details>
+            - Error types and codes
+            - Exception handling
+            - Fallback mechanisms
+            - Recovery procedures
+          </details>
+        </step>
+        <step>
+          <action>Identify quality metrics</action>
+          <details>
+            - Code complexity
+            - Performance benchmarks
+            - Security vulnerabilities
+            - Maintainability scores
+          </details>
+        </step>
+      </steps>
+    </phase>
+
+    <phase name="security_analysis">
+      <title>Security Analysis</title>
+      <steps>
+        <step>
+          <action>Document security</action>
+          <details>
+            - Auth mechanisms
+            - Access control
+            - Data encryption
+            - Security policies
+          </details>
+        </step>
+        <step>
+          <action>Identify vulnerabilities</action>
+          <details>
+            - Known security issues
+            - Attack vectors
+            - Mitigation
+            - Best practices
+          </details>
+        </step>
+        <step>
+          <action>Check compliance</action>
+          <details>
+            - Regulatory compliance (GDPR, etc.)
+            - Industry standards
+            - Audit trail requirements
+            - Data privacy
+          </details>
+        </step>
+      </steps>
+    </phase>
+  </analysis_phases>
+
+  <documentation_generation>
+    <note>Workflow branches here: review existing docs or generate new docs.</note>
+    <step number="1">
+      <title>Path 1: Review and Recommend</title>
+      <note>Used when a document is provided for review.</note>
+      <actions>
+        <action>Compare provided docs against codebase analysis.</action>
+        <action>Identify inaccuracies, omissions, and areas for improvement.</action>
+        <action>Categorize issues by severity (Critical, Major, Minor).</action>
+        <action>Formulate a structured recommendation in chat.</action>
+        <action>Do not write files.</action>
+        <action>Final output is only the recommendation.</action>
+      </actions>
+    </step>
+    <step number="2">
+      <title>Path 2: Generate Documentation</title>
+      <note>Used when new documentation is requested.</note>
+      <actions>
+        <action>Select a template from `2_documentation_patterns.xml`.</action>
+        <action>Structure the document with clear sections and examples.</action>
+        <action>Create `DOCS-TEMP-[feature].md` with generated content.</action>
+        <action>Apply tone and examples from `7_user_friendly_examples.xml`.</action>
+      </actions>
+    </step>
+  </documentation_generation>
+
+  <completion_criteria>
+    <criterion>Code paths analyzed</criterion>
+    <criterion>Business logic documented</criterion>
+    <criterion>Integration points mapped</criterion>
+    <criterion>Security addressed</criterion>
+    <criterion>Audience needs met</criterion>
+    <criterion>Metadata and links are complete</criterion>
+  </completion_criteria>
+</extraction_workflow>

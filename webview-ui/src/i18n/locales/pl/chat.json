@@ -1,0 +1,329 @@
+{
+	"greeting": "Witamy w WeCoder",
+	"task": {
+		"title": "Zadanie",
+		"seeMore": "Zobacz więcej",
+		"seeLess": "Zobacz mniej",
+		"tokens": "Tokeny:",
+		"cache": "Pamięć podręczna:",
+		"apiCost": "Koszt API:",
+		"contextWindow": "Okno kontekstu:",
+		"closeAndStart": "Zamknij zadanie i rozpocznij nowe",
+		"export": "Eksportuj historię zadań",
+		"delete": "Usuń zadanie (Shift + Kliknięcie, aby pominąć potwierdzenie)",
+		"condenseContext": "Inteligentnie skondensuj kontekst",
+		"share": "Udostępnij zadanie",
+		"shareWithOrganization": "Udostępnij organizacji",
+		"shareWithOrganizationDescription": "Tylko członkowie twojej organizacji mogą uzyskać dostęp",
+		"sharePublicly": "Udostępnij publicznie",
+		"sharePubliclyDescription": "Każdy z linkiem może uzyskać dostęp",
+		"connectToCloud": "Połącz z chmurą",
+		"connectToCloudDescription": "Zaloguj się do WeCoder Cloud, aby udostępniać zadania",
+		"sharingDisabledByOrganization": "Udostępnianie wyłączone przez organizację",
+		"shareSuccessOrganization": "Link organizacji skopiowany do schowka",
+		"shareSuccessPublic": "Link publiczny skopiowany do schowka"
+	},
+	"unpin": "Odepnij",
+	"pin": "Przypnij",
+	"tokenProgress": {
+		"availableSpace": "Dostępne miejsce: {{amount}} tokenów",
+		"tokensUsed": "Wykorzystane tokeny: {{used}} z {{total}}",
+		"reservedForResponse": "Zarezerwowane dla odpowiedzi modelu: {{amount}} tokenów"
+	},
+	"retry": {
+		"title": "Ponów",
+		"tooltip": "Spróbuj ponownie wykonać operację"
+	},
+	"startNewTask": {
+		"title": "Rozpocznij nowe zadanie",
+		"tooltip": "Rozpocznij nowe zadanie"
+	},
+	"proceedAnyways": {
+		"title": "Kontynuuj mimo to",
+		"tooltip": "Kontynuuj podczas wykonywania polecenia"
+	},
+	"save": {
+		"title": "Zapisz",
+		"tooltip": "Zapisz zmiany wiadomości"
+	},
+	"reject": {
+		"title": "Odrzuć",
+		"tooltip": "Odrzuć tę akcję"
+	},
+	"completeSubtaskAndReturn": "Zakończ podzadanie i wróć",
+	"approve": {
+		"title": "Zatwierdź",
+		"tooltip": "Zatwierdź tę akcję"
+	},
+	"runCommand": {
+		"title": "Uruchom polecenie",
+		"tooltip": "Wykonaj to polecenie"
+	},
+	"proceedWhileRunning": {
+		"title": "Kontynuuj podczas wykonywania",
+		"tooltip": "Kontynuuj pomimo ostrzeżeń"
+	},
+	"killCommand": {
+		"title": "Zatrzymaj polecenie",
+		"tooltip": "Zatrzymaj bieżące polecenie"
+	},
+	"resumeTask": {
+		"title": "Wznów zadanie",
+		"tooltip": "Kontynuuj bieżące zadanie"
+	},
+	"terminate": {
+		"title": "Zakończ",
+		"tooltip": "Zakończ bieżące zadanie"
+	},
+	"cancel": {
+		"title": "Anuluj",
+		"tooltip": "Anuluj bieżącą operację"
+	},
+	"scrollToBottom": "Przewiń do dołu czatu",
+	"about": "Generuj, refaktoryzuj i debuguj kod z pomocą sztucznej inteligencji. Sprawdź naszą <DocsLink>dokumentację</DocsLink>, aby dowiedzieć się więcej.",
+	"onboarding": "<strong>Twoja lista zadań w tym obszarze roboczym jest pusta.</strong> Zacznij od wpisania zadania poniżej. Nie wiesz, jak zacząć? Przeczytaj więcej o tym, co WeCoder może dla Ciebie zrobić w <DocsLink>dokumentacji</DocsLink>.",
+	"rooTips": {
+		"boomerangTasks": {
+			"title": "Orkiestracja Zadań",
+			"description": "Podziel zadania na mniejsze, łatwiejsze do zarządzania części."
+		},
+		"stickyModels": {
+			"title": "Tryby trwałe",
+			"description": "Każdy tryb zapamiętuje ostatnio używany model"
+		},
+		"tools": {
+			"title": "Narzędzia",
+			"description": "Pozwól sztucznej inteligencji rozwiązywać problemy, przeglądając sieć, uruchamiając polecenia i nie tylko."
+		},
+		"customizableModes": {
+			"title": "Konfigurowalne tryby",
+			"description": "Wyspecjalizowane persona z własnymi zachowaniami i przypisanymi modelami"
+		}
+	},
+	"selectMode": "Wybierz tryb interakcji",
+	"selectApiConfig": "Wybierz konfigurację API",
+	"enhancePrompt": "Ulepsz podpowiedź dodatkowym kontekstem",
+	"addImages": "Dodaj obrazy do wiadomości",
+	"sendMessage": "Wyślij wiadomość",
+	"stopTts": "Zatrzymaj syntezę mowy",
+	"typeMessage": "Wpisz wiadomość...",
+	"typeTask": "Wpisz swoje zadanie tutaj...",
+	"addContext": "@ aby dodać kontekst, / aby zmienić tryb",
+	"dragFiles": "przytrzymaj shift, aby przeciągnąć pliki",
+	"dragFilesImages": "przytrzymaj shift, aby przeciągnąć pliki/obrazy",
+	"enhancePromptDescription": "Przycisk 'Ulepsz podpowiedź' pomaga ulepszyć Twoją prośbę, dostarczając dodatkowy kontekst, wyjaśnienia lub przeformułowania. Spróbuj wpisać prośbę tutaj i kliknij przycisk ponownie, aby zobaczyć, jak to działa.",
+	"modeSelector": {
+		"title": "Tryby",
+		"marketplace": "Marketplace Trybów",
+		"settings": "Ustawienia Trybów",
+		"description": "Wyspecjalizowane persony, które dostosowują zachowanie WeCoder."
+	},
+	"errorReadingFile": "Błąd odczytu pliku:",
+	"noValidImages": "Nie przetworzono żadnych prawidłowych obrazów",
+	"separator": "Separator",
+	"edit": "Edytuj...",
+	"forNextMode": "dla następnego trybu",
+	"forPreviousMode": "dla poprzedniego trybu",
+	"error": "Błąd",
+	"diffError": {
+		"title": "Edycja nieudana"
+	},
+	"troubleMessage": "WeCoder ma problemy...",
+	"apiRequest": {
+		"title": "Zapytanie API",
+		"failed": "Zapytanie API nie powiodło się",
+		"streaming": "Zapytanie API...",
+		"cancelled": "Zapytanie API anulowane",
+		"streamingFailed": "Strumieniowanie API nie powiodło się"
+	},
+	"checkpoint": {
+		"initial": "Początkowy punkt kontrolny",
+		"regular": "Punkt kontrolny",
+		"initializingWarning": "Trwa inicjalizacja punktu kontrolnego... Jeśli to trwa zbyt długo, możesz wyłączyć punkty kontrolne w <settingsLink>ustawieniach</settingsLink> i uruchomić zadanie ponownie.",
+		"menu": {
+			"viewDiff": "Zobacz różnice",
+			"restore": "Przywróć punkt kontrolny",
+			"restoreFiles": "Przywróć pliki",
+			"restoreFilesDescription": "Przywraca pliki Twojego projektu do zrzutu wykonanego w tym punkcie.",
+			"restoreFilesAndTask": "Przywróć pliki i zadanie",
+			"confirm": "Potwierdź",
+			"cancel": "Anuluj",
+			"cannotUndo": "Tej akcji nie można cofnąć.",
+			"restoreFilesAndTaskDescription": "Przywraca pliki Twojego projektu do zrzutu wykonanego w tym punkcie i usuwa wszystkie wiadomości po tym punkcie."
+		},
+		"current": "Bieżący"
+	},
+	"instructions": {
+		"wantsToFetch": "WeCoder chce pobrać szczegółowe instrukcje, aby pomóc w bieżącym zadaniu"
+	},
+	"fileOperations": {
+		"wantsToRead": "WeCoder chce przeczytać ten plik:",
+		"wantsToReadOutsideWorkspace": "WeCoder chce przeczytać ten plik poza obszarem roboczym:",
+		"didRead": "WeCoder przeczytał ten plik:",
+		"wantsToEdit": "WeCoder chce edytować ten plik:",
+		"wantsToEditOutsideWorkspace": "WeCoder chce edytować ten plik poza obszarem roboczym:",
+		"wantsToEditProtected": "WeCoder chce edytować chroniony plik konfiguracyjny:",
+		"wantsToCreate": "WeCoder chce utworzyć nowy plik:",
+		"wantsToSearchReplace": "WeCoder chce wykonać wyszukiwanie i zamianę w tym pliku:",
+		"didSearchReplace": "WeCoder wykonał wyszukiwanie i zamianę w tym pliku:",
+		"wantsToInsert": "WeCoder chce wstawić zawartość do tego pliku:",
+		"wantsToInsertWithLineNumber": "WeCoder chce wstawić zawartość do tego pliku w linii {{lineNumber}}:",
+		"wantsToInsertAtEnd": "WeCoder chce dodać zawartość na końcu tego pliku:",
+		"wantsToReadAndXMore": "WeCoder chce przeczytać ten plik i {{count}} więcej:",
+		"wantsToReadMultiple": "WeCoder chce odczytać wiele plików:",
+		"wantsToApplyBatchChanges": "WeCoder chce zastosować zmiany do wielu plików:"
+	},
+	"directoryOperations": {
+		"wantsToViewTopLevel": "WeCoder chce zobaczyć pliki najwyższego poziomu w tym katalogu:",
+		"didViewTopLevel": "WeCoder zobaczył pliki najwyższego poziomu w tym katalogu:",
+		"wantsToViewRecursive": "WeCoder chce rekurencyjnie zobaczyć wszystkie pliki w tym katalogu:",
+		"didViewRecursive": "WeCoder rekurencyjnie zobaczył wszystkie pliki w tym katalogu:",
+		"wantsToViewDefinitions": "WeCoder chce zobaczyć nazwy definicji kodu źródłowego używane w tym katalogu:",
+		"didViewDefinitions": "WeCoder zobaczył nazwy definicji kodu źródłowego używane w tym katalogu:",
+		"wantsToSearch": "WeCoder chce przeszukać ten katalog w poszukiwaniu <code>{{regex}}</code>:",
+		"didSearch": "WeCoder przeszukał ten katalog w poszukiwaniu <code>{{regex}}</code>:",
+		"wantsToSearchOutsideWorkspace": "WeCoder chce przeszukać ten katalog (poza obszarem roboczym) w poszukiwaniu <code>{{regex}}</code>:",
+		"didSearchOutsideWorkspace": "WeCoder przeszukał ten katalog (poza obszarem roboczym) w poszukiwaniu <code>{{regex}}</code>:",
+		"wantsToViewTopLevelOutsideWorkspace": "WeCoder chce zobaczyć pliki najwyższego poziomu w tym katalogu (poza obszarem roboczym):",
+		"didViewTopLevelOutsideWorkspace": "WeCoder zobaczył pliki najwyższego poziomu w tym katalogu (poza obszarem roboczym):",
+		"wantsToViewRecursiveOutsideWorkspace": "WeCoder chce rekurencyjnie zobaczyć wszystkie pliki w tym katalogu (poza obszarem roboczym):",
+		"didViewRecursiveOutsideWorkspace": "WeCoder rekurencyjnie zobaczył wszystkie pliki w tym katalogu (poza obszarem roboczym):",
+		"wantsToViewDefinitionsOutsideWorkspace": "WeCoder chce zobaczyć nazwy definicji kodu źródłowego używane w tym katalogu (poza obszarem roboczym):",
+		"didViewDefinitionsOutsideWorkspace": "WeCoder zobaczył nazwy definicji kodu źródłowego używane w tym katalogu (poza obszarem roboczym):"
+	},
+	"commandOutput": "Wyjście polecenia",
+	"response": "Odpowiedź",
+	"arguments": "Argumenty",
+	"mcp": {
+		"wantsToUseTool": "WeCoder chce użyć narzędzia na serwerze MCP {{serverName}}:",
+		"wantsToAccessResource": "WeCoder chce uzyskać dostęp do zasobu na serwerze MCP {{serverName}}:"
+	},
+	"modes": {
+		"wantsToSwitch": "WeCoder chce przełączyć się na tryb <code>{{mode}}</code>",
+		"wantsToSwitchWithReason": "WeCoder chce przełączyć się na tryb <code>{{mode}}</code> ponieważ: {{reason}}",
+		"didSwitch": "WeCoder przełączył się na tryb <code>{{mode}}</code>",
+		"didSwitchWithReason": "WeCoder przełączył się na tryb <code>{{mode}}</code> ponieważ: {{reason}}"
+	},
+	"subtasks": {
+		"wantsToCreate": "WeCoder chce utworzyć nowe podzadanie w trybie <code>{{mode}}</code>:",
+		"wantsToFinish": "WeCoder chce zakończyć to podzadanie",
+		"newTaskContent": "Instrukcje podzadania",
+		"completionContent": "Podzadanie zakończone",
+		"resultContent": "Wyniki podzadania",
+		"defaultResult": "Proszę kontynuować następne zadanie.",
+		"completionInstructions": "Podzadanie zakończone! Możesz przejrzeć wyniki i zasugerować poprawki lub następne kroki. Jeśli wszystko wygląda dobrze, potwierdź, aby zwrócić wynik do zadania nadrzędnego."
+	},
+	"questions": {
+		"hasQuestion": "WeCoder ma pytanie:"
+	},
+	"taskCompleted": "Zadanie zakończone",
+	"powershell": {
+		"issues": "Wygląda na to, że masz problemy z Windows PowerShell, proszę zapoznaj się z tym"
+	},
+	"autoApprove": {
+		"title": "Automatyczne zatwierdzanie:",
+		"none": "Brak",
+		"description": "Automatyczne zatwierdzanie pozwala WeCoder wykonywać działania bez pytania o pozwolenie. Włącz tylko dla działań, którym w pełni ufasz. Bardziej szczegółowa konfiguracja dostępna w <settingsLink>Ustawieniach</settingsLink>.",
+		"selectOptionsFirst": "Wybierz co najmniej jedną opcję poniżej, aby włączyć automatyczne zatwierdzanie",
+		"toggleAriaLabel": "Przełącz automatyczne zatwierdzanie",
+		"disabledAriaLabel": "Automatyczne zatwierdzanie wyłączone - najpierw wybierz opcje"
+	},
+	"reasoning": {
+		"thinking": "Myślenie",
+		"seconds": "{{count}} s"
+	},
+	"contextCondense": {
+		"title": "Kontekst skondensowany",
+		"condensing": "Kondensowanie kontekstu...",
+		"errorHeader": "Nie udało się skondensować kontekstu",
+		"tokens": "tokeny"
+	},
+	"followUpSuggest": {
+		"copyToInput": "Kopiuj do pola wprowadzania (lub Shift + kliknięcie)",
+		"autoSelectCountdown": "Automatyczny wybór za {{count}}s",
+		"countdownDisplay": "{{count}}s"
+	},
+	"announcement": {
+		"title": "🎉 WeCoder {{version}} wydany",
+		"description": "WeCoder {{version}} wprowadza potężne nowe funkcje i znaczące ulepszenia, aby ulepszyć Twój przepływ pracy programistycznej.",
+		"whatsNew": "Co nowego",
+		"feature1": "<bold>Indeksowanie bazy kodu ukończone z fazy eksperymentalnej</bold>: Pełne indeksowanie bazy kodu jest teraz stabilne i gotowe do użytku produkcyjnego z ulepszonymi funkcjami wyszukiwania i rozumienia kontekstu.",
+		"feature2": "<bold>Nowa funkcja listy zadań</bold>: Utrzymuj swoje zadania na właściwym torze dzięki zintegrowanemu zarządzaniu zadaniami, które pomaga ci pozostać zorganizowanym i skupionym na celach rozwojowych.",
+		"feature3": "<bold>Ulepszone przejścia z Architekta do Kodu</bold>: Płynne transfery z planowania w trybie Architekta do implementacji w trybie Kodu.",
+		"hideButton": "Ukryj ogłoszenie",
+		"detailsDiscussLinks": "Uzyskaj więcej szczegółów i dołącz do dyskusji na <discordLink>Discord</discordLink> i <redditLink>Reddit</redditLink> 🚀"
+	},
+	"browser": {
+		"rooWantsToUse": "WeCoder chce użyć przeglądarki:",
+		"consoleLogs": "Logi konsoli",
+		"noNewLogs": "(Brak nowych logów)",
+		"screenshot": "Zrzut ekranu przeglądarki",
+		"cursor": "kursor",
+		"navigation": {
+			"step": "Krok {{current}} z {{total}}",
+			"previous": "Poprzedni",
+			"next": "Następny"
+		},
+		"sessionStarted": "Sesja przeglądarki rozpoczęta",
+		"actions": {
+			"title": "Akcja przeglądarki: ",
+			"launch": "Uruchom przeglądarkę na {{url}}",
+			"click": "Kliknij ({{coordinate}})",
+			"type": "Wpisz \"{{text}}\"",
+			"scrollDown": "Przewiń w dół",
+			"scrollUp": "Przewiń w górę",
+			"close": "Zamknij przeglądarkę"
+		}
+	},
+	"codeblock": {
+		"tooltips": {
+			"expand": "Rozwiń blok kodu",
+			"collapse": "Zwiń blok kodu",
+			"enable_wrap": "Włącz zawijanie wierszy",
+			"disable_wrap": "Wyłącz zawijanie wierszy",
+			"copy_code": "Kopiuj kod"
+		}
+	},
+	"systemPromptWarning": "OSTRZEŻENIE: Aktywne niestandardowe zastąpienie instrukcji systemowych. Może to poważnie zakłócić funkcjonalność i powodować nieprzewidywalne zachowanie.",
+	"profileViolationWarning": "Bieżący profil nie jest kompatybilny z ustawieniami Twojej organizacji",
+	"shellIntegration": {
+		"title": "Ostrzeżenie wykonania polecenia",
+		"description": "Twoje polecenie jest wykonywane bez integracji powłoki terminala VSCode. Aby ukryć to ostrzeżenie, możesz wyłączyć integrację powłoki w sekcji <strong>Terminal</strong> w <settingsLink>ustawieniach WeCoder</settingsLink> lub rozwiązać problemy z integracją terminala VSCode korzystając z poniższego linku.",
+		"troubleshooting": "Kliknij tutaj, aby zobaczyć dokumentację integracji powłoki."
+	},
+	"ask": {
+		"autoApprovedRequestLimitReached": {
+			"title": "Osiągnięto limit automatycznie zatwierdzonych żądań",
+			"description": "WeCoder osiągnął automatycznie zatwierdzony limit {{count}} żądania/żądań API. Czy chcesz zresetować licznik i kontynuować zadanie?",
+			"button": "Zresetuj i kontynuuj"
+		}
+	},
+	"codebaseSearch": {
+		"wantsToSearch": "WeCoder chce przeszukać bazę kodu w poszukiwaniu <code>{{query}}</code>:",
+		"wantsToSearchWithPath": "WeCoder chce przeszukać bazę kodu w poszukiwaniu <code>{{query}}</code> w <code>{{path}}</code>:",
+		"didSearch_one": "Znaleziono 1 wynik",
+		"didSearch_other": "Znaleziono {{count}} wyników",
+		"resultTooltip": "Wynik podobieństwa: {{score}} (kliknij, aby otworzyć plik)"
+	},
+	"read-batch": {
+		"approve": {
+			"title": "Zatwierdź wszystko"
+		},
+		"deny": {
+			"title": "Odrzuć wszystko"
+		}
+	},
+	"indexingStatus": {
+		"ready": "Indeks gotowy",
+		"indexing": "Indeksowanie {{percentage}}%",
+		"indexed": "Zaindeksowane",
+		"error": "Błąd indeksu",
+		"status": "Status indeksu"
+	},
+	"versionIndicator": {
+		"ariaLabel": "Wersja {{version}} - Kliknij, aby wyświetlić informacje o wydaniu"
+	},
+	"editMessage": {
+		"placeholder": "Edytuj swoją wiadomość..."
+	}
+}

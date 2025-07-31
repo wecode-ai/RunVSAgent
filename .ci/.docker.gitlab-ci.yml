@@ -1,0 +1,25 @@
+image: registry.api.weibo.com/ci/ci-runner:xuemin8-20241104-extend
+
+variables:
+  K8S_NAMESPACE: ci-deploy-video
+  MAIL_TO: weibo_rd_video@staff.sina.com.cn
+  SERVICE: wecoder
+  MASTER_BRANCH: master
+
+docker_we_coder_base:
+  stage: package
+  retry: 1
+  variables:
+    SERVICE: base_we_coder
+    DOCKERFILE_PATH: base_docker/
+  script:
+    - build_image
+  when: manual
+
+docker_we_coder:
+  stage: package
+  retry: 1
+  variables:
+    DOCKERFILE_PATH: ./
+  script:
+    - build_image

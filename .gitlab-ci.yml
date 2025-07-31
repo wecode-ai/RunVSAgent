@@ -1,0 +1,13 @@
+stages:
+  - build_test_main
+  - build_test_develop
+  - publish
+  - create_mr
+  - runtime_create_mr
+  - package
+
+include:
+  - ".ci/.develop.gitlab-ci.yml"
+  - ".ci/.main.gitlab-ci.yml"
+  - ".ci/.docker.gitlab-ci.yml"
+  - ".ci/.runtime.gitlab-ci.yml"

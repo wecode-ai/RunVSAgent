@@ -1,0 +1,61 @@
+variables:
+  NODE_IMAGE: registry.api.weibo.com/hongyu9/node/node:20.19.2-alpine-v0.1
+  VSCE_PAT: ${VSCE_TOKEN}
+
+# 1. main 分支：发布流程
+build_test_main:
+  stage: build_test_main
+  image: $NODE_IMAGE
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - pnpm install
+    - pnpm run vsix
+    - cp ./bin/*.vsix ./
+    - cd src
+    - CURRENT_VERSION=$(npm pkg get version | tr -d '"')
+    - cd ..
+    - echo "请人工测试 .vsix 后点继续，测试通过后 发布正式版本。"
+    - |
+      curl "https://oapi.dingtalk.com/robot/send?access_token=${DINGTAKE_TOKEN}" \
+      -s -H 'Content-Type: application/json' \
+      -d "{
+          \"msgtype\": \"markdown\",
+          \"markdown\": {
+              \"title\": \"Wecoder打包进度：Main分支打包完成\",
+              \"text\": \"### Wecoder ${CURRENT_VERSION} Release 打包完成\n* 分支：main\n* 当前版本：${CURRENT_VERSION} Release\n* 下载地址：[点击下载](${CI_PROJECT_URL}/-/jobs/$CI_JOB_ID/artifacts/browse)\n* 如需发布正式版，请在 CI 页面点击 publish 创建合并请求\n  * CI 详情页：[跳转到本次 Pipeline](${CI_PROJECT_URL}/-/pipelines/${CI_PIPELINE_ID})\"
+          }
+      }"
+  artifacts:
+    paths:
+      - "*.vsix"
+    expire_in: 1 hour
+
+publish:
+  stage: publish
+  image: $NODE_IMAGE
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - cd src
+    - CURRENT_VERSION=$(npm pkg get version | tr -d '"')
+    - cd ..
+    - pnpm install
+    - pnpm vsix
+    - echo ">>>>>> 发布至 vscode 市场 开始"
+    - pnpm --filter wecoder publish:marketplace
+    - echo ">>>>>> 发布至 vscode 市场 完成"
+    - echo ">>>>>> 发布至 云 IDE 市场 开始"
+    - npx ovsx publish ./bin/*.vsix -p c15981ee-d317-4ade-b8cb-53e09ba174a3
+    - echo ">>>>>> 发布至 云 IDE 市场 完成"
+    - |
+      curl "https://oapi.dingtalk.com/robot/send?access_token=${DINGTAKE_TOKEN}" \
+      -s -H 'Content-Type: application/json' \
+      -d "{
+          \"msgtype\": \"markdown\",
+          \"markdown\": {
+              \"title\": \"Wecoder ${CURRENT_VERSION} 已发布\",
+              \"text\": \"### Wecoder ${CURRENT_VERSION} 已发布\n* 发布市场：\n	* VSCode：[已完成](https://marketplace.visualstudio.com/items?itemName=weiboplat.wecoder)\n	* 云 Idea：已完成\n	* Pipeline 地址：[查看 Pipeline](${CI_PROJECT_URL}/-/pipelines/${CI_PIPELINE_ID})\n* 分支：main\n* 当前版本：${CURRENT_VERSION}\"
+          }
+      }"
+  when: manual

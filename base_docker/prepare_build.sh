@@ -1,0 +1,1 @@
+cp ../package*.json ./

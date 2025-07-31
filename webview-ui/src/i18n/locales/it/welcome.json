@@ -1,0 +1,27 @@
+{
+	"greeting": "Benvenuto in WeCoder!",
+	"introduction": "Con una gamma di Modalità integrate ed estensibili, WeCoder ti permette di pianificare, architettare, codificare, debuggare e aumentare la tua produttività come mai prima d'ora.",
+	"notice": "Per iniziare, questa estensione necessita di un fornitore di API.",
+	"start": "Andiamo!",
+	"routers": {
+		"requesty": {
+			"description": "Il tuo router LLM ottimizzato",
+			"incentive": "$1 di credito gratuito"
+		},
+		"openrouter": {
+			"description": "Un'interfaccia unificata per LLMs"
+		}
+	},
+	"chooseProvider": "Per fare la sua magia, WeCoder ha bisogno di una chiave API.",
+	"startRouter": "Consigliamo di utilizzare un router LLM:",
+	"startCustom": "Oppure puoi utilizzare la tua chiave API:",
+	"telemetry": {
+		"title": "Aiuta a migliorare WeCoder",
+		"anonymousTelemetry": "Invia dati di utilizzo ed errori anonimi per aiutarci a correggere bug e migliorare l'estensione. Non viene mai inviato codice, testo o informazioni personali.",
+		"changeSettings": "Puoi sempre cambiare questo in fondo alle <settingsLink>impostazioni</settingsLink>",
+		"settings": "impostazioni",
+		"allow": "Consenti",
+		"deny": "Nega"
+	},
+	"importSettings": "Importa impostazioni"
+}

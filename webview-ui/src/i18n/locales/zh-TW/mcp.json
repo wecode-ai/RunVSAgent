@@ -1,0 +1,65 @@
+{
+	"title": "MCP 伺服器",
+	"done": "完成",
+	"marketplace": "MCP 市集",
+	"description": "<0>Model Context Protocol</0> 能與本機執行的 MCP 伺服器通訊，提供額外的工具和資源來擴展 WeCoder 的功能。您可以使用<1>社群開發的伺服器</1>，或請 WeCoder 為您的工作流程建立新工具（例如「新增一個取得最新 npm 文件的工具」）。",
+	"instructions": "使用說明",
+	"enableToggle": {
+		"title": "啟用 MCP 伺服器",
+		"description": "開啟後 WeCoder 可用已連接 MCP 伺服器的工具，能力更強。不用這些工具時建議關閉，節省 API Token 費用。"
+	},
+	"enableServerCreation": {
+		"title": "啟用 MCP 伺服器建立",
+		"description": "開啟後 WeCoder 可協助你建立<1>新</1>自訂 MCP 伺服器。<0>了解伺服器建立</0>",
+		"hint": "提示：不需要 WeCoder 建立新 MCP 伺服器時建議關閉，減少 API Token 費用。"
+	},
+	"editGlobalMCP": "編輯全域 MCP",
+	"editProjectMCP": "編輯專案 MCP",
+	"learnMoreEditingSettings": "了解如何編輯 MCP 設定檔",
+	"tool": {
+		"alwaysAllow": "總是允許",
+		"parameters": "參數",
+		"noDescription": "無說明",
+		"togglePromptInclusion": "切換在提示中的包含"
+	},
+	"tabs": {
+		"tools": "工具",
+		"resources": "資源",
+		"errors": "錯誤"
+	},
+	"emptyState": {
+		"noTools": "找不到工具",
+		"noResources": "找不到資源",
+		"noErrors": "找不到錯誤"
+	},
+	"networkTimeout": {
+		"label": "網路逾時",
+		"description": "伺服器回應最大等待時間",
+		"options": {
+			"15seconds": "15 秒",
+			"30seconds": "30 秒",
+			"1minute": "1 分鐘",
+			"5minutes": "5 分鐘",
+			"10minutes": "10 分鐘",
+			"15minutes": "15 分鐘",
+			"30minutes": "30 分鐘",
+			"60minutes": "60 分鐘"
+		}
+	},
+	"deleteDialog": {
+		"title": "刪除 MCP 伺服器",
+		"description": "你確定要刪除 MCP 伺服器「{{serverName}}」嗎？此操作無法復原。",
+		"cancel": "取消",
+		"delete": "刪除"
+	},
+	"serverStatus": {
+		"retrying": "重試中...",
+		"retryConnection": "重試連線"
+	},
+	"refreshMCP": "重新整理 MCP 伺服器",
+	"execution": {
+		"running": "執行中",
+		"completed": "已完成",
+		"error": "錯誤"
+	}
+}

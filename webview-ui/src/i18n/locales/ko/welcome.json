@@ -1,0 +1,27 @@
+{
+	"greeting": "WeCoder에 오신 것을 환영합니다!",
+	"introduction": "내장 및 확장 가능한 다양한 모드를 통해 WeCoder는 계획, 아키텍처 설계, 코딩, 디버깅 및 전례 없는 생산성 향상을 가능하게 합니다.",
+	"notice": "시작하려면 이 확장 프로그램에 API 공급자가 필요합니다.",
+	"start": "시작해 봅시다!",
+	"routers": {
+		"requesty": {
+			"description": "최적화된 LLM 라우터",
+			"incentive": "$1 무료 크레딧"
+		},
+		"openrouter": {
+			"description": "LLM을 위한 통합 인터페이스"
+		}
+	},
+	"chooseProvider": "WeCoder가 작동하려면 API 키가 필요합니다.",
+	"startRouter": "LLM 라우터 사용을 권장합니다:",
+	"startCustom": "또는 직접 API 키를 가져올 수 있습니다:",
+	"telemetry": {
+		"title": "WeCoder 개선에 도움 주세요",
+		"anonymousTelemetry": "버그 수정 및 확장 기능 개선을 위해 익명의 오류 및 사용 데이터를 보내주세요. 코드, 프롬프트 또는 개인 정보는 절대 전송되지 않습니다.",
+		"changeSettings": "<settingsLink>설정</settingsLink> 하단에서 언제든지 변경할 수 있습니다",
+		"settings": "설정",
+		"allow": "허용",
+		"deny": "거부"
+	},
+	"importSettings": "설정 가져오기"
+}

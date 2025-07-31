@@ -1,0 +1,40 @@
+variables:
+  NODE_IMAGE: registry.api.weibo.com/hongyu9/node/node:20.19.2-alpine-v0.1
+  PROJECT_NAME: weibo_rd/common/wecode/wecode-runtime-package
+
+runtime_create_mr:
+  stage: runtime_create_mr
+  image: $NODE_IMAGE
+  dependencies:
+    - build_test_main      # 加上依赖，拿到 artifact
+  before_script:
+    - git config --global user.email "gitlab@git.intra.weibo.com"
+    - git config --global user.name "Wecoder CI"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE !~ /^\[bot\]/'
+  script:
+    - |
+      git clone https://oauth2:${CI_PUSH_TOKEN}@git.intra.weibo.com/${PROJECT_NAME}.git wecode-runtime-package
+      # 拿 artifact 文件，这里假设只有一个 vsix 文件
+      VSIX_FILE=$(ls *.vsix | head -n 1)
+      NEW_VERSION=$(echo $VSIX_FILE | sed 's/.*\///')
+      cd wecode-runtime-package
+      cp -f ../${VSIX_FILE} centos/code-server/wecoder.vsix
+      # 切分支
+      NEW_BRANCH="release/auto-bump-${NEW_VERSION}"
+      git checkout -b $NEW_BRANCH
+      git add centos/code-server/wecoder.vsix
+      git commit -m "chore(release): bump version to ${NEW_VERSION}"
+      git push origin $NEW_BRANCH
+      MR_URL="https://git.intra.weibo.com/${PROJECT_NAME}/-/merge_requests/new?merge_request%5Bsource_branch%5D=${NEW_BRANCH}&merge_request%5Btarget_branch%5D=develop&merge_request%5Btitle%5D=chore%28release%29%3A%20bump%20version%20to%20${NEW_VERSION}"
+      MAIN_MR_URL="https://git.intra.weibo.com/${PROJECT_NAME}/-/merge_requests/new?merge_request%5Bsource_branch%5D=develop&merge_request%5Btarget_branch%5D=main&merge_request%5Btitle%5D=chore%28release%29%3A%20bump%20version%20to%20${NEW_VERSION}"
+      echo "点击创建MR: ${MR_URL}"
+      curl "https://oapi.dingtalk.com/robot/send?access_token=${DINGTAKE_TOKEN}" \
+        -s -H 'Content-Type: application/json' \
+        -d "{
+            \"msgtype\": \"markdown\",
+            \"markdown\": {
+                \"title\": \"Wecoder Runtime ${NEW_VERSION} 合并请求\",
+                \"text\": \"### Wecoder Runtime ${NEW_VERSION} 合并请求\n* Pipeline 地址：[查看 Pipeline](${CI_PROJECT_URL}/-/pipelines/${CI_PIPELINE_ID})\n* 分支：$NEW_BRANCH\n* 当前版本：${NEW_VERSION}\n* 创建 MR：[创建合并请求到 develop 分支](${MR_URL})\n---\n> **请在合并到 develop 后，再创建合并到 main 的合并请求：**\n>\n> * [点击这里快速创建 main 分支的 MR](${MAIN_MR_URL})\"
+            }
+        }"

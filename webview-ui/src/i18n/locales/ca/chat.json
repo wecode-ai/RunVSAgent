@@ -1,0 +1,329 @@
+{
+	"greeting": "Benvingut a WeCoder",
+	"task": {
+		"title": "Tasca",
+		"seeMore": "Veure més",
+		"seeLess": "Veure menys",
+		"tokens": "Tokens:",
+		"cache": "Caché:",
+		"apiCost": "Cost d'API:",
+		"contextWindow": "Finestra de context:",
+		"closeAndStart": "Tancar tasca i iniciar-ne una de nova",
+		"export": "Exportar historial de tasques",
+		"delete": "Eliminar tasca (Shift + Clic per ometre confirmació)",
+		"condenseContext": "Condensar context de forma intel·ligent",
+		"share": "Compartir tasca",
+		"shareWithOrganization": "Compartir amb l'organització",
+		"shareWithOrganizationDescription": "Només els membres de la teva organització poden accedir",
+		"sharePublicly": "Compartir públicament",
+		"sharePubliclyDescription": "Qualsevol amb l'enllaç pot accedir",
+		"connectToCloud": "Connecta al núvol",
+		"connectToCloudDescription": "Inicia sessió a WeCoder Cloud per compartir tasques",
+		"sharingDisabledByOrganization": "Compartició deshabilitada per l'organització",
+		"shareSuccessOrganization": "Enllaç d'organització copiat al porta-retalls",
+		"shareSuccessPublic": "Enllaç públic copiat al porta-retalls"
+	},
+	"unpin": "Desfixar",
+	"pin": "Fixar",
+	"tokenProgress": {
+		"availableSpace": "Espai disponible: {{amount}} tokens",
+		"tokensUsed": "Tokens utilitzats: {{used}} de {{total}}",
+		"reservedForResponse": "Reservat per a resposta del model: {{amount}} tokens"
+	},
+	"retry": {
+		"title": "Tornar a intentar",
+		"tooltip": "Torna a provar l'operació"
+	},
+	"startNewTask": {
+		"title": "Començar una nova tasca",
+		"tooltip": "Comença una nova tasca"
+	},
+	"proceedAnyways": {
+		"title": "Continuar de totes maneres",
+		"tooltip": "Continua mentre s'executa l'ordre"
+	},
+	"save": {
+		"title": "Desar",
+		"tooltip": "Desa els canvis del missatge"
+	},
+	"reject": {
+		"title": "Rebutjar",
+		"tooltip": "Rebutja aquesta acció"
+	},
+	"completeSubtaskAndReturn": "Completar la subtasca i tornar",
+	"approve": {
+		"title": "Aprovar",
+		"tooltip": "Aprova aquesta acció"
+	},
+	"runCommand": {
+		"title": "Executar ordre",
+		"tooltip": "Executa aquesta ordre"
+	},
+	"proceedWhileRunning": {
+		"title": "Continuar mentre s'executa",
+		"tooltip": "Continua malgrat els advertiments"
+	},
+	"killCommand": {
+		"title": "Atura l'ordre",
+		"tooltip": "Atura l'ordre actual"
+	},
+	"resumeTask": {
+		"title": "Reprendre la tasca",
+		"tooltip": "Repren la tasca actual"
+	},
+	"terminate": {
+		"title": "Finalitzar",
+		"tooltip": "Finalitza la tasca actual"
+	},
+	"cancel": {
+		"title": "Cancel·lar",
+		"tooltip": "Cancel·la l'operació actual"
+	},
+	"scrollToBottom": "Desplaça't al final del xat",
+	"about": "Genera, refactoritza i depura codi amb l'ajuda de la IA. Consulta la nostra <DocsLink>documentació</DocsLink> per obtenir més informació.",
+	"onboarding": "<strong> La vostra llista de tasques en aquest espai de treball està buida. </strong> Comença escrivint una tasca a continuació. \nNo esteu segur per on començar? \nMés informació sobre què pot fer WeCoder als documents.",
+	"rooTips": {
+		"boomerangTasks": {
+			"title": "Orquestració de Tasques",
+			"description": "Divideix les tasques en parts més petites i manejables."
+		},
+		"stickyModels": {
+			"title": "Modes persistents",
+			"description": "Cada mode recorda el vostre darrer model utilitzat"
+		},
+		"tools": {
+			"title": "Eines",
+			"description": "Permet que la IA resolgui problemes navegant per la web, executant ordres i molt més."
+		},
+		"customizableModes": {
+			"title": "Modes personalitzables",
+			"description": "Personalitats especialitzades amb comportaments propis i models assignats"
+		}
+	},
+	"selectMode": "Selecciona el mode d'interacció",
+	"selectApiConfig": "Seleccioneu la configuració de l'API",
+	"enhancePrompt": "Millora la sol·licitud amb context addicional",
+	"addImages": "Afegeix imatges al missatge",
+	"sendMessage": "Envia el missatge",
+	"stopTts": "Atura la síntesi de veu",
+	"typeMessage": "Escriu un missatge...",
+	"typeTask": "Escriu la teva tasca aquí...",
+	"addContext": "@ per afegir context, / per canviar de mode",
+	"dragFiles": "manté premut shift per arrossegar fitxers",
+	"dragFilesImages": "manté premut shift per arrossegar fitxers/imatges",
+	"enhancePromptDescription": "El botó 'Millora la sol·licitud' ajuda a millorar la teva sol·licitud proporcionant context addicional, aclariments o reformulacions. Prova d'escriure una sol·licitud aquí i fes clic al botó de nou per veure com funciona.",
+	"modeSelector": {
+		"title": "Modes",
+		"marketplace": "Marketplace de Modes",
+		"settings": "Configuració de Modes",
+		"description": "Personalitats especialitzades que adapten el comportament de WeCoder."
+	},
+	"errorReadingFile": "Error en llegir el fitxer:",
+	"noValidImages": "No s'ha processat cap imatge vàlida",
+	"separator": "Separador",
+	"edit": "Edita...",
+	"forNextMode": "per al següent mode",
+	"forPreviousMode": "per al mode anterior",
+	"error": "Error",
+	"diffError": {
+		"title": "Edició fallida"
+	},
+	"troubleMessage": "WeCoder està tenint problemes...",
+	"apiRequest": {
+		"title": "Sol·licitud API",
+		"failed": "Sol·licitud API ha fallat",
+		"streaming": "Sol·licitud API...",
+		"cancelled": "Sol·licitud API cancel·lada",
+		"streamingFailed": "Transmissió API ha fallat"
+	},
+	"checkpoint": {
+		"initial": "Punt de control inicial",
+		"regular": "Punt de control",
+		"initializingWarning": "Encara s'està inicialitzant el punt de control... Si això triga massa, pots desactivar els punts de control a la <settingsLink>configuració</settingsLink> i reiniciar la teva tasca.",
+		"menu": {
+			"viewDiff": "Veure diferències",
+			"restore": "Restaurar punt de control",
+			"restoreFiles": "Restaurar arxius",
+			"restoreFilesDescription": "Restaura els arxius del teu projecte a una instantània presa en aquest punt.",
+			"restoreFilesAndTask": "Restaurar arxius i tasca",
+			"confirm": "Confirmar",
+			"cancel": "Cancel·lar",
+			"cannotUndo": "Aquesta acció no es pot desfer.",
+			"restoreFilesAndTaskDescription": "Restaura els arxius del teu projecte a una instantània presa en aquest punt i elimina tots els missatges posteriors a aquest punt."
+		},
+		"current": "Actual"
+	},
+	"instructions": {
+		"wantsToFetch": "WeCoder vol obtenir instruccions detallades per ajudar amb la tasca actual."
+	},
+	"fileOperations": {
+		"wantsToRead": "WeCoder vol llegir aquest fitxer:",
+		"wantsToReadOutsideWorkspace": "WeCoder vol llegir aquest fitxer fora de l'espai de treball:",
+		"didRead": "WeCoder ha llegit aquest fitxer:",
+		"wantsToEdit": "WeCoder vol editar aquest fitxer:",
+		"wantsToEditOutsideWorkspace": "WeCoder vol editar aquest fitxer fora de l'espai de treball:",
+		"wantsToEditProtected": "WeCoder vol editar un fitxer de configuració protegit:",
+		"wantsToCreate": "WeCoder vol crear un nou fitxer:",
+		"wantsToSearchReplace": "WeCoder vol realitzar cerca i substitució en aquest fitxer:",
+		"didSearchReplace": "WeCoder ha realitzat cerca i substitució en aquest fitxer:",
+		"wantsToInsert": "WeCoder vol inserir contingut en aquest fitxer:",
+		"wantsToInsertWithLineNumber": "WeCoder vol inserir contingut a la línia {{lineNumber}} d'aquest fitxer:",
+		"wantsToInsertAtEnd": "WeCoder vol afegir contingut al final d'aquest fitxer:",
+		"wantsToReadAndXMore": "En WeCoder vol llegir aquest fitxer i {{count}} més:",
+		"wantsToReadMultiple": "WeCoder vol llegir diversos fitxers:",
+		"wantsToApplyBatchChanges": "WeCoder vol aplicar canvis a múltiples fitxers:"
+	},
+	"directoryOperations": {
+		"wantsToViewTopLevel": "WeCoder vol veure els fitxers de nivell superior en aquest directori:",
+		"didViewTopLevel": "WeCoder ha vist els fitxers de nivell superior en aquest directori:",
+		"wantsToViewRecursive": "WeCoder vol veure recursivament tots els fitxers en aquest directori:",
+		"didViewRecursive": "WeCoder ha vist recursivament tots els fitxers en aquest directori:",
+		"wantsToViewDefinitions": "WeCoder vol veure noms de definicions de codi font utilitzats en aquest directori:",
+		"didViewDefinitions": "WeCoder ha vist noms de definicions de codi font utilitzats en aquest directori:",
+		"wantsToSearch": "WeCoder vol cercar en aquest directori <code>{{regex}}</code>:",
+		"didSearch": "WeCoder ha cercat en aquest directori <code>{{regex}}</code>:",
+		"wantsToSearchOutsideWorkspace": "WeCoder vol cercar en aquest directori (fora de l'espai de treball) <code>{{regex}}</code>:",
+		"didSearchOutsideWorkspace": "WeCoder ha cercat en aquest directori (fora de l'espai de treball) <code>{{regex}}</code>:",
+		"wantsToViewTopLevelOutsideWorkspace": "WeCoder vol veure els fitxers de nivell superior en aquest directori (fora de l'espai de treball):",
+		"didViewTopLevelOutsideWorkspace": "WeCoder ha vist els fitxers de nivell superior en aquest directori (fora de l'espai de treball):",
+		"wantsToViewRecursiveOutsideWorkspace": "WeCoder vol veure recursivament tots els fitxers en aquest directori (fora de l'espai de treball):",
+		"didViewRecursiveOutsideWorkspace": "WeCoder ha vist recursivament tots els fitxers en aquest directori (fora de l'espai de treball):",
+		"wantsToViewDefinitionsOutsideWorkspace": "WeCoder vol veure noms de definicions de codi font utilitzats en aquest directori (fora de l'espai de treball):",
+		"didViewDefinitionsOutsideWorkspace": "WeCoder ha vist noms de definicions de codi font utilitzats en aquest directori (fora de l'espai de treball):"
+	},
+	"commandOutput": "Sortida de l'ordre",
+	"response": "Resposta",
+	"arguments": "Arguments",
+	"mcp": {
+		"wantsToUseTool": "WeCoder vol utilitzar una eina al servidor MCP {{serverName}}:",
+		"wantsToAccessResource": "WeCoder vol accedir a un recurs al servidor MCP {{serverName}}:"
+	},
+	"modes": {
+		"wantsToSwitch": "WeCoder vol canviar a mode <code>{{mode}}</code>",
+		"wantsToSwitchWithReason": "WeCoder vol canviar a mode <code>{{mode}}</code> perquè: {{reason}}",
+		"didSwitch": "WeCoder ha canviat a mode <code>{{mode}}</code>",
+		"didSwitchWithReason": "WeCoder ha canviat a mode <code>{{mode}}</code> perquè: {{reason}}"
+	},
+	"subtasks": {
+		"wantsToCreate": "WeCoder vol crear una nova subtasca en mode <code>{{mode}}</code>:",
+		"wantsToFinish": "WeCoder vol finalitzar aquesta subtasca",
+		"newTaskContent": "Instruccions de la subtasca",
+		"completionContent": "Subtasca completada",
+		"resultContent": "Resultats de la subtasca",
+		"defaultResult": "Si us plau, continua amb la següent tasca.",
+		"completionInstructions": "Subtasca completada! Pots revisar els resultats i suggerir correccions o següents passos. Si tot sembla correcte, confirma per tornar el resultat a la tasca principal."
+	},
+	"questions": {
+		"hasQuestion": "WeCoder té una pregunta:"
+	},
+	"taskCompleted": "Tasca completada",
+	"powershell": {
+		"issues": "Sembla que estàs tenint problemes amb Windows PowerShell, si us plau consulta aquesta documentació per a més informació."
+	},
+	"autoApprove": {
+		"title": "Aprovació automàtica:",
+		"none": "Cap",
+		"description": "L'aprovació automàtica permet a WeCoder realitzar accions sense demanar permís. Activa-la només per a accions en les que confies plenament. Configuració més detallada disponible a la <settingsLink>Configuració</settingsLink>.",
+		"selectOptionsFirst": "Selecciona almenys una opció a continuació per activar l'aprovació automàtica",
+		"toggleAriaLabel": "Commuta l'aprovació automàtica",
+		"disabledAriaLabel": "Aprovació automàtica desactivada: seleccioneu primer les opcions"
+	},
+	"reasoning": {
+		"thinking": "Pensant",
+		"seconds": "{{count}}s"
+	},
+	"contextCondense": {
+		"title": "Context condensat",
+		"condensing": "Condensant context...",
+		"errorHeader": "Error en condensar el context",
+		"tokens": "tokens"
+	},
+	"followUpSuggest": {
+		"copyToInput": "Copiar a l'entrada (o Shift + clic)",
+		"autoSelectCountdown": "Selecció automàtica en {{count}}s",
+		"countdownDisplay": "{{count}}s"
+	},
+	"announcement": {
+		"title": "🎉 WeCoder {{version}} Llançat",
+		"description": "WeCoder {{version}} porta noves funcions potents i millores significatives per millorar el vostre flux de treball de desenvolupament.",
+		"whatsNew": "Novetats",
+		"feature1": "<bold>Indexació de Base de Codi Graduada d'Experimental</bold>: La indexació completa de la base de codi ara és estable i està llesta per a ús en producció amb cerca millorada i comprensió del context.",
+		"feature2": "<bold>Nova Funcionalitat de Llista de Tasques Pendents</bold>: Mantingueu les vostres tasques en el bon camí amb gestió integrada de tasques pendents que us ajuda a mantenir-vos organitzats i centrats en els vostres objectius de desenvolupament.",
+		"feature3": "<bold>Transicions Millorades d'Arquitecte a Codi</bold>: Transferències fluides de la planificació en mode Arquitecte a la implementació en mode Codi.",
+		"hideButton": "Amaga l'anunci",
+		"detailsDiscussLinks": "Obtén més detalls i uneix-te a les discussions a <discordLink>Discord</discordLink> i <redditLink>Reddit</redditLink> 🚀"
+	},
+	"browser": {
+		"rooWantsToUse": "WeCoder vol utilitzar el navegador:",
+		"consoleLogs": "Registres de consola",
+		"noNewLogs": "(Cap registre nou)",
+		"screenshot": "Captura de pantalla del navegador",
+		"cursor": "cursor",
+		"navigation": {
+			"step": "Pas {{current}} de {{total}}",
+			"previous": "Anterior",
+			"next": "Següent"
+		},
+		"sessionStarted": "Sessió de navegador iniciada",
+		"actions": {
+			"title": "Acció de navegació: ",
+			"launch": "Iniciar navegador a {{url}}",
+			"click": "Clic ({{coordinate}})",
+			"type": "Escriure \"{{text}}\"",
+			"scrollDown": "Desplaçar avall",
+			"scrollUp": "Desplaçar amunt",
+			"close": "Tancar navegador"
+		}
+	},
+	"codeblock": {
+		"tooltips": {
+			"expand": "Expandir bloc de codi",
+			"collapse": "Contraure bloc de codi",
+			"enable_wrap": "Activar ajustament de línia",
+			"disable_wrap": "Desactivar ajustament de línia",
+			"copy_code": "Copiar codi"
+		}
+	},
+	"systemPromptWarning": "ADVERTÈNCIA: S'ha activat una substitució personalitzada d'instruccions del sistema. Això pot trencar greument la funcionalitat i causar un comportament impredictible.",
+	"profileViolationWarning": "El perfil actual no és compatible amb la configuració de la teva organització",
+	"shellIntegration": {
+		"title": "Advertència d'execució d'ordres",
+		"description": "La teva ordre s'està executant sense la integració de shell del terminal VSCode. Per suprimir aquest advertiment, pots desactivar la integració de shell a la secció <strong>Terminal</strong> de la <settingsLink>configuració de WeCoder</settingsLink> o solucionar problemes d'integració del terminal VSCode utilitzant l'enllaç a continuació.",
+		"troubleshooting": "Fes clic aquí per a la documentació d'integració de shell."
+	},
+	"ask": {
+		"autoApprovedRequestLimitReached": {
+			"title": "S'ha arribat al límit de sol·licituds aprovades automàticament",
+			"description": "WeCoder ha arribat al límit aprovat automàticament de {{count}} sol·licitud(s) d'API. Vols reiniciar el comptador i continuar amb la tasca?",
+			"button": "Reiniciar i continuar"
+		}
+	},
+	"codebaseSearch": {
+		"wantsToSearch": "WeCoder vol cercar a la base de codi <code>{{query}}</code>:",
+		"wantsToSearchWithPath": "WeCoder vol cercar a la base de codi <code>{{query}}</code> a <code>{{path}}</code>:",
+		"didSearch_one": "S'ha trobat 1 resultat",
+		"didSearch_other": "S'han trobat {{count}} resultats",
+		"resultTooltip": "Puntuació de similitud: {{score}} (fes clic per obrir el fitxer)"
+	},
+	"read-batch": {
+		"approve": {
+			"title": "Aprovar tot"
+		},
+		"deny": {
+			"title": "Denegar tot"
+		}
+	},
+	"indexingStatus": {
+		"ready": "Índex preparat",
+		"indexing": "Indexant {{percentage}}%",
+		"indexed": "Indexat",
+		"error": "Error d'índex",
+		"status": "Estat de l'índex"
+	},
+	"versionIndicator": {
+		"ariaLabel": "Versió {{version}} - Feu clic per veure les notes de llançament"
+	},
+	"editMessage": {
+		"placeholder": "Edita el teu missatge..."
+	}
+}

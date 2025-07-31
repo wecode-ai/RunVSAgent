@@ -1,0 +1,68 @@
+variables:
+  NODE_IMAGE: registry.api.weibo.com/hongyu9/node/node:20.19.2-alpine-v0.1
+
+# 1. develop 分支：测试包流程
+build_test_develop:
+  stage: build_test_develop
+  image: $NODE_IMAGE
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_COMMIT_MESSAGE !~ /^\[bot\]/'
+  script:
+    - pnpm install
+    - pnpm run vsix
+    - cp ./bin/*.vsix ./
+    - cd src
+    - CURRENT_VERSION=$(npm pkg get version | tr -d '"')
+    - cd ..
+    - echo "请人工测试 .vsix 后点继续，测试通过后 bump 版本号并创建 release 分支"
+    - |
+      curl "https://oapi.dingtalk.com/robot/send?access_token=${DINGTAKE_TOKEN}" \
+      -s -H 'Content-Type: application/json' \
+      -d "{
+          \"msgtype\": \"markdown\",
+          \"markdown\": {
+              \"title\": \"Wecoder ${CURRENT_VERSION} +1 Alpha 打包完成\",
+              \"text\": \"### Wecoder ${CURRENT_VERSION} +1 Alpha 打包完成\n* 分支：develop\n* 当前版本：${CURRENT_VERSION} +1 Alpha\n* 下载链接：[点击下载](${CI_PROJECT_URL}/-/jobs/$CI_JOB_ID/artifacts/browse)\n* 如需继续流程，请在 CI 页面点击 create_mr 创建合并请求\n  * CI 详情页：[跳转到本次 Pipeline](${CI_PROJECT_URL}/-/pipelines/${CI_PIPELINE_ID})\"
+          }
+      }"
+  artifacts:
+    paths:
+      - "*.vsix"
+    expire_in: 1 hour
+
+create_mr:
+  stage: create_mr
+  image: $NODE_IMAGE
+  before_script:
+    - git config --global user.email "gitlab@git.intra.weibo.com"
+    - git config --global user.name "Wecoder CI"
+    - git remote set-url origin https://oauth2:${CI_PUSH_TOKEN}@git.intra.weibo.com/${CI_PROJECT_PATH}.git
+    - git checkout develop
+    # 关键补充：先同步远端最新 develop
+    - git pull --rebase origin develop
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_COMMIT_MESSAGE !~ /^\[bot\]/'
+  script:
+    - |
+      cd src
+      CURRENT_VERSION=$(npm pkg get version | tr -d '"')
+      npm version patch -m "chore(release): bump version to %s"
+      cd ..
+      NEW_VERSION=$(node -p "require('./src/package.json').version")
+      git add src/package.json # 如果有
+      git commit --no-verify --allow-empty -m "[bot]chore(release): bump version to ${NEW_VERSION}" # 若没自动commit
+      # 再次同步一下（防止极端并发），可选
+      git pull --rebase origin develop
+      git push origin develop
+      MR_URL="${CI_PROJECT_URL}/-/merge_requests/new?merge_request%5Bsource_branch%5D=${CI_COMMIT_REF_NAME}&merge_request%5Btarget_branch%5D=main&merge_request%5Btitle%5D=chore%28release%29%3A%20bump%20version%20to%20${NEW_VERSION}"
+      echo "点击创建MR: ${MR_URL}"
+      curl "https://oapi.dingtalk.com/robot/send?access_token=${DINGTAKE_TOKEN}" \
+        -s -H 'Content-Type: application/json' \
+        -d "{
+            \"msgtype\": \"markdown\",
+            \"markdown\": {
+                \"title\": \"Wecoder ${CURRENT_VERSION} +1 Alpha 合并请求\",
+                \"text\": \"### Wecoder ${CURRENT_VERSION} +1 Alpha 合并请求\n* Pipeline 地址：[查看 Pipeline](${CI_PROJECT_URL}/-/pipelines/${CI_PIPELINE_ID})\n* 分支：develop\n* 当前版本：${CURRENT_VERSION} +1 Alpha\n* 创建 MR：[点击这里创建合并请求](${MR_URL})\"
+            }
+        }"
+  when: manual

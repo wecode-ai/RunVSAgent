@@ -1,0 +1,27 @@
+{
+	"greeting": "WeCoder'a Hoş Geldin!",
+	"introduction": "Yerleşik ve genişletilebilir Modlar yelpazesiyle WeCoder, daha önce hiç olmadığı gibi planlama, mimari tasarım, kodlama, hata ayıklama ve üretkenliğini artırmanı sağlar.",
+	"notice": "Başlamak için bu eklentinin bir API sağlayıcısına ihtiyacı var.",
+	"start": "Hadi başlayalım!",
+	"routers": {
+		"requesty": {
+			"description": "Optimize edilmiş LLM yönlendiricin",
+			"incentive": "$1 ücretsiz kredi"
+		},
+		"openrouter": {
+			"description": "LLM'ler için birleşik bir arayüz"
+		}
+	},
+	"chooseProvider": "Sihirini yapabilmesi için WeCoder'nun bir API anahtarına ihtiyacı var.",
+	"startRouter": "Bir LLM yönlendiricisi kullanmanı öneririz:",
+	"startCustom": "Veya kendi API anahtarını kullanabilirsin:",
+	"telemetry": {
+		"title": "WeCoder'u Geliştirmeye Yardım Et",
+		"anonymousTelemetry": "Hataları düzeltmemize ve eklentiyi geliştirmemize yardımcı olmak için anonim hata ve kullanım verileri gönder. Hiçbir zaman kod, metin veya kişisel bilgi gönderilmez.",
+		"changeSettings": "Bunu her zaman <settingsLink>ayarlar</settingsLink>ın altından değiştirebilirsin",
+		"settings": "ayarlar",
+		"allow": "İzin Ver",
+		"deny": "Reddet"
+	},
+	"importSettings": "Ayarları İçe Aktar"
+}

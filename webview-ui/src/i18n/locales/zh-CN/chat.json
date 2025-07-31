@@ -1,0 +1,329 @@
+{
+	"greeting": "欢迎使用 WeCoder",
+	"task": {
+		"title": "任务",
+		"seeMore": "展开",
+		"seeLess": "收起",
+		"tokens": "Token 用量:",
+		"cache": "缓存:",
+		"apiCost": "API 费用:",
+		"contextWindow": "上下文长度：",
+		"closeAndStart": "关闭任务并开始新任务",
+		"export": "导出任务历史",
+		"delete": "删除任务（Shift + 点击跳过确认）",
+		"share": "分享任务",
+		"condenseContext": "智能压缩上下文",
+		"shareWithOrganization": "与组织分享",
+		"shareWithOrganizationDescription": "仅组织成员可访问",
+		"sharePublicly": "公开分享",
+		"sharePubliclyDescription": "任何拥有链接的人都可访问",
+		"connectToCloud": "连接到云端",
+		"connectToCloudDescription": "登录 WeCoder Cloud 以分享任务",
+		"sharingDisabledByOrganization": "组织已禁用分享功能",
+		"shareSuccessOrganization": "组织链接已复制到剪贴板",
+		"shareSuccessPublic": "公开链接已复制到剪贴板"
+	},
+	"unpin": "取消置顶",
+	"pin": "置顶",
+	"tokenProgress": {
+		"availableSpace": "可用: {{amount}}",
+		"tokensUsed": "已使用: {{used}} / {{total}}",
+		"reservedForResponse": "已保留: {{amount}}"
+	},
+	"retry": {
+		"title": "重试",
+		"tooltip": "再次尝试操作"
+	},
+	"startNewTask": {
+		"title": "开始新任务",
+		"tooltip": "开始一个新任务"
+	},
+	"proceedAnyways": {
+		"title": "仍然继续",
+		"tooltip": "在命令执行时继续"
+	},
+	"save": {
+		"title": "保存",
+		"tooltip": "保存消息更改"
+	},
+	"reject": {
+		"title": "拒绝",
+		"tooltip": "拒绝此操作"
+	},
+	"completeSubtaskAndReturn": "完成子任务并返回",
+	"approve": {
+		"title": "批准",
+		"tooltip": "批准此操作"
+	},
+	"runCommand": {
+		"title": "运行命令",
+		"tooltip": "执行此命令"
+	},
+	"proceedWhileRunning": {
+		"title": "强制继续",
+		"tooltip": "忽略运行中的命令并继续"
+	},
+	"killCommand": {
+		"title": "终止命令",
+		"tooltip": "终止当前命令"
+	},
+	"resumeTask": {
+		"title": "恢复任务",
+		"tooltip": "继续当前任务"
+	},
+	"terminate": {
+		"title": "结束",
+		"tooltip": "结束当前任务"
+	},
+	"cancel": {
+		"title": "取消",
+		"tooltip": "取消当前操作"
+	},
+	"scrollToBottom": "滚动到聊天底部",
+	"about": "通过 AI 辅助生成、重构和调试代码。查看我们的 <DocsLink>文档</DocsLink> 了解更多信息。",
+	"onboarding": "<strong>此工作区中的任务列表为空。</strong> 请在下方输入任务开始。 不确定如何开始？ 在 <DocsLink>文档</DocsLink> 中阅读更多关于 WeCoder 可以为您做什么的信息。",
+	"rooTips": {
+		"boomerangTasks": {
+			"title": "任务编排",
+			"description": "将任务拆分为更小、更易于管理的部分。"
+		},
+		"stickyModels": {
+			"title": "粘性模式",
+			"description": "每个模式 都会记住 您上次使用的模型"
+		},
+		"tools": {
+			"title": "工具",
+			"description": "允许 AI 通过浏览网络、运行命令等方式解决问题。"
+		},
+		"customizableModes": {
+			"title": "自定义模式",
+			"description": "具有专属行为和指定模型的特定角色"
+		}
+	},
+	"selectMode": "选择交互模式",
+	"selectApiConfig": "选择 API 配置",
+	"enhancePrompt": "增强提示词",
+	"addImages": "添加图片到消息",
+	"sendMessage": "发送消息",
+	"stopTts": "停止文本转语音",
+	"typeMessage": "输入消息...",
+	"typeTask": "在此处输入您的任务...",
+	"addContext": "@添加上下文，/切换模式",
+	"dragFiles": "Shift+拖拽文件",
+	"dragFilesImages": "Shift+拖拽文件/图片",
+	"enhancePromptDescription": "'增强提示'按钮通过提供额外上下文、澄清或重新表述来帮助改进您的请求。尝试在此处输入请求，然后再次点击按钮查看其工作原理。",
+	"modeSelector": {
+		"title": "模式",
+		"marketplace": "模式市场",
+		"settings": "模式设置",
+		"description": "专门定制WeCoder行为的角色。"
+	},
+	"errorReadingFile": "读取文件时出错:",
+	"noValidImages": "没有处理有效图片",
+	"separator": "分隔符",
+	"edit": "编辑...",
+	"forNextMode": "用于下一个模式",
+	"forPreviousMode": "用于上一个模式",
+	"error": "错误",
+	"diffError": {
+		"title": "编辑失败"
+	},
+	"troubleMessage": "WeCoder遇到问题...",
+	"apiRequest": {
+		"title": "API请求",
+		"failed": "API请求失败",
+		"streaming": "API请求...",
+		"cancelled": "API请求已取消",
+		"streamingFailed": "API流式传输失败"
+	},
+	"checkpoint": {
+		"initial": "初始检查点",
+		"regular": "检查点",
+		"initializingWarning": "正在初始化检查点...如果耗时过长，你可以在<settingsLink>设置</settingsLink>中禁用检查点并重新启动任务。",
+		"menu": {
+			"viewDiff": "查看差异",
+			"restore": "恢复检查点",
+			"restoreFiles": "恢复文件",
+			"restoreFilesDescription": "将项目文件恢复到此检查点状态",
+			"restoreFilesAndTask": "恢复文件和任务",
+			"confirm": "确认",
+			"cancel": "取消",
+			"cannotUndo": "此操作无法撤消。",
+			"restoreFilesAndTaskDescription": "恢复文件至此时状态，并清除后续对话记录"
+		},
+		"current": "当前"
+	},
+	"instructions": {
+		"wantsToFetch": "WeCoder 想要获取详细指示以协助当前任务"
+	},
+	"fileOperations": {
+		"wantsToRead": "需要读取文件:",
+		"wantsToReadOutsideWorkspace": "请求访问外部文件:",
+		"didRead": "已读取文件:",
+		"wantsToEdit": "需要编辑文件:",
+		"wantsToEditOutsideWorkspace": "需要编辑外部文件:",
+		"wantsToEditProtected": "需要编辑受保护的配置文件:",
+		"wantsToCreate": "需要新建文件:",
+		"wantsToSearchReplace": "需要在此文件中搜索和替换:",
+		"didSearchReplace": "已完成搜索和替换:",
+		"wantsToInsert": "需要在此文件中插入内容:",
+		"wantsToInsertWithLineNumber": "需要在第 {{lineNumber}} 行插入内容:",
+		"wantsToInsertAtEnd": "需要在文件末尾添加内容:",
+		"wantsToReadAndXMore": "WeCoder 想读取此文件以及另外 {{count}} 个文件：",
+		"wantsToReadMultiple": "WeCoder 想要读取多个文件：",
+		"wantsToApplyBatchChanges": "WeCoder 想要对多个文件应用更改："
+	},
+	"directoryOperations": {
+		"wantsToViewTopLevel": "需要查看目录文件列表:",
+		"didViewTopLevel": "已查看目录文件列表:",
+		"wantsToViewRecursive": "需要查看目录所有文件:",
+		"didViewRecursive": "已查看目录所有文件:",
+		"wantsToViewDefinitions": "WeCoder想查看此目录中使用的源代码定义名称:",
+		"didViewDefinitions": "WeCoder已查看此目录中使用的源代码定义名称:",
+		"wantsToSearch": "需要搜索内容: {{regex}}",
+		"didSearch": "已完成内容搜索: {{regex}}",
+		"wantsToSearchOutsideWorkspace": "需要搜索内容（工作区外）: {{regex}}",
+		"didSearchOutsideWorkspace": "已完成内容搜索（工作区外）: {{regex}}",
+		"wantsToViewTopLevelOutsideWorkspace": "需要查看目录文件列表（工作区外）:",
+		"didViewTopLevelOutsideWorkspace": "已查看目录文件列表（工作区外）:",
+		"wantsToViewRecursiveOutsideWorkspace": "需要查看目录所有文件（工作区外）:",
+		"didViewRecursiveOutsideWorkspace": "已查看目录所有文件（工作区外）:",
+		"wantsToViewDefinitionsOutsideWorkspace": "WeCoder想查看此目录中使用的源代码定义名称（工作区外）:",
+		"didViewDefinitionsOutsideWorkspace": "WeCoder已查看此目录中使用的源代码定义名称（工作区外）:"
+	},
+	"commandOutput": "命令输出",
+	"response": "响应",
+	"arguments": "参数",
+	"mcp": {
+		"wantsToUseTool": "WeCoder想在{{serverName}} MCP上使用工具:",
+		"wantsToAccessResource": "WeCoder想访问{{serverName}} MCP服务上的资源:"
+	},
+	"modes": {
+		"wantsToSwitch": "即将切换至{{mode}}模式",
+		"wantsToSwitchWithReason": "即将切换至{{mode}}模式（原因：{{reason}}）",
+		"didSwitch": "已切换至{{mode}}模式",
+		"didSwitchWithReason": "已切换至{{mode}}模式（原因：{{reason}}）"
+	},
+	"subtasks": {
+		"wantsToCreate": "WeCoder想在<code>{{mode}}</code>模式下创建新子任务:",
+		"wantsToFinish": "WeCoder想完成此子任务",
+		"newTaskContent": "子任务说明",
+		"completionContent": "子任务已完成",
+		"resultContent": "子任务结果",
+		"defaultResult": "请继续下一个任务。",
+		"completionInstructions": "子任务已完成！您可以查看结果并提出修改或下一步建议。如果一切正常，请确认以将结果返回给主任务。"
+	},
+	"questions": {
+		"hasQuestion": "WeCoder有一个问题:"
+	},
+	"taskCompleted": "任务完成",
+	"powershell": {
+		"issues": "看起来您遇到了Windows PowerShell问题，请参阅此"
+	},
+	"autoApprove": {
+		"title": "自动批准:",
+		"none": "无",
+		"description": "允许直接执行操作无需确认，请谨慎启用。前往<settingsLink>设置</settingsLink>调整",
+		"selectOptionsFirst": "选择至少一个下面的选项以启用自动批准",
+		"toggleAriaLabel": "切换自动批准",
+		"disabledAriaLabel": "自动批准已禁用 - 请先选择选项"
+	},
+	"reasoning": {
+		"thinking": "思考中",
+		"seconds": "{{count}}秒"
+	},
+	"contextCondense": {
+		"title": "上下文已压缩",
+		"condensing": "正在压缩上下文...",
+		"errorHeader": "上下文压缩失败",
+		"tokens": "tokens"
+	},
+	"followUpSuggest": {
+		"copyToInput": "复制到输入框（或按住Shift点击）",
+		"autoSelectCountdown": "{{count}}秒后自动选择",
+		"countdownDisplay": "{{count}}秒"
+	},
+	"announcement": {
+		"title": "🎉 WeCoder {{version}} 已发布",
+		"description": "WeCoder {{version}} 带来强大的新功能和重大改进，提升您的开发工作流程。",
+		"whatsNew": "新特性",
+		"feature1": "<bold>代码库索引从实验阶段正式发布</bold>: 完整的代码库索引现已稳定，可用于生产环境，具备改进的搜索和上下文理解功能。",
+		"feature2": "<bold>新增待办事项列表功能</bold>: 通过集成的待办事项管理保持任务进度，帮助你保持条理并专注于开发目标。",
+		"feature3": "<bold>改进的架构师到代码转换</bold>: 从架构师模式的规划到代码模式的实现，实现无缝交接。",
+		"hideButton": "隐藏公告",
+		"detailsDiscussLinks": "在 <discordLink>Discord</discordLink> 和 <redditLink>Reddit</redditLink> 获取更多详情并参与讨论 🚀"
+	},
+	"browser": {
+		"rooWantsToUse": "WeCoder想使用浏览器:",
+		"consoleLogs": "控制台日志",
+		"noNewLogs": "(没有新日志)",
+		"screenshot": "浏览器截图",
+		"cursor": "光标",
+		"navigation": {
+			"step": "步骤 {{current}} / {{total}}",
+			"previous": "上一步",
+			"next": "下一步"
+		},
+		"sessionStarted": "浏览器会话已启动",
+		"actions": {
+			"title": "浏览器操作: ",
+			"launch": "访问 {{url}}",
+			"click": "点击 ({{coordinate}})",
+			"type": "输入 \"{{text}}\"",
+			"scrollDown": "向下滚动",
+			"scrollUp": "向上滚动",
+			"close": "关闭浏览器"
+		}
+	},
+	"codeblock": {
+		"tooltips": {
+			"expand": "展开代码块",
+			"collapse": "收起代码块",
+			"enable_wrap": "启用自动换行",
+			"disable_wrap": "禁用自动换行",
+			"copy_code": "复制代码"
+		}
+	},
+	"systemPromptWarning": "警告：自定义系统提示词覆盖已激活。这可能严重破坏功能并导致不可预测的行为。",
+	"profileViolationWarning": "当前配置文件与您的组织设置不兼容",
+	"shellIntegration": {
+		"title": "命令执行警告",
+		"description": "您的命令正在没有 VSCode 终端 shell 集成的情况下执行。要隐藏此警告，您可以在 <settingsLink>WeCoder 设置</settingsLink>的 <strong>Terminal</strong> 部分禁用 shell 集成，或使用下方链接排查 VSCode 终端集成问题。",
+		"troubleshooting": "点击此处查看 shell 集成文档。"
+	},
+	"ask": {
+		"autoApprovedRequestLimitReached": {
+			"title": "已达自动批准请求限制",
+			"description": "WeCoder 已达到 {{count}} 次 API 请求的自动批准限制。您想重置计数并继续任务吗？",
+			"button": "重置并继续"
+		}
+	},
+	"codebaseSearch": {
+		"wantsToSearch": "WeCoder 需要搜索代码库: <code>{{query}}</code>",
+		"wantsToSearchWithPath": "WeCoder 需要在 <code>{{path}}</code> 中搜索: <code>{{query}}</code>",
+		"didSearch_one": "找到 1 个结果",
+		"didSearch_other": "找到 {{count}} 个结果",
+		"resultTooltip": "相似度评分: {{score}} (点击打开文件)"
+	},
+	"read-batch": {
+		"approve": {
+			"title": "全部批准"
+		},
+		"deny": {
+			"title": "全部拒绝"
+		}
+	},
+	"indexingStatus": {
+		"ready": "索引就绪",
+		"indexing": "索引中 {{percentage}}%",
+		"indexed": "已索引",
+		"error": "索引错误",
+		"status": "索引状态"
+	},
+	"versionIndicator": {
+		"ariaLabel": "版本 {{version}} - 点击查看发布说明"
+	},
+	"editMessage": {
+		"placeholder": "编辑消息..."
+	}
+}

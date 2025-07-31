@@ -1,0 +1,73 @@
+/* WeCode工具容器样式 */
+.wecode-tools-container {
+	margin-top: 16px;
+	padding: 0 4px;
+}
+
+/* 产品分类区块样式 */
+.wecode-section {
+	margin-bottom: 24px;
+}
+
+.wecode-section-title {
+	font-size: 1.1em;
+	font-weight: bold;
+	margin-bottom: 10px;
+	color: var(--vscode-editor-foreground);
+}
+
+.wecode-section-desc {
+	margin-bottom: 15px;
+	line-height: 1.5;
+}
+
+/* 产品列表样式 */
+.wecode-product-list {
+	margin-top: 12px;
+	padding-left: 8px;
+	list-style-type: none;
+}
+
+.wecode-product-item {
+	margin-bottom: 16px;
+	display: flex;
+	flex-direction: column;
+}
+
+/* 链接样式 */
+.wecode-link {
+	color: var(--vscode-textLink-foreground);
+	text-decoration: none;
+}
+
+.wecode-link:hover {
+	text-decoration: underline;
+}
+
+.wecode-product-desc {
+	margin-top: 4px;
+	margin-bottom: 4px;
+}
+
+/* 插件链接容器 */
+.wecode-plugin-links {
+	display: flex;
+	flex-wrap: wrap;
+	margin-top: 6px;
+	margin-left: 8px;
+}
+
+/* 子链接样式 */
+.wecode-sub-link {
+	margin-right: 16px;
+	margin-bottom: 6px;
+	font-size: 0.95em;
+	display: inline-flex;
+	align-items: center;
+}
+
+.wecode-sub-link:before {
+	content: "•";
+	margin-right: 6px;
+	color: var(--vscode-textLink-foreground);
+}
