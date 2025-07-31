@@ -419,7 +419,7 @@
 		"@vscode/codicons": "^0.0.36",
 		"async-mutex": "^0.5.0",
 		"axios": "^1.7.4",
-		"cheerio": "^1.0.0",
+		"cheerio": "^1.1.2",
 		"chokidar": "^4.0.1",
 		"clone-deep": "^4.0.1",
 		"default-shell": "^2.2.0",
