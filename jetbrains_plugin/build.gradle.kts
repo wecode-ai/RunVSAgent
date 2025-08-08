@@ -49,6 +49,7 @@ ext {
     set("debugMode", project.findProperty("debugMode") ?: "none")
     set("debugResource", project.projectDir.resolve("../debug-resources").absolutePath)
     set("vscodePlugin", project.findProperty("vscodePlugin") ?: "roo-code")
+    set("extensionType", project.findProperty("extensionType") ?: "roo-code")
 }
 
 project.afterEvaluate {
@@ -69,9 +70,10 @@ fun Sync.prepareSandbox() {
             File(vscodePluginDir, ".env").createNewFile()
         }
     } else {
-        val vscodePluginDir = File("./plugins/${ext.get("vscodePlugin")}")
+        val extensionType = ext.get("extensionType") as String
+        val vscodePluginDir = File("./plugins/${extensionType}")
         if (!vscodePluginDir.exists()) {
-            throw IllegalStateException("missing plugin dir")
+            throw IllegalStateException("missing plugin dir for extension type: $extensionType")
         }
         val list = mutableListOf<String>()
         val depfile = File("prodDep.txt")
@@ -95,8 +97,8 @@ fun Sync.prepareSandbox() {
             }
         }
 
-        from("${vscodePluginDir.path}/extension") { into("${intellij.pluginName.get()}/${ext.get("vscodePlugin")}") }
-        from("src/main/resources/themes/") { into("${intellij.pluginName.get()}/${ext.get("vscodePlugin")}/integrations/theme/default-themes/") }
+        from("${vscodePluginDir.path}/extension") { into("${intellij.pluginName.get()}/${extensionType}") }
+        from("src/main/resources/themes/") { into("${intellij.pluginName.get()}/${extensionType}/integrations/theme/default-themes/") }
         
         // The platform.zip file required for release mode is associated with the code in ../base/vscode, currently using version 1.100.0. If upgrading this code later
         // Need to modify the vscodeVersion value in gradle.properties, then execute the task named genPlatform, which will generate a new platform.zip file for submission
@@ -122,7 +124,7 @@ fun Sync.prepareSandbox() {
         }
 
         doLast {
-            File("${destinationDir}/${intellij.pluginName.get()}/${ext.get("vscodePlugin")}/.env").createNewFile()
+            File("${destinationDir}/${intellij.pluginName.get()}/${extensionType}/.env").createNewFile()
         }
     }
 }
