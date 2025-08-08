@@ -1,0 +1,23 @@
+# VSCode Agent Configuration File
+# Copy this file to your project root and rename to .vscode-agent
+
+# Extension type to use
+# Supported values: roo-code, copilot, claude, custom
+extension.type=roo-code
+
+# Additional configuration options can be added here
+# debug.mode=idea
+# debug.resource=/path/to/debug/resources
+
+# Extension-specific configurations
+# roo-code specific settings
+# roo.debug.enabled=false
+# roo.api.endpoint=https://api.roo-code.com
+
+# copilot specific settings
+# copilot.auth.token=your_github_token
+# copilot.auto_suggest=true
+
+# claude specific settings
+# claude.api.key=your_anthropic_api_key
+# claude.model=claude-3-sonnet-20240229 

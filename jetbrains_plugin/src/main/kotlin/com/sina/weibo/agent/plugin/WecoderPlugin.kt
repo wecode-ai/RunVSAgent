@@ -75,6 +75,13 @@ class WecoderPlugin : StartupActivity.DumbAware {
         )
 
         try {
+            // Initialize global extension manager
+            val extensionManager = com.sina.weibo.agent.extensions.ExtensionManager.getInstance(project)
+            extensionManager.initialize()
+            
+            // Initialize current extension provider
+            extensionManager.initializeCurrentProvider()
+            
             // Initialize plugin service
             val pluginService = getInstance(project)
             pluginService.initialize(project)
@@ -87,6 +94,7 @@ class WecoderPlugin : StartupActivity.DumbAware {
             Disposer.register(project, Disposable {
                 LOG.info("Disposing RunVSAgent plugin for project: ${project.name}")
                 pluginService.dispose()
+                extensionManager.dispose()
                 SystemObjectProvider.dispose()
             })
             

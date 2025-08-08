@@ -48,6 +48,9 @@ SPDX-License-Identifier: Apache-2.0
         <h2>Supported Agents</h2>
         <ul>
             <li><strong>Roo Code</strong>: Advanced AI-powered coding assistant with intelligent code generation and refactoring capabilities</li>
+            <li><strong>GitHub Copilot</strong>: AI pair programming assistant from GitHub</li>
+            <li><strong>Claude</strong>: Anthropic's AI assistant for coding tasks</li>
+            <li><strong>Custom Extensions</strong>: Support for custom AI coding assistants</li>
         </ul>
         
         <h2>Requirements</h2>
@@ -67,6 +70,15 @@ SPDX-License-Identifier: Apache-2.0
    
    <!-- Change notes for the plugin -->
    <change-notes><![CDATA[
+        <h3>Version 0.2.0</h3>
+        <ul>
+            <li>Complete extension decoupling with modular architecture</li>
+            <li>Roo Code extension moved to independent package</li>
+            <li>Generic extension provider interface for easy extension development</li>
+            <li>Unified extension management system</li>
+            <li>Enhanced UI for extension selection</li>
+        </ul>
+        
         <h3>Version 0.1.5</h3>
         <ul>
             <li>Added system information display while webview is loading</li>
@@ -95,7 +107,7 @@ SPDX-License-Identifier: Apache-2.0
         <projectService serviceImplementation="com.sina.weibo.agent.plugin.WecoderPluginService"/>
         <postStartupActivity implementation="com.sina.weibo.agent.plugin.WecoderPlugin"/>
         <editorFactoryListener implementation="com.sina.weibo.agent.editor.EditorListener"/>
-        <toolWindow factoryClass="com.sina.weibo.agent.ui.RooToolWindowFactory"
+        <toolWindow factoryClass="com.sina.weibo.agent.ui.RunVSAgentToolWindowFactory"
                     id="RunVSAgent"
                     secondary="true"
                     icon="/icons/wecoder-window.svg"
@@ -157,6 +169,14 @@ SPDX-License-Identifier: Apache-2.0
             <override-text place="GoToAction" text="Setting" />
         </action>
 
+        <action id="RunVSAgent.extensionSelector"
+                icon="AllIcons.General.Modified"
+                class="com.sina.weibo.agent.extensions.actions.ExtensionSelectorAction"
+                text="Select Extension"
+                description="Select extension">
+            <override-text place="GoToAction" text="Select Extension" />
+        </action>
+
         <group id="WecoderToolbarGroup">
             <reference ref="RunVSAgent.plusButtonClicked" />
             <reference ref="RunVSAgent.promptsButtonClicked" />
@@ -164,6 +184,7 @@ SPDX-License-Identifier: Apache-2.0
             <reference ref="RunVSAgent.historyButtonClicked" />
             <reference ref="RunVSAgent.marketplaceButtonClicked" />
             <reference ref="RunVSAgent.settingsButtonClicked" />
+            <reference ref="RunVSAgent.extensionSelector" />
         </group>
 
         <group id="RunVSAgent.RightClickMenu" text="RunVSAgent" description="RunVSAgent main menu"  icon="/icons/weibo_logo_13px.svg" popup="true">

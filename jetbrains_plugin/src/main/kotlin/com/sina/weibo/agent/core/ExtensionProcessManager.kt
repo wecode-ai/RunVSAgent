@@ -31,7 +31,8 @@ class ExtensionProcessManager : Disposable {
         // Extension process entry file
         private const val EXTENSION_ENTRY_FILE = PluginConstants.EXTENSION_ENTRY_FILE
         
-        // Plugin code directory
+        // Plugin code directory - Deprecated, use ExtensionConfiguration instead
+        @Deprecated("Use ExtensionConfiguration.getCurrentConfig().codeDir instead")
         private const val PLUGIN_CODE_DIR = PluginConstants.PLUGIN_CODE_DIR
         
         // Runtime directory
@@ -356,21 +357,7 @@ class ExtensionProcessManager : Disposable {
         return null
     }
     
-    /**
-     * Find plugin code directory
-     */
-    private fun findPluginCodeDir(): String? {
-        val pluginDirPath = PluginResourceUtil.getResourcePath(PLUGIN_ID, PLUGIN_CODE_DIR)
-        if (pluginDirPath != null) {
-            val pluginCodeDir = File(pluginDirPath)
-            if (pluginCodeDir.exists() && pluginCodeDir.isDirectory) {
-                return pluginCodeDir.absolutePath
-            }
-        }
-        
-        LOG.warn("Plugin code directory not found")
-        return null
-    }
+
     
     /**
      * Find node_modules path
