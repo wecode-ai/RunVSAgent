@@ -34,9 +34,6 @@ src/main/kotlin/com/sina/weibo/agent/
 │   │   │   └── ExtensionTypeSelector.kt
 │   │   └── actions/              # Roo-specific actions
 │   │       └── ExtensionTypeSelectorAction.kt
-│   └── copilot/                  # Copilot extension implementation
-│       ├── CopilotExtensionProvider.kt # Copilot extension provider
-│       └── CopilotExtensionConfiguration.kt # Copilot configuration
 ```
 
 ### Extension Implementations

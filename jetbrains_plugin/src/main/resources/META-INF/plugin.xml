@@ -48,8 +48,6 @@ SPDX-License-Identifier: Apache-2.0
         <h2>Supported Agents</h2>
         <ul>
             <li><strong>Roo Code</strong>: Advanced AI-powered coding assistant with intelligent code generation and refactoring capabilities</li>
-            <li><strong>GitHub Copilot</strong>: AI pair programming assistant from GitHub</li>
-            <li><strong>Claude</strong>: Anthropic's AI assistant for coding tasks</li>
             <li><strong>Custom Extensions</strong>: Support for custom AI coding assistants</li>
         </ul>
         

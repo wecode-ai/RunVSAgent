@@ -10,8 +10,6 @@ package com.sina.weibo.agent.extensions.roo
  */
 enum class ExtensionType(val code: String, val displayName: String, val description: String) {
     ROO_CODE("roo-code", "Roo Code", "AI-powered code assistant"),
-    COPILOT("copilot", "GitHub Copilot", "AI pair programming assistant"),
-    CLAUDE("claude", "Claude", "Anthropic's AI assistant"),
     CUSTOM("custom", "Custom Extension", "Custom AI extension");
     
     companion object {

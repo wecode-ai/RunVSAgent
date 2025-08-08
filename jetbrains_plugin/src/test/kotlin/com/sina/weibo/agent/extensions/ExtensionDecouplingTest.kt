@@ -34,34 +34,19 @@ class ExtensionDecouplingTest : BasePlatformTestCase() {
         val rooProvider = extensionManager.getProvider("roo-code")
         assertNotNull("Roo Code provider should be registered", rooProvider)
         assertEquals("Roo Code", rooProvider?.getDisplayName())
-        
-        val copilotProvider = extensionManager.getProvider("copilot")
-        assertNotNull("Copilot provider should be registered", copilotProvider)
-        assertEquals("GitHub Copilot", copilotProvider?.getDisplayName())
-        
-        val claudeProvider = extensionManager.getProvider("claude")
-        assertNotNull("Claude provider should be registered", claudeProvider)
-        assertEquals("Claude", claudeProvider?.getDisplayName())
     }
     
     fun testExtensionProviderSwitching() {
         // Test switching between extension providers
         val rooProvider = extensionManager.getProvider("roo-code")
-        val copilotProvider = extensionManager.getProvider("copilot")
-        
+
         assertNotNull("Roo provider should exist", rooProvider)
-        assertNotNull("Copilot provider should exist", copilotProvider)
-        
+
         // In test environment, providers may not be available due to missing files
         // So we test the switching logic only if providers are available
         if (rooProvider?.isAvailable(project) == true) {
             extensionManager.setCurrentProvider("roo-code")
             assertEquals("Current provider should be roo-code", "roo-code", extensionManager.getCurrentProvider()?.getExtensionId())
-        }
-        
-        if (copilotProvider?.isAvailable(project) == true) {
-            extensionManager.setCurrentProvider("copilot")
-            assertEquals("Current provider should be copilot", "copilot", extensionManager.getCurrentProvider()?.getExtensionId())
         }
     }
     
@@ -80,16 +65,13 @@ class ExtensionDecouplingTest : BasePlatformTestCase() {
     fun testExtensionAvailability() {
         // Test extension availability checking
         val rooProvider = extensionManager.getProvider("roo-code")
-        val copilotProvider = extensionManager.getProvider("copilot")
-        
+
         assertNotNull("Roo provider should exist", rooProvider)
-        assertNotNull("Copilot provider should exist", copilotProvider)
-        
+
         // Test availability (this will depend on whether extension files exist)
         // In test environment, extensions may not be available due to missing files
         // This is expected behavior, so we just verify the method works
         assertNotNull("Roo provider availability check should work", rooProvider?.isAvailable(project))
-        assertNotNull("Copilot provider availability check should work", copilotProvider?.isAvailable(project))
     }
     
     fun testExtensionProviderInterface() {

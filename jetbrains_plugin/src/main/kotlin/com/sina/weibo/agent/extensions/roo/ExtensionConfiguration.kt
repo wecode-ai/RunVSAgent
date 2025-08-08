@@ -171,32 +171,6 @@ data class ExtensionConfig(
                     capabilities = emptyMap(),
                     extensionDependencies = emptyList()
                 )
-                ExtensionType.COPILOT -> ExtensionConfig(
-                    extensionType = extensionType,
-                    codeDir = "copilot",
-                    displayName = "GitHub Copilot",
-                    description = "AI pair programming assistant",
-                    publisher = "GitHub",
-                    version = "1.0.0",
-                    mainFile = "./dist/extension.js",
-                    activationEvents = listOf("onStartupFinished"),
-                    engines = mapOf("vscode" to "^1.0.0"),
-                    capabilities = emptyMap(),
-                    extensionDependencies = emptyList()
-                )
-                ExtensionType.CLAUDE -> ExtensionConfig(
-                    extensionType = extensionType,
-                    codeDir = "claude",
-                    displayName = "Claude",
-                    description = "Anthropic's AI assistant",
-                    publisher = "Anthropic",
-                    version = "1.0.0",
-                    mainFile = "./dist/extension.js",
-                    activationEvents = listOf("onStartupFinished"),
-                    engines = mapOf("vscode" to "^1.0.0"),
-                    capabilities = emptyMap(),
-                    extensionDependencies = emptyList()
-                )
                 ExtensionType.CUSTOM -> ExtensionConfig(
                     extensionType = extensionType,
                     codeDir = "custom",

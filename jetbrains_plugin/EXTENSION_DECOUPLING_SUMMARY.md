@@ -30,16 +30,6 @@ Successfully completed the decoupling of roo-code logic from the RunVSAgent plug
 - Created `RooExtensionProvider` implementing the new interface
 - Maintained backward compatibility with existing roo-code functionality
 
-#### Copilot Extension
-- Created `CopilotExtensionProvider` as an example implementation
-- Implemented `CopilotExtensionConfiguration` for configuration management
-- Demonstrated how to add new extension types
-
-#### Claude Extension
-- Created `ClaudeExtensionProvider` as another example
-- Implemented `ClaudeExtensionConfiguration` for configuration management
-- Showed extensibility of the new system
-
 ### 3. User Interface
 
 #### Extension Selector

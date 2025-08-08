@@ -12,18 +12,6 @@ RunVSAgent now supports a modular extension system that allows you to use differ
 - **Publisher**: WeCode-AI
 - **Directory**: `roo-code/`
 
-### 2. GitHub Copilot
-- **ID**: `copilot`
-- **Description**: AI pair programming assistant from GitHub
-- **Publisher**: GitHub
-- **Directory**: `copilot/`
-
-### 3. Claude
-- **ID**: `claude`
-- **Description**: Anthropic's AI assistant for coding tasks
-- **Publisher**: Anthropic
-- **Directory**: `claude/`
-
 ## Quick Start
 
 ### For Users
@@ -40,7 +28,7 @@ RunVSAgent now supports a modular extension system that allows you to use differ
    ```properties
    extension.type=roo-code
    ```
-   - Supported values: `roo-code`, `copilot`, `claude`
+   - Supported values: `roo-code`
 
 3. **Extension Directory Structure**:
    ```
@@ -50,14 +38,7 @@ RunVSAgent now supports a modular extension system that allows you to use differ
    │   ├── package.json
    │   ├── dist/
    │   └── src/
-   ├── copilot/               # Copilot extension files
-   │   ├── package.json
-   │   ├── dist/
-   │   └── src/
-   └── claude/                # Claude extension files
-       ├── package.json
-       ├── dist/
-       └── src/
+   └── custom/                # Custom extension files
    ```
 
 ### For Developers
@@ -227,7 +208,7 @@ val extensionManager = ExtensionManager.getInstance(project)
 val currentProvider = extensionManager.getCurrentProvider()
 
 // Switch to different extension
-extensionManager.setCurrentProvider("copilot")
+extensionManager.setCurrentProvider("xxxx")
 
 // Get all available providers
 val availableProviders = extensionManager.getAvailableProviders()
