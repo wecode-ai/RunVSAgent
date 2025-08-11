@@ -67,6 +67,13 @@ SPDX-License-Identifier: Apache-2.0
    
    <!-- Change notes for the plugin -->
    <change-notes><![CDATA[
+        <h3>Version 0.1.6</h3>
+        <ul>
+            <li>Added proxy support for extension host to enable usage in restricted network environments</li>
+            <li>Fixed ConcurrentModificationException in EditorAndDocManager for improved stability</li>
+            <li>Updated Roo Code version to 3.25.10 with latest AI coding assistant features</li>
+        </ul>
+        
         <h3>Version 0.1.5</h3>
         <ul>
             <li>Added system information display while webview is loading</li>
@@ -79,7 +86,7 @@ SPDX-License-Identifier: Apache-2.0
         <h3>Version 0.1.4</h3>
         <ul>
             <li>Initial release with support for VSCode-based coding agents</li>
-            <li>Compatibility with JetBrains IDE 2023.1+</lit >
+            <li>Compatibility with JetBrains IDE 2023.1+</li>
             <li>Support for Roo Code AI assistant</li>
         </ul>
    ]]></change-notes>
