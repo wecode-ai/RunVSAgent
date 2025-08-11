@@ -1,0 +1,15 @@
+# VSCode Agent Configuration File
+# Copy this file to your project root and rename to .vscode-agent
+
+# Extension type to use
+# Supported values: roo-code
+extension.type=roo-code
+
+# Additional configuration options can be added here
+# debug.mode=idea
+# debug.resource=/path/to/debug/resources
+
+# Extension-specific configurations
+# roo-code specific settings
+# roo.debug.enabled=false
+# roo.api.endpoint=https://api.roo-code.com

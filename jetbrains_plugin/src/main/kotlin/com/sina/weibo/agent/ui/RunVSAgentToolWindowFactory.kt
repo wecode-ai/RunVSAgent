@@ -33,7 +33,7 @@ import javax.swing.JButton
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class RooToolWindowFactory : ToolWindowFactory {
+class RunVSAgentToolWindowFactory : ToolWindowFactory {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         // Initialize plugin service
@@ -54,21 +54,21 @@ class RooToolWindowFactory : ToolWindowFactory {
         toolWindow.setTitleActions(titleActions)
 
         // webview panel
-        val rooToolWindowContent = RooToolWindowContent(project, toolWindow)
+        val toolWindowContent = RunVSAgentToolWindowContent(project, toolWindow)
         val contentFactory = ContentFactory.getInstance()
         val content = contentFactory.createContent(
-            rooToolWindowContent.content,
+            toolWindowContent.content,
             "",
             false
         )
         toolWindow.contentManager.addContent(content)
     }
 
-    private class RooToolWindowContent(
+    private class RunVSAgentToolWindowContent(
         private val project: Project,
         private val toolWindow: ToolWindow
     ) : WebViewCreationCallback {
-        private val logger = Logger.getInstance(RooToolWindowContent::class.java)
+        private val logger = Logger.getInstance(RunVSAgentToolWindowContent::class.java)
         
         // Get WebViewManager instance
         private val webViewManager = project.getService(WebViewManager::class.java)

@@ -27,6 +27,9 @@ import java.nio.channels.SocketChannel
 import java.nio.file.Paths
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
+import com.sina.weibo.agent.extensions.ExtensionManager as GlobalExtensionManager
+import com.sina.weibo.agent.extensions.ExtensionProvider
+import java.io.File
 
 /**
  * Extension host manager, responsible for communication with extension processes.
@@ -50,8 +53,11 @@ class ExtensionHostManager : Disposable {
      // Extension manager
     private var extensionManager: ExtensionManager? = null
     
-     // Plugin identifier
-    private var rooCodeIdentifier: String? = null
+    // Current extension provider
+    private var currentExtensionProvider: ExtensionProvider? = null
+    
+    // Extension identifier
+    private var extensionIdentifier: String? = null
     
      // JSON serialization
     private val gson = Gson()
@@ -80,11 +86,37 @@ class ExtensionHostManager : Disposable {
      */
     fun start() {
         try {
-             // Initialize extension manager
+            // Get current extension provider from global extension manager
+            val globalExtensionManager = GlobalExtensionManager.getInstance(project)
+            currentExtensionProvider = globalExtensionManager.getCurrentProvider()
+            
+            if (currentExtensionProvider == null) {
+                LOG.error("No extension provider available")
+                dispose()
+                return
+            }
+            
+            // Initialize extension manager
             extensionManager = ExtensionManager()
-            val extensionPath = PluginResourceUtil.getResourcePath(PluginConstants.PLUGIN_ID, PluginConstants.PLUGIN_CODE_DIR)
-            rooCodeIdentifier = extensionPath?.let { extensionManager!!.registerExtension(it).identifier.value }
-             // Create protocol
+            
+            // Get extension configuration
+            val extensionConfig = currentExtensionProvider!!.getConfiguration(project)
+            
+            // Get extension path from configuration
+            val extensionPath = getExtensionPath(extensionConfig)
+            
+            if (extensionPath != null && File(extensionPath).exists()) {
+                            // Register extension using configuration
+            val extensionDesc = extensionManager!!.registerExtension(extensionPath, extensionConfig)
+                extensionIdentifier = extensionDesc.identifier.value
+                LOG.info("Registered extension: ${currentExtensionProvider!!.getExtensionId()}")
+            } else {
+                LOG.error("Extension path not found: $extensionPath")
+                dispose()
+                return
+            }
+            
+            // Create protocol
             protocol = PersistentProtocol(
                 PersistentProtocol.PersistentProtocolOptions(
                     socket = nodeSocket,
@@ -95,7 +127,7 @@ class ExtensionHostManager : Disposable {
                 this::handleMessage
             )
 
-            LOG.info("ExtensionHostManager started successfully")
+            LOG.info("ExtensionHostManager started successfully with extension: ${currentExtensionProvider!!.getExtensionId()}")
         } catch (e: Exception) {
             LOG.error("Failed to start ExtensionHostManager", e)
             dispose()
@@ -188,25 +220,26 @@ class ExtensionHostManager : Disposable {
             // Get protocol
             val protocol = this.protocol ?: throw IllegalStateException("Protocol is not initialized")
             val extensionManager = this.extensionManager ?: throw IllegalStateException("ExtensionManager is not initialized")
+            val currentProvider = this.currentExtensionProvider ?: throw IllegalStateException("Extension provider is not initialized")
 
             // Create RPC manager
-            rpcManager = RPCManager(protocol, extensionManager,null, project)
+            rpcManager = RPCManager(protocol, extensionManager, null, project)
 
             // Start initialization process
             rpcManager?.startInitialize()
 
             // Start file monitoring
             project.getService(WorkspaceFileChangeManager::class.java)
-//            WorkspaceFileChangeManager.getInstance()
             project.getService(EditorAndDocManager::class.java).initCurrentIdeaEditor()
-             // Activate RooCode plugin
-            val rooCodeId = rooCodeIdentifier ?: throw IllegalStateException("RooCode identifier is not initialized")
-            extensionManager.activateExtension(rooCodeId, rpcManager!!.getRPCProtocol())
+            
+            // Activate extension
+            val extensionId = extensionIdentifier ?: throw IllegalStateException("Extension identifier is not initialized")
+            extensionManager.activateExtension(extensionId, rpcManager!!.getRPCProtocol())
                 .whenComplete { _, error ->
                     if (error != null) {
-                        LOG.error("Failed to activate RooCode plugin", error)
+                        LOG.error("Failed to activate extension: ${currentProvider.getExtensionId()}", error)
                     } else {
-                        LOG.info("RooCode plugin activated successfully")
+                        LOG.info("Extension activated successfully: ${currentProvider.getExtensionId()}")
                     }
                 }
 
@@ -338,6 +371,45 @@ class ExtensionHostManager : Disposable {
     private fun getPluginDir(): String {
         return PluginResourceUtil.getResourcePath(PluginConstants.PLUGIN_ID, "")
             ?: throw IllegalStateException("Unable to get plugin directory")
+    }
+    
+    /**
+     * Get extension path from configuration
+     */
+    private fun getExtensionPath(extensionConfig: com.sina.weibo.agent.extensions.ExtensionConfiguration): String? {
+        // First check project paths
+        val projectPath = project.basePath
+        if (projectPath != null) {
+            val possiblePaths = listOf(
+                "$projectPath/${extensionConfig.getCodeDir()}",
+                "$projectPath/../${extensionConfig.getCodeDir()}",
+                "$projectPath/../../${extensionConfig.getCodeDir()}"
+            )
+            
+            val foundPath = possiblePaths.find { File(it).exists() }
+            if (foundPath != null) {
+                return foundPath
+            }
+        }
+        
+        // Then check plugin resources (for built-in extensions)
+        try {
+            val pluginResourcePath = com.sina.weibo.agent.util.PluginResourceUtil.getResourcePath(
+                com.sina.weibo.agent.util.PluginConstants.PLUGIN_ID, 
+                extensionConfig.getCodeDir()
+            )
+            if (pluginResourcePath != null && File(pluginResourcePath).exists()) {
+                return pluginResourcePath
+            }
+        } catch (e: Exception) {
+            LOG.warn("Failed to get plugin resource path for extension: ${extensionConfig.getCodeDir()}", e)
+        }
+        
+        // For development/testing, return a default path
+        // This allows the extension to work even without the actual extension files
+        val defaultPath = projectPath?.let { "$it/${extensionConfig.getCodeDir()}" } ?: "/tmp/${extensionConfig.getCodeDir()}"
+        LOG.info("Using default extension path: $defaultPath")
+        return defaultPath
     }
     
     /**

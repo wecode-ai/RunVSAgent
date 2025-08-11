@@ -13,6 +13,8 @@ import com.sina.weibo.agent.ipc.proxy.ProxyIdentifier
 import com.sina.weibo.agent.ipc.proxy.createProxyIdentifier
 import com.sina.weibo.agent.util.URI
 import com.sina.weibo.agent.util.toCompletableFuture
+import com.sina.weibo.agent.extensions.roo.ExtensionConfig as RooExtensionConfig
+import com.sina.weibo.agent.extensions.ExtensionConfiguration
 import java.io.File
 import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
@@ -36,9 +38,10 @@ class ExtensionManager : Disposable {
     /**
      * Parse extension description information
      * @param extensionPath Extension path
+     * @param extensionConfig Extension configuration
      * @return Extension description object
      */
-    private fun parseExtensionDescription(extensionPath: String): ExtensionDescription {
+    private fun parseExtensionDescription(extensionPath: String, extensionConfig: RooExtensionConfig): ExtensionDescription {
         LOG.info("Parsing extension: $extensionPath")
         
         // Read package.json file
@@ -46,22 +49,21 @@ class ExtensionManager : Disposable {
         val packageJsonContent = File(packageJsonPath).readText()
         val packageJson = gson.fromJson(packageJsonContent, PackageJson::class.java)
         
-        // Create extension identifier
-        val name = "RunVSAgent."+packageJson.name
-        val publisher = "WeCode-AI"
-        val extensionIdentifier = ExtensionIdentifier("$publisher.$name")
+        // Create extension identifier using configuration
+        val name = "${extensionConfig.publisher}.${packageJson.name}"
+        val extensionIdentifier = ExtensionIdentifier(name)
         
         // Create extension description
         return ExtensionDescription(
-            id = "${publisher}.${name}",
+            id = name,
             identifier = extensionIdentifier,
-            name = "${publisher}.${name}",
-            displayName = "RunVSAgent:"+packageJson.displayName,
-            description = "RunVSAgent:"+packageJson.description,
-            version = packageJson.version ?: "1.0.0",
-            publisher = "WeCode-AI",
-            main = packageJson.main ?: "./dist/extension.js",
-            activationEvents = packageJson.activationEvents ?: listOf("onStartupFinished"),
+            name = name,
+            displayName = "${extensionConfig.displayName}: ${packageJson.displayName}",
+            description = "${extensionConfig.description}: ${packageJson.description}",
+            version = packageJson.version ?: extensionConfig.version,
+            publisher = extensionConfig.publisher,
+            main = packageJson.main ?: extensionConfig.mainFile,
+            activationEvents = packageJson.activationEvents ?: extensionConfig.activationEvents,
             extensionLocation = URI.file(extensionPath),
             targetPlatform = "universal", // TargetPlatform.UNIVERSAL
             isBuiltin = false,
@@ -69,10 +71,53 @@ class ExtensionManager : Disposable {
             isUnderDevelopment = false,
             engines = packageJson.engines?.let { 
                 mapOf("vscode" to (it.vscode ?: "^1.0.0"))
-            } ?: mapOf("vscode" to "^1.0.0"),
+            } ?: extensionConfig.engines,
             preRelease = false,
-            capabilities = mapOf(),
-            extensionDependencies = packageJson.extensionDependencies ?: emptyList(),
+            capabilities = extensionConfig.capabilities,
+            extensionDependencies = packageJson.extensionDependencies ?: extensionConfig.extensionDependencies,
+        )
+    }
+    
+    /**
+     * Parse extension description information from new configuration interface
+     * @param extensionPath Extension path
+     * @param extensionConfig Extension configuration
+     * @return Extension description object
+     */
+    private fun parseExtensionDescriptionFromNewConfig(extensionPath: String, extensionConfig: com.sina.weibo.agent.extensions.ExtensionConfiguration): ExtensionDescription {
+        LOG.info("Parsing extension: $extensionPath")
+        
+        // Read package.json file
+        val packageJsonPath = Paths.get(extensionPath, "package.json").toString()
+        val packageJsonContent = File(packageJsonPath).readText()
+        val packageJson = gson.fromJson(packageJsonContent, PackageJson::class.java)
+        
+        // Create extension identifier using configuration
+        val name = "${extensionConfig.getPublisher()}.${packageJson.name}"
+        val extensionIdentifier = ExtensionIdentifier(name)
+        
+        // Create extension description
+        return ExtensionDescription(
+            id = name,
+            identifier = extensionIdentifier,
+            name = name,
+            displayName = "${extensionConfig.getCodeDir()}: ${packageJson.displayName}",
+            description = "${extensionConfig.getCodeDir()}: ${packageJson.description}",
+            version = packageJson.version ?: extensionConfig.getVersion(),
+            publisher = extensionConfig.getPublisher(),
+            main = packageJson.main ?: extensionConfig.getMainFile(),
+            activationEvents = packageJson.activationEvents ?: extensionConfig.getActivationEvents(),
+            extensionLocation = URI.file(extensionPath),
+            targetPlatform = "universal", // TargetPlatform.UNIVERSAL
+            isBuiltin = false,
+            isUserBuiltin = false,
+            isUnderDevelopment = false,
+            engines = packageJson.engines?.let { 
+                mapOf("vscode" to (it.vscode ?: "^1.0.0"))
+            } ?: extensionConfig.getEngines(),
+            preRelease = false,
+            capabilities = extensionConfig.getCapabilities(),
+            extensionDependencies = packageJson.extensionDependencies ?: extensionConfig.getExtensionDependencies(),
         )
     }
     
@@ -96,10 +141,24 @@ class ExtensionManager : Disposable {
     /**
      * Register extension
      * @param extensionPath Extension path
+     * @param extensionConfig Extension configuration
      * @return Extension description object
      */
-    fun registerExtension(extensionPath: String): ExtensionDescription {
-        val extensionDescription = parseExtensionDescription(extensionPath)
+    fun registerExtension(extensionPath: String, extensionConfig: RooExtensionConfig): ExtensionDescription {
+        val extensionDescription = parseExtensionDescription(extensionPath, extensionConfig)
+        extensions[extensionDescription.name] = extensionDescription
+        LOG.info("Extension registered: ${extensionDescription.name}")
+        return extensionDescription
+    }
+    
+    /**
+     * Register extension with new configuration interface
+     * @param extensionPath Extension path
+     * @param extensionConfig Extension configuration
+     * @return Extension description object
+     */
+    fun registerExtension(extensionPath: String, extensionConfig: com.sina.weibo.agent.extensions.ExtensionConfiguration): ExtensionDescription {
+        val extensionDescription = parseExtensionDescriptionFromNewConfig(extensionPath, extensionConfig)
         extensions[extensionDescription.name] = extensionDescription
         LOG.info("Extension registered: ${extensionDescription.name}")
         return extensionDescription
