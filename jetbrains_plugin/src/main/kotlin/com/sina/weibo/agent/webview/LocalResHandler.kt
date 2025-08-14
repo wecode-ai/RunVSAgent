@@ -34,29 +34,41 @@ class LocalCefResHandle(val resourceBasePath: String, val request: CefRequest?) 
     private var offset = 0
 
     init {
+        logger.info("=== LocalCefResHandle INIT START ===")
+        logger.info("Resource base path: $resourceBasePath")
+        logger.info("Request URL: ${request?.url}")
+        
         val requestPath = request?.url?.decodeURLPart()?.replace("http://localhost:","")?.substringAfter("/")?.substringBefore("?")
+        logger.info("Extracted request path: $requestPath")
+        
         requestPath?.let {
             val filePath = if (requestPath.isEmpty()) {
                 "$resourceBasePath/index.html"
             } else {
                 "$resourceBasePath/$requestPath"
             }
+            logger.info("Constructed file path: $filePath")
+            
             file = File(filePath)
+            logger.info("File object created: $file")
 
             if (file!!.exists() && file!!.isFile) {
                 try {
                     fileContent = file!!.readBytes()
+                    logger.info("File content loaded successfully, size: ${fileContent?.size} bytes")
                 } catch (e: Exception) {
-                    logger.warn("cannot get fileContent,e:${e}")
+                    logger.warn("Cannot get file content, error: ${e}")
                     file = null
                     fileContent = null
                 }
             } else {
+                logger.warn("File does not exist or is not a file: exists=${file?.exists()}, isFile=${file?.isFile}")
                 file = null
                 fileContent = null
             }
-            logger.info("init LocalCefResHandle,filePath:${filePath},file:${file},exists:${file?.exists()}")
+            logger.info("Final state: file=$file, exists=${file?.exists()}, content size=${fileContent?.size}")
         }
+        logger.info("=== LocalCefResHandle INIT END ===")
     }
 
 

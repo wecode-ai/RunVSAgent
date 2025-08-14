@@ -57,6 +57,10 @@ class ExtensionManager(private val project: Project) {
         val rooProvider = com.sina.weibo.agent.extensions.roo.RooExtensionProvider()
         registerExtensionProvider(rooProvider)
 
+        // Register Cline AI extension provider
+        val clineProvider = com.sina.weibo.agent.extensions.cline.ClineExtensionProvider()
+        registerExtensionProvider(clineProvider)
+
         // TODO: Register other extension providers here
         // val customProvider = com.sina.weibo.agent.extensions.custom.CustomExtensionProvider()
         // registerExtensionProvider(customProvider)
@@ -78,9 +82,17 @@ class ExtensionManager(private val project: Project) {
         val availableProviders = extensionProviders.values.filter { it.isAvailable(project) }
         
         if (availableProviders.isNotEmpty()) {
-            // Use the first available provider as default
-            currentProvider = availableProviders.first()
-            LOG.info("Set default extension provider: ${currentProvider?.getExtensionId()}")
+            // Prefer roo-code as default provider
+//             val rooProvider = availableProviders.find { it.getExtensionId() == "roo-code" }
+            val rooProvider = availableProviders.find { it.getExtensionId() == "cline" }
+            if (rooProvider != null) {
+                currentProvider = rooProvider
+                LOG.info("Set default extension provider: roo-code (preferred)")
+            } else {
+                // Fallback to first available provider
+                currentProvider = availableProviders.first()
+                LOG.info("Set default extension provider: ${currentProvider?.getExtensionId()}")
+            }
         } else {
             LOG.warn("No available extension providers found")
         }

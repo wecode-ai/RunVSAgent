@@ -7,7 +7,10 @@ package com.sina.weibo.agent.extensions.roo
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.openapi.extensions.PluginId
 import com.sina.weibo.agent.core.ExtensionManager
+import com.sina.weibo.agent.util.PluginConstants
 import java.io.File
 
 /**
@@ -79,30 +82,35 @@ class ExtensionManagerFactory(private val project: Project) {
             try {
                 extensionManager.registerExtension(extensionPath, config)
                 LOG.info("Extension registered for type: ${extensionType.code}")
+                extensionManagers[extensionType] = extensionManager
             } catch (e: Exception) {
                 LOG.warn("Failed to register extension for type: ${extensionType.code}", e)
             }
         } else {
             LOG.info("Extension path not found for type: ${extensionType.code}: $extensionPath")
         }
-        
-        extensionManagers[extensionType] = extensionManager
     }
     
     /**
      * Get extension path for configuration
      */
     private fun getExtensionPath(config: ExtensionConfig): String? {
-        val projectPath = project.basePath ?: return null
+        // Use PluginResourceUtil to get extension path (this is the correct way)
+        try {
+            val extensionPath = com.sina.weibo.agent.util.PluginResourceUtil.getResourcePath(
+                com.sina.weibo.agent.util.PluginConstants.PLUGIN_ID, 
+                config.codeDir
+            )
+            if (extensionPath != null && File(extensionPath).exists()) {
+                LOG.info("Found extension path via PluginResourceUtil: $extensionPath")
+                return extensionPath
+            }
+        } catch (e: Exception) {
+            LOG.warn("Failed to get extension path via PluginResourceUtil for: ${config.codeDir}", e)
+        }
         
-        // Try different possible paths
-        val possiblePaths = listOf(
-            "$projectPath/${config.codeDir}",
-            "$projectPath/../${config.codeDir}",
-            "$projectPath/../../${config.codeDir}"
-        )
-        
-        return possiblePaths.find { File(it).exists() }
+        LOG.warn("Extension path not found for type: ${config.extensionType.code} (${config.codeDir})")
+        return null
     }
     
     /**

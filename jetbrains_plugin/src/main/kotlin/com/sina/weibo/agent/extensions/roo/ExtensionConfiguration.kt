@@ -171,6 +171,25 @@ data class ExtensionConfig(
                     capabilities = emptyMap(),
                     extensionDependencies = emptyList()
                 )
+                ExtensionType.CLINE -> ExtensionConfig(
+                    extensionType = extensionType,
+                    codeDir = "cline",
+                    displayName = "Cline AI",
+                    description = "AI-powered coding assistant with advanced features",
+                    publisher = "Cline-AI",
+                    version = "1.0.0",
+                    mainFile = "./dist/extension.js",
+                    activationEvents = listOf("onStartupFinished"),
+                    engines = mapOf("vscode" to "^1.0.0"),
+                    capabilities = mapOf(
+                        "ai" to true,
+                        "codeCompletion" to true,
+                        "codeExplanation" to true,
+                        "codeFix" to true,
+                        "codeImprovement" to true
+                    ),
+                    extensionDependencies = emptyList()
+                )
                 ExtensionType.CUSTOM -> ExtensionConfig(
                     extensionType = extensionType,
                     codeDir = "custom",

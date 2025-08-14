@@ -38,7 +38,7 @@ class RunVSAgentToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         // Initialize plugin service
         val pluginService = WecoderPlugin.getInstance(project)
-        pluginService.initialize(project)
+//        pluginService.initialize(project)
 
         // toolbar
         val titleActions = mutableListOf<AnAction>()

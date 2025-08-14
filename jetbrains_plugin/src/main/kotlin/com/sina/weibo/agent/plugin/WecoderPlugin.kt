@@ -111,6 +111,7 @@ class WecoderPlugin : StartupActivity.DumbAware {
 enum class DEBUG_MODE {
     ALL,    // All debug modes
     IDEA,   // Only IDEA plugin debug
+    RELEASE,   // Only IDEA plugin debug
     NONE;   // Debug not enabled
     
     companion object {
@@ -123,6 +124,7 @@ enum class DEBUG_MODE {
             return when (value.lowercase()) {
                 "all" -> ALL
                 "idea" -> IDEA
+                "release" -> RELEASE
                 "true" -> ALL  // backward compatibility
                 else -> NONE
             }

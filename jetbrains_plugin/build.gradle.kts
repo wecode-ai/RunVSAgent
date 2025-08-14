@@ -48,8 +48,10 @@ apply("genPlatform.gradle")
 ext {
     set("debugMode", project.findProperty("debugMode") ?: "none")
     set("debugResource", project.projectDir.resolve("../debug-resources").absolutePath)
-    set("vscodePlugin", project.findProperty("vscodePlugin") ?: "roo-code")
-    set("extensionType", project.findProperty("extensionType") ?: "roo-code")
+    // set("vscodePlugin", project.findProperty("vscodePlugin") ?: "roo-code")
+    // set("extensionType", project.findProperty("extensionType") ?: "roo-code")
+    // Support multiple extension types
+    set("supportedExtensions", listOf("roo-code", "cline"))
 }
 
 project.afterEvaluate {
@@ -59,22 +61,27 @@ project.afterEvaluate {
 fun Sync.prepareSandbox() {
     // Set duplicate strategy to include files, with later sources taking precedence
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    val pluginName = "jetbrains_plugin"
     
     if (ext.get("debugMode") == "idea") {
-        from("${project.projectDir.absolutePath}/src/main/resources/themes/") {
-            into("${ext.get("debugResource")}/${ext.get("vscodePlugin")}/src/integrations/theme/default-themes/")
+        // Support multiple extensions in debug mode
+        val supportedExtensions = ext.get("supportedExtensions") as List<String>
+        supportedExtensions.forEach { extensionType ->
+            from("${project.projectDir.absolutePath}/src/main/resources/themes/") {
+                into("${ext.get("debugResource")}/${extensionType}/src/integrations/theme/default-themes/")
+            }
         }
         doLast {
-            val vscodePluginDir = File("${ext.get("debugResource")}/${ext.get("vscodePlugin")}")
-            vscodePluginDir.mkdirs()
-            File(vscodePluginDir, ".env").createNewFile()
+            val supportedExtensions = ext.get("supportedExtensions") as List<String>
+            supportedExtensions.forEach { extensionType ->
+                val vscodePluginDir = File("${ext.get("debugResource")}/${extensionType}")
+                vscodePluginDir.mkdirs()
+                File(vscodePluginDir, ".env").createNewFile()
+            }
         }
     } else {
-        val extensionType = ext.get("extensionType") as String
-        val vscodePluginDir = File("./plugins/${extensionType}")
-        if (!vscodePluginDir.exists()) {
-            throw IllegalStateException("missing plugin dir for extension type: $extensionType")
-        }
+        // Support multiple extensions in production mode
+        val supportedExtensions = ext.get("supportedExtensions") as List<String>
         val list = mutableListOf<String>()
         val depfile = File("prodDep.txt")
         if (!depfile.exists()) {
@@ -97,8 +104,30 @@ fun Sync.prepareSandbox() {
             }
         }
 
-        from("${vscodePluginDir.path}/extension") { into("${intellij.pluginName.get()}/${extensionType}") }
-        from("src/main/resources/themes/") { into("${intellij.pluginName.get()}/${extensionType}/integrations/theme/default-themes/") }
+        // Copy all supported extensions
+        supportedExtensions.forEach { extensionType ->
+            val vscodePluginDir = File("./plugins/${extensionType}")
+            if (!vscodePluginDir.exists()) {
+                // Create the extension directory if it doesn't exist
+                vscodePluginDir.mkdirs()
+                println("Created extension directory: ${vscodePluginDir.absolutePath}")
+            }
+            
+            // Copy extension files if they exist
+            if (vscodePluginDir.exists()) {
+                from("${vscodePluginDir.path}/extension") { 
+                    into("${intellij.pluginName.get()}/${extensionType}")
+                    // Only copy if the extension directory exists and has content
+                    if (vscodePluginDir.resolve("extension").exists()) {
+                        include("**/*")
+                    }
+                }
+            }
+        }
+        
+        from("src/main/resources/themes/") { 
+            into("${intellij.pluginName.get()}/themes/")
+        }
         
         // The platform.zip file required for release mode is associated with the code in ../base/vscode, currently using version 1.100.0. If upgrading this code later
         // Need to modify the vscodeVersion value in gradle.properties, then execute the task named genPlatform, which will generate a new platform.zip file for submission
@@ -124,7 +153,10 @@ fun Sync.prepareSandbox() {
         }
 
         doLast {
-            File("${destinationDir}/${intellij.pluginName.get()}/${extensionType}/.env").createNewFile()
+            // Create .env files for all supported extensions
+            supportedExtensions.forEach { extensionType ->
+                File("${destinationDir}/${intellij.pluginName.get()}/${extensionType}/.env").createNewFile()
+            }
         }
     }
 }

@@ -480,7 +480,7 @@ class RPCProtocol(
         val messageType = MessageType.fromValue(buff.readUInt8()) ?: return
         val req = buff.readUInt32()
 
-//        LOG.info("receiveOneMessage: $messageType, req: $req, length: $msgLength")
+        LOG.info("receiveOneMessage: $messageType, req: $req, length: $msgLength")
         when (messageType) {
             MessageType.RequestJSONArgs, MessageType.RequestJSONArgsWithCancellation -> {
                 val (rpcId, method, args) = MessageIO.deserializeRequestJSONArgs(buff)

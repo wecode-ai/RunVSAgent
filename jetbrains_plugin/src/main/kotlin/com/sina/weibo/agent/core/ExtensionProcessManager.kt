@@ -31,10 +31,6 @@ class ExtensionProcessManager : Disposable {
         // Extension process entry file
         private const val EXTENSION_ENTRY_FILE = PluginConstants.EXTENSION_ENTRY_FILE
         
-        // Plugin code directory - Deprecated, use ExtensionConfiguration instead
-        @Deprecated("Use ExtensionConfiguration.getCurrentConfig().codeDir instead")
-        private const val PLUGIN_CODE_DIR = PluginConstants.PLUGIN_CODE_DIR
-        
         // Runtime directory
         private const val RUNTIME_DIR = PluginConstants.RUNTIME_DIR
         

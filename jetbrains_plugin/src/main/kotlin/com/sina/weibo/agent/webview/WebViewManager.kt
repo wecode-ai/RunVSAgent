@@ -278,7 +278,8 @@ class WebViewManager(var project: Project) : Disposable, ThemeChangeListener {
          */
     fun updateWebViewHtml(data: WebviewHtmlUpdateData) {
         val encodedState = getLatestWebView()?.state.toString().replace("\"", "\\\"")
-        val mRst = """<script\s+nonce="([A-Za-z0-9]{32})">""".toRegex().find(data.htmlContent)
+        // Support both <script nonce="..."> and <script type="text/javascript" nonce="..."> formats
+        val mRst = """<script(?:\s+type="text/javascript")?\s+nonce="([A-Za-z0-9]{32})">""".toRegex().find(data.htmlContent)
         val str = mRst?.value ?: ""
         data.htmlContent = data.htmlContent.replace(str,"""
                         ${str}

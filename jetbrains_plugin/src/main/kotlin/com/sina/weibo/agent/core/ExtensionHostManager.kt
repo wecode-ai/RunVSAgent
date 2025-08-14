@@ -89,7 +89,6 @@ class ExtensionHostManager : Disposable {
             // Get current extension provider from global extension manager
             val globalExtensionManager = GlobalExtensionManager.getInstance(project)
             currentExtensionProvider = globalExtensionManager.getCurrentProvider()
-            
             if (currentExtensionProvider == null) {
                 LOG.error("No extension provider available")
                 dispose()
@@ -199,6 +198,7 @@ class ExtensionHostManager : Disposable {
         try {
              // Build initialization data
             val initData = createInitData()
+            LOG.info("handleReadyMessage createInitData: ${initData}")
             
              // Send initialization data
             val jsonData = gson.toJson(initData).toByteArray()

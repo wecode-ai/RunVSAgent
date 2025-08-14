@@ -6,6 +6,7 @@ package com.sina.weibo.agent.ipc.proxy
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.intellij.openapi.diagnostic.Logger
 import java.lang.Exception
 
  // Symbol name for buffer reference during serialization
@@ -108,6 +109,8 @@ sealed class SerializedRequestArguments {
  * Corresponds to MessageIO in VSCode
  */
 object MessageIO {
+
+    private val LOG = Logger.getInstance(MessageIO::class.java)
     /**
      * Check whether to use mixed argument serialization
      */
@@ -211,6 +214,8 @@ object MessageIO {
             method = method.substring(1)
         }
         val argsJson = buff.readLongString()
+
+        LOG.info("deserializeRequestJSONArgs: $argsJson")
         
         val gson = Gson()
         val listType = object : TypeToken<List<Any?>>() {}.type
