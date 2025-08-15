@@ -108,14 +108,45 @@ class ExtensionManager(private val project: Project) {
     /**
      * Set current extension provider
      */
-    fun setCurrentProvider(extensionId: String) {
+    fun setCurrentProvider(extensionId: String): Boolean {
         val provider = extensionProviders[extensionId]
         if (provider != null && provider.isAvailable(project)) {
+            val oldProvider = currentProvider
             currentProvider = provider
-            LOG.info("Switched to extension provider: $extensionId")
+            
+            // Initialize new provider
+            provider.initialize(project)
+            
+            // Update configuration
+            try {
+                val configManager = ExtensionConfigurationManager.getInstance(project)
+                configManager.setCurrentExtensionId(extensionId)
+            } catch (e: Exception) {
+                LOG.warn("Failed to update configuration manager", e)
+            }
+            
+            // Notify listeners
+            try {
+                project.messageBus.syncPublisher(ExtensionChangeListener.EXTENSION_CHANGE_TOPIC)
+                    .onExtensionChanged(extensionId)
+            } catch (e: Exception) {
+                LOG.warn("Failed to notify extension change listeners", e)
+            }
+            
+            LOG.info("Switched to extension provider: $extensionId (was: ${oldProvider?.getExtensionId()})")
+            return true
         } else {
             LOG.warn("Extension provider not found or not available: $extensionId")
+            return false
         }
+    }
+    
+    /**
+     * Switch extension provider with restart
+     */
+    fun switchExtensionProvider(extensionId: String, forceRestart: Boolean = false): java.util.concurrent.CompletableFuture<Boolean> {
+        val extensionSwitcher = ExtensionSwitcher.getInstance(project)
+        return extensionSwitcher.switchExtension(extensionId, forceRestart)
     }
     
     /**

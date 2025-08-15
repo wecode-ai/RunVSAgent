@@ -75,9 +75,17 @@ class WecoderPlugin : StartupActivity.DumbAware {
         )
 
         try {
+            // Initialize extension configuration manager
+            val configManager = com.sina.weibo.agent.extensions.ExtensionConfigurationManager.getInstance(project)
+            configManager.loadFromProjectConfig()
+            
             // Initialize global extension manager
             val extensionManager = com.sina.weibo.agent.extensions.ExtensionManager.getInstance(project)
             extensionManager.initialize()
+            
+            // Set extension provider from configuration
+            val configuredExtensionId = configManager.getCurrentExtensionId()
+            extensionManager.setCurrentProvider(configuredExtensionId)
             
             // Initialize current extension provider
             extensionManager.initializeCurrentProvider()
@@ -377,6 +385,13 @@ class WecoderPluginService(private var currentProject: Project) : Disposable {
     fun getSocketServer(): ExtensionSocketServer {
         return socketServer
     }
+
+    /**
+    * Get UDS server
+    */
+    fun getUdsServer(): ExtensionUnixDomainSocketServer {
+        return udsSocketServer
+    }
     
     /**
      * Get process manager
@@ -402,7 +417,7 @@ class WecoderPluginService(private var currentProject: Project) : Disposable {
         
         LOG.info("Disposing WecoderPluginService")
 
-        currentProject?.getService(WebViewManager::class.java)?.dispose()
+        currentProject.getService(WebViewManager::class.java)?.dispose()
         
         // Cancel all coroutines
         coroutineScope.cancel()

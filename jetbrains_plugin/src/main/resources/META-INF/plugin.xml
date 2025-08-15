@@ -175,6 +175,23 @@ SPDX-License-Identifier: Apache-2.0
             <override-text place="GoToAction" text="Select Extension" />
         </action>
 
+        <action id="RunVSAgent.extensionSwitcher"
+                icon="AllIcons.Actions.Refresh"
+                class="com.sina.weibo.agent.extensions.actions.ExtensionSwitcherAction"
+                text="Switch Extension Provider"
+                description="Switch to a different extension provider">
+            <override-text place="GoToAction" text="Switch Extension" />
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt S" />
+        </action>
+
+        <action id="RunVSAgent.extensionStatus"
+                icon="AllIcons.General.Modified"
+                class="com.sina.weibo.agent.extensions.actions.ExtensionStatusButton"
+                text="Extension Status"
+                description="Current extension status and switching">
+            <override-text place="GoToAction" text="Extension Status" />
+        </action>
+
         <group id="WecoderToolbarGroup">
             <reference ref="RunVSAgent.plusButtonClicked" />
             <reference ref="RunVSAgent.promptsButtonClicked" />
@@ -183,12 +200,26 @@ SPDX-License-Identifier: Apache-2.0
             <reference ref="RunVSAgent.marketplaceButtonClicked" />
             <reference ref="RunVSAgent.settingsButtonClicked" />
             <reference ref="RunVSAgent.extensionSelector" />
+            <reference ref="RunVSAgent.extensionSwitcher" />
+            <reference ref="RunVSAgent.extensionStatus" />
         </group>
 
         <group id="RunVSAgent.RightClickMenu" text="RunVSAgent" description="RunVSAgent main menu"  icon="/icons/weibo_logo_13px.svg" popup="true">
             <group id="RunVSAgent.RightClick.Chat" class="com.sina.weibo.agent.actions.RightClickChatActionGroup"
                    text="Chat" description="RunVSAgent chat tool"/>
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </group>
+
+        <!-- Right-click menu for extension switching -->
+        <group id="RunVSAgent.RightClick.Extensions" text="Extensions" description="Extension management">
+            <reference ref="RunVSAgent.extensionSwitcher" />
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </group>
+
+        <!-- Main menu integration -->
+        <group id="RunVSAgent.MainMenu" text="RunVSAgent" description="RunVSAgent main menu">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <reference ref="RunVSAgent.extensionSwitcher" />
         </group>
     </actions>
 </idea-plugin>

@@ -62,13 +62,22 @@ fun Sync.prepareSandbox() {
     // Set duplicate strategy to include files, with later sources taking precedence
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     val pluginName = "jetbrains_plugin"
-    
+    // ---- Copy logging helpers ----
+    data class CopyPlan(val label: String, val src: File, val intoPath: String)
+    val copyPlans = mutableListOf<CopyPlan>()
+    fun plan(label: String, src: File, intoPath: String) {
+        copyPlans += CopyPlan(label, src, intoPath)
+    }
+
     if (ext.get("debugMode") == "idea") {
         // Support multiple extensions in debug mode
         val supportedExtensions = ext.get("supportedExtensions") as List<String>
         supportedExtensions.forEach { extensionType ->
-            from("${project.projectDir.absolutePath}/src/main/resources/themes/") {
+            val srcThemes = File("${project.projectDir.absolutePath}/src/main/resources/themes/")
+            plan("themes -> debug-resources/${extensionType}", srcThemes, "${ext.get("debugResource")}/${extensionType}/src/integrations/theme/default-themes/")
+            from(srcThemes) {
                 into("${ext.get("debugResource")}/${extensionType}/src/integrations/theme/default-themes/")
+                into("${ext.get("debugResource")}/${extensionType}/integrations/theme/default-themes/")
             }
         }
         doLast {
@@ -77,6 +86,23 @@ fun Sync.prepareSandbox() {
                 val vscodePluginDir = File("${ext.get("debugResource")}/${extensionType}")
                 vscodePluginDir.mkdirs()
                 File(vscodePluginDir, ".env").createNewFile()
+            }
+            // Log copy results (IDEA debug mode)
+            logger.lifecycle("==== Copy Report (debug: idea) ====")
+            copyPlans.forEach { p ->
+                val srcExists = p.src.exists()
+                val srcInfo = if (p.src.isDirectory) "dir" else "file"
+                logger.lifecycle("[PLAN] ${p.label}: src=${p.src} (exists=${srcExists}, type=${srcInfo}) -> into='${p.intoPath}'")
+                val destDir = File(destinationDir, p.intoPath)
+                val status = when {
+                    !srcExists -> "SKIPPED (source missing)"
+                    p.src.isFile -> if (File(destDir, p.src.name).exists()) "OK (file copied)" else "FAILED (file missing)"
+                    else -> {
+                        val hasFiles = destDir.exists() && destDir.walkTopDown().any { it.isFile }
+                        if (hasFiles) "OK (files present)" else "FAILED (no files)"
+                    }
+                }
+                logger.lifecycle("[RESULT] ${p.label}: ${status}; dest='${destDir}'")
             }
         }
     } else {
@@ -93,15 +119,19 @@ fun Sync.prepareSandbox() {
             }
         }
 
-        from("../extension_host/dist") { into("${intellij.pluginName.get()}/runtime/") }
-        from("../extension_host/package.json") { into("${intellij.pluginName.get()}/runtime/") }
-        
-        // First copy extension_host node_modules
-        from("../extension_host/node_modules") {
+        val srcDist = File("../extension_host/dist")
+        plan("extension_host dist", srcDist, "${intellij.pluginName.get()}/runtime/")
+        from(srcDist) { into("${intellij.pluginName.get()}/runtime/") }
+
+        val srcPkg = File("../extension_host/package.json")
+        plan("extension_host package.json", srcPkg, "${intellij.pluginName.get()}/runtime/")
+        from(srcPkg) { into("${intellij.pluginName.get()}/runtime/") }
+
+        val srcNodeModules = File("../extension_host/node_modules")
+        plan("extension_host node_modules (filtered)", srcNodeModules, "${intellij.pluginName.get()}/node_modules/")
+        from(srcNodeModules) {
             into("${intellij.pluginName.get()}/node_modules/")
-            list.forEach {
-                include(it)
-            }
+            list.forEach { include(it) }
         }
 
         // Copy all supported extensions
@@ -112,23 +142,21 @@ fun Sync.prepareSandbox() {
                 vscodePluginDir.mkdirs()
                 println("Created extension directory: ${vscodePluginDir.absolutePath}")
             }
-            
-            // Copy extension files if they exist
-            if (vscodePluginDir.exists()) {
-                from("${vscodePluginDir.path}/extension") { 
-                    into("${intellij.pluginName.get()}/${extensionType}")
-                    // Only copy if the extension directory exists and has content
-                    if (vscodePluginDir.resolve("extension").exists()) {
-                        include("**/*")
-                    }
+
+            val srcExt = File("${vscodePluginDir.path}/extension")
+            plan("${extensionType} extension/", srcExt, "${intellij.pluginName.get()}/${extensionType}")
+            from(srcExt) {
+                into("${intellij.pluginName.get()}/${extensionType}")
+                if (srcExt.exists()) {
+                    include("**/*")
                 }
             }
         }
-        
-        from("src/main/resources/themes/") { 
-            into("${intellij.pluginName.get()}/themes/")
-        }
-        
+
+        val srcThemes = File("src/main/resources/themes/")
+        plan("plugin themes", srcThemes, "${intellij.pluginName.get()}/themes/")
+        from(srcThemes) { into("${intellij.pluginName.get()}/themes/") }
+
         // The platform.zip file required for release mode is associated with the code in ../base/vscode, currently using version 1.100.0. If upgrading this code later
         // Need to modify the vscodeVersion value in gradle.properties, then execute the task named genPlatform, which will generate a new platform.zip file for submission
         // To support new architectures, modify according to the logic in genPlatform.gradle script
@@ -147,15 +175,36 @@ fun Sync.prepareSandbox() {
                 throw IllegalStateException("platform.zip file does not exist or is smaller than 1MB. This file is supported through git lfs and needs to be obtained through git lfs")
             }
 
-            from(File(project.buildDir, "platform/platform.txt")) { into("${intellij.pluginName.get()}/") }
+            val srcPlatformTxt = File(project.buildDir, "platform/platform.txt")
+            plan("platform.txt", srcPlatformTxt, "${intellij.pluginName.get()}/")
+            from(srcPlatformTxt) { into("${intellij.pluginName.get()}/") }
             // Copy platform node_modules last to ensure it takes precedence over extension_host node_modules
-            from(File(project.buildDir, "platform/node_modules")) { into("${intellij.pluginName.get()}/node_modules") }
+            val srcPlatformNodeModules = File(project.buildDir, "platform/node_modules")
+            plan("platform node_modules", srcPlatformNodeModules, "${intellij.pluginName.get()}/node_modules")
+            from(srcPlatformNodeModules) { into("${intellij.pluginName.get()}/node_modules") }
         }
 
         doLast {
             // Create .env files for all supported extensions
             supportedExtensions.forEach { extensionType ->
                 File("${destinationDir}/${intellij.pluginName.get()}/${extensionType}/.env").createNewFile()
+            }
+            // Log copy results (production modes)
+            logger.lifecycle("==== Copy Report (mode=${ext.get("debugMode")}) ====")
+            copyPlans.forEach { p ->
+                val srcExists = p.src.exists()
+                val srcInfo = if (p.src.isDirectory) "dir" else "file"
+                logger.lifecycle("[PLAN] ${p.label}: src=${p.src} (exists=${srcExists}, type=${srcInfo}) -> into='${p.intoPath}'")
+                val destDir = File(destinationDir, p.intoPath)
+                val status = when {
+                    !srcExists -> "SKIPPED (source missing)"
+                    p.src.isFile -> if (File(destDir, p.src.name).exists()) "OK (file copied)" else "FAILED (file missing)"
+                    else -> {
+                        val hasFiles = destDir.exists() && destDir.walkTopDown().any { it.isFile }
+                        if (hasFiles) "OK (files present)" else "FAILED (no files)"
+                    }
+                }
+                logger.lifecycle("[RESULT] ${p.label}: ${status}; dest='${destDir}'")
             }
         }
     }

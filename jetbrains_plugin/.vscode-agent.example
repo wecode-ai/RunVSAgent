@@ -1,15 +1,23 @@
-# VSCode Agent Configuration File
-# Copy this file to your project root and rename to .vscode-agent
+# Extension Configuration
+# This file controls which extension provider to use for this project
 
-# Extension type to use
-# Supported values: roo-code
-extension.type=roo-code
+# Extension type to use (cline, roo-code, custom-extension)
+extension.type=cline
 
-# Additional configuration options can be added here
-# debug.mode=idea
-# debug.resource=/path/to/debug/resources
+# Auto-switch enabled (true/false)
+auto.switch=false
 
-# Extension-specific configurations
-# roo-code specific settings
-# roo.debug.enabled=false
-# roo.api.endpoint=https://api.roo-code.com
+# Extension-specific settings
+extension.cline.api_key=${CLINE_API_KEY}
+extension.cline.model=gpt-4
+extension.cline.temperature=0.7
+
+extension.roo-code.api_key=${ROO_API_KEY}
+extension.roo-code.endpoint=https://api.roo.ai
+extension.roo-code.timeout=30000
+
+# Debug mode (all, idea, release, none)
+debug.mode=none
+
+# Log level (debug, info, warn, error)
+log.level=info

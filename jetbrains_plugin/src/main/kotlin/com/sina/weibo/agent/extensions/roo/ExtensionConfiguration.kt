@@ -190,19 +190,6 @@ data class ExtensionConfig(
                     ),
                     extensionDependencies = emptyList()
                 )
-                ExtensionType.CUSTOM -> ExtensionConfig(
-                    extensionType = extensionType,
-                    codeDir = "custom",
-                    displayName = "Custom Extension",
-                    description = "Custom AI extension",
-                    publisher = "Custom",
-                    version = "1.0.0",
-                    mainFile = "./dist/extension.js",
-                    activationEvents = listOf("onStartupFinished"),
-                    engines = mapOf("vscode" to "^1.0.0"),
-                    capabilities = emptyMap(),
-                    extensionDependencies = emptyList()
-                )
             }
         }
         
