@@ -21,6 +21,7 @@ import com.sina.weibo.agent.actions.OpenDevToolsAction
 import com.sina.weibo.agent.plugin.WecoderPlugin
 import com.sina.weibo.agent.plugin.WecoderPluginService
 import com.sina.weibo.agent.plugin.DEBUG_MODE
+import com.sina.weibo.agent.webview.DragDropHandler
 import com.sina.weibo.agent.webview.WebViewCreationCallback
 import com.sina.weibo.agent.webview.WebViewInstance
 import com.sina.weibo.agent.webview.WebViewManager
@@ -210,6 +211,8 @@ class RooToolWindowFactory : ToolWindowFactory {
             add(copyButton, BorderLayout.EAST)
         }
         
+        private var dragDropHandler: DragDropHandler? = null
+        
         // Main panel
         val content: JPanel = JPanel(BorderLayout()).apply {
             // Set content panel with both label and button
@@ -279,6 +282,8 @@ class RooToolWindowFactory : ToolWindowFactory {
             // Add WebView component without removing existing components
             contentPanel.add(webView.browser.component, BorderLayout.CENTER)
             
+            setupDragAndDropSupport(webView)
+            
             // Relayout
             contentPanel.revalidate()
             contentPanel.repaint()
@@ -305,6 +310,23 @@ class RooToolWindowFactory : ToolWindowFactory {
             contentPanel.repaint()
             
             logger.info("System info placeholder hidden")
+        }
+        
+        /**
+         * Setup drag and drop support
+         */
+        private fun setupDragAndDropSupport(webView: WebViewInstance) {
+            try {
+                logger.info("Setting up drag and drop support for WebView")
+                
+                dragDropHandler = DragDropHandler(webView, contentPanel)
+                
+                dragDropHandler?.setupDragAndDrop()
+                
+                logger.info("Drag and drop support enabled")
+            } catch (e: Exception) {
+                logger.error("Failed to setup drag and drop support", e)
+            }
         }
     }
 }
