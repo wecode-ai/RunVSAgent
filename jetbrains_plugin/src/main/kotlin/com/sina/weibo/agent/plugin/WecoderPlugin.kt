@@ -286,6 +286,7 @@ class WecoderPluginService(private var currentProject: Project) : Disposable {
                 "aarch64" -> "darwin-arm64"
                 else -> ""
             }
+            SystemInfo.isLinux -> "linux-x64"
             else -> ""
         }
         if (platformSuffix.isNotEmpty()) {
