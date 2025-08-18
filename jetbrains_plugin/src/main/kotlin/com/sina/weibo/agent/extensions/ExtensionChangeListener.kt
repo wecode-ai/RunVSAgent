@@ -7,32 +7,23 @@ package com.sina.weibo.agent.extensions
 import com.intellij.util.messages.Topic
 
 /**
- * Extension change listener interface
- * Components can implement this to receive extension change notifications
+ * Extension change listener interface.
+ * Components can implement this interface to be notified when the current extension changes.
  */
 interface ExtensionChangeListener {
     
     /**
-     * Called when extension is changed
-     * @param newExtensionId New extension ID
+     * Called when the current extension changes.
+     * 
+     * @param newExtensionId The ID of the new extension
      */
     fun onExtensionChanged(newExtensionId: String)
     
-    /**
-     * Called before extension change starts
-     * @param oldExtensionId Current extension ID
-     * @param newExtensionId Target extension ID
-     */
-    fun onExtensionChangeStarting(oldExtensionId: String, newExtensionId: String)
-    
-    /**
-     * Called when extension change is completed
-     * @param newExtensionId New extension ID
-     * @param success Whether the change was successful
-     */
-    fun onExtensionChangeCompleted(newExtensionId: String, success: Boolean)
-    
     companion object {
+        /**
+         * Topic for extension change events.
+         * Components can subscribe to this topic to receive extension change notifications.
+         */
         val EXTENSION_CHANGE_TOPIC = Topic.create("Extension Change", ExtensionChangeListener::class.java)
     }
 }

@@ -1,8 +1,4 @@
-// SPDX-FileCopyrightText: 2025 Weibo, Inc.
-//
-// SPDX-License-Identifier: Apache-2.0
-
-package com.sina.weibo.agent.extensions.roo
+package com.sina.weibo.agent.extensions
 
 /**
  * Extension type enum for Roo Code
@@ -13,7 +9,7 @@ enum class ExtensionType(val code: String, val displayName: String, val descript
     CLINE("cline", "Cline AI", "AI-powered coding assistant with advanced features"),
 //    CUSTOM("custom", "Custom Extension", "Custom AI extension");
     ;
-    
+
     companion object {
         /**
          * Get extension type by code
@@ -23,7 +19,7 @@ enum class ExtensionType(val code: String, val displayName: String, val descript
         fun fromCode(code: String): ExtensionType? {
             return values().find { it.code == code }
         }
-        
+
         /**
          * Get default extension type
          * @return Default extension type
@@ -31,7 +27,7 @@ enum class ExtensionType(val code: String, val displayName: String, val descript
         fun getDefault(): ExtensionType {
             return ROO_CODE
         }
-        
+
         /**
          * Get all supported extension types
          * @return List of all extension types
@@ -40,4 +36,4 @@ enum class ExtensionType(val code: String, val displayName: String, val descript
             return values().toList()
         }
     }
-} 
+}

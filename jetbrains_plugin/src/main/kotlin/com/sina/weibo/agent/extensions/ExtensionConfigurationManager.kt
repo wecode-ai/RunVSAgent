@@ -7,38 +7,30 @@ package com.sina.weibo.agent.extensions
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
-import com.intellij.openapi.components.PersistentStateComponent
-
 import java.io.File
 import java.util.Properties
 
 /**
- * Extension configuration manager
- * Manages extension configuration and persistence
+ * Extension configuration manager.
+ * Manages configuration for different extensions and persists settings.
  */
 @Service(Service.Level.PROJECT)
-@State(
-    name = "ExtensionConfigurationManager",
-    storages = [Storage("extension-configuration.xml")]
-)
-class ExtensionConfigurationManager(private val project: Project) : PersistentStateComponent<ExtensionConfigurationManager.State> {
+class ExtensionConfigurationManager(private val project: Project) {
     
-    private val LOG = Logger.getInstance(ExtensionConfigurationManager::class.java)
+    private val logger = Logger.getInstance(ExtensionConfigurationManager::class.java)
     
-    // Configuration state
-    data class State(
-        var currentExtensionId: String = "cline",
-        var previousExtensionId: String? = null,
-        var autoSwitchEnabled: Boolean = false,
-        var switchHistory: MutableList<String> = mutableListOf(),
-        var extensionSettings: MutableMap<String, MutableMap<String, String>> = mutableMapOf()
-    )
+    // Configuration file path
+    private val configFile: File
+        get() = File(project.basePath ?: "", ".vscode-agent")
     
-    private var state = State()
+    // Current extension ID
+    @Volatile
+    private var currentExtensionId: String? = null
     
     companion object {
+        /**
+         * Get extension configuration manager instance
+         */
         fun getInstance(project: Project): ExtensionConfigurationManager {
             return project.getService(ExtensionConfigurationManager::class.java)
                 ?: error("ExtensionConfigurationManager not found")
@@ -46,145 +38,143 @@ class ExtensionConfigurationManager(private val project: Project) : PersistentSt
     }
     
     /**
+     * Initialize the configuration manager
+     */
+    fun initialize() {
+        logger.info("Initializing extension configuration manager")
+        loadConfiguration()
+    }
+    
+    /**
+     * Load configuration from file
+     */
+    private fun loadConfiguration() {
+        try {
+            if (configFile.exists()) {
+                val properties = Properties()
+                properties.load(configFile.inputStream())
+                currentExtensionId = properties.getProperty("extension.type")
+                logger.info("Loaded configuration: current extension = $currentExtensionId")
+            } else {
+                logger.info("No configuration file found, using default settings")
+            }
+        } catch (e: Exception) {
+            logger.warn("Failed to load configuration", e)
+        }
+    }
+    
+    /**
+     * Save configuration to file
+     */
+    private fun saveConfiguration() {
+        try {
+            val properties = Properties()
+            currentExtensionId?.let { properties.setProperty("extension.type", it) }
+            
+            // Ensure directory exists
+            configFile.parentFile?.mkdirs()
+            
+            properties.store(configFile.outputStream(), "RunVSAgent Extension Configuration")
+            logger.info("Configuration saved: current extension = $currentExtensionId")
+        } catch (e: Exception) {
+            logger.warn("Failed to save configuration", e)
+        }
+    }
+    
+    /**
      * Get current extension ID
      */
-    fun getCurrentExtensionId(): String = state.currentExtensionId
+    fun getCurrentExtensionId(): String? {
+        return currentExtensionId
+    }
     
     /**
      * Set current extension ID
      */
     fun setCurrentExtensionId(extensionId: String) {
-        if (state.currentExtensionId != extensionId) {
-            state.previousExtensionId = state.currentExtensionId
-            state.currentExtensionId = extensionId
-            
-            // Add to switch history
-            if (!state.switchHistory.contains(extensionId)) {
-                state.switchHistory.add(extensionId)
-                // Keep only last 10 switches
-                if (state.switchHistory.size > 10) {
-                    state.switchHistory.removeAt(0)
-                }
+        logger.info("Setting current extension ID to: $extensionId")
+        currentExtensionId = extensionId
+        saveConfiguration()
+    }
+    
+    /**
+     * Get configuration for a specific extension
+     */
+    fun getExtensionConfiguration(extensionId: String): Map<String, String> {
+        return try {
+            val basePath = project.basePath ?: ""
+            val extensionConfigFile = File(basePath, ".vscode-agent.$extensionId")
+            if (extensionConfigFile.exists()) {
+                val properties = Properties()
+                properties.load(extensionConfigFile.inputStream())
+                properties.stringPropertyNames().associateWith { properties.getProperty(it) }
+            } else {
+                emptyMap()
             }
-            
-            LOG.info("Extension ID changed from ${state.previousExtensionId} to $extensionId")
+        } catch (e: Exception) {
+            logger.warn("Failed to load extension configuration for: $extensionId", e)
+            emptyMap()
         }
     }
     
     /**
-     * Get previous extension ID
+     * Set configuration for a specific extension
      */
-    fun getPreviousExtensionId(): String? = state.previousExtensionId
-    
-    /**
-     * Get switch history
-     */
-    fun getSwitchHistory(): List<String> = state.switchHistory.toList()
-    
-    /**
-     * Check if auto-switch is enabled
-     */
-    fun isAutoSwitchEnabled(): Boolean = state.autoSwitchEnabled
-    
-    /**
-     * Set auto-switch enabled
-     */
-    fun setAutoSwitchEnabled(enabled: Boolean) {
-        state.autoSwitchEnabled = enabled
-    }
-    
-    /**
-     * Get extension-specific settings
-     */
-    fun getExtensionSettings(extensionId: String): Map<String, String> {
-        return state.extensionSettings[extensionId] ?: emptyMap()
-    }
-    
-    /**
-     * Set extension-specific settings
-     */
-    fun setExtensionSettings(extensionId: String, settings: Map<String, String>) {
-        state.extensionSettings[extensionId] = settings.toMutableMap()
-    }
-    
-    /**
-     * Load configuration from .vscode-agent file
-     */
-    fun loadFromProjectConfig() {
+    fun setExtensionConfiguration(extensionId: String, config: Map<String, String>) {
         try {
-            val projectPath = project.basePath ?: return
-            val configFile = File(projectPath, ".vscode-agent")
+            val basePath = project.basePath ?: ""
+            val extensionConfigFile = File(basePath, ".vscode-agent.$extensionId")
             
-            if (configFile.exists()) {
-                val properties = Properties()
-                properties.load(configFile.inputStream())
-                
-                val extensionType = properties.getProperty("extension.type")
-                if (extensionType != null) {
-                    setCurrentExtensionId(extensionType)
-                    LOG.info("Loaded extension type from project config: $extensionType")
-                }
-                
-                // Load other settings
-                val autoSwitch = properties.getProperty("auto.switch", "false")
-                setAutoSwitchEnabled(autoSwitch.toBoolean())
-                
-                // Load extension-specific settings
-                properties.forEach { (key, value) ->
-                    val keyStr = key.toString()
-                    if (keyStr.startsWith("extension.") && keyStr.contains(".")) {
-                        val parts = keyStr.split(".", limit = 3)
-                        if (parts.size >= 3) {
-                            val extId = parts[1]
-                            val settingKey = parts[2]
-                            val currentSettings = state.extensionSettings[extId] ?: mutableMapOf()
-                            currentSettings[settingKey] = value.toString()
-                            state.extensionSettings[extId] = currentSettings
+            // Ensure directory exists
+            extensionConfigFile.parentFile?.mkdirs()
+            
+            val properties = Properties()
+            config.forEach { (key, value) ->
+                properties.setProperty(key, value)
+            }
+            
+            properties.store(extensionConfigFile.outputStream(), "Extension Configuration for $extensionId")
+            logger.info("Configuration saved for extension: $extensionId")
+        } catch (e: Exception) {
+            logger.warn("Failed to save extension configuration for: $extensionId", e)
+        }
+    }
+    
+    /**
+     * Get all available extension configurations
+     */
+    fun getAllExtensionConfigurations(): Map<String, Map<String, String>> {
+        val configs = mutableMapOf<String, Map<String, String>>()
+        
+        try {
+            val basePath = project.basePath ?: ""
+            if (basePath.isNotEmpty()) {
+                val baseDir = File(basePath)
+                if (baseDir.exists() && baseDir.isDirectory) {
+                    val files = baseDir.listFiles { file ->
+                        file.name.startsWith(".vscode-agent.") && file.name != ".vscode-agent"
+                    }
+                    files?.forEach { file ->
+                        val extensionId = file.name.substring(".vscode-agent.".length)
+                        val config = getExtensionConfiguration(extensionId)
+                        if (config.isNotEmpty()) {
+                            configs[extensionId] = config
                         }
                     }
                 }
             }
         } catch (e: Exception) {
-            LOG.warn("Failed to load project configuration", e)
+            logger.warn("Failed to get all extension configurations", e)
         }
+        
+        return configs
     }
     
     /**
-     * Save configuration to .vscode-agent file
+     * Dispose the configuration manager
      */
-    fun saveToProjectConfig() {
-        try {
-            val projectPath = project.basePath ?: return
-            val configFile = File(projectPath, ".vscode-agent")
-            
-            val properties = Properties()
-            properties.setProperty("extension.type", state.currentExtensionId)
-            properties.setProperty("auto.switch", state.autoSwitchEnabled.toString())
-            
-            // Save extension-specific settings
-            state.extensionSettings.forEach { (extId, settings) ->
-                settings.forEach { (key, value) ->
-                    properties.setProperty("extension.$extId.$key", value)
-                }
-            }
-            
-            properties.store(configFile.outputStream(), "Extension Configuration")
-            LOG.info("Configuration saved to project config file")
-        } catch (e: Exception) {
-            LOG.warn("Failed to save project configuration", e)
-        }
-    }
-    
-    /**
-     * Get state for persistence
-     */
-    override fun getState(): State = state
-    
-    /**
-     * Load state from persistence
-     */
-    override fun loadState(state: State) {
-        this.state = state
-        LOG.info("Extension configuration state loaded")
+    fun dispose() {
+        logger.info("Disposing extension configuration manager")
+        saveConfiguration()
     }
 }

@@ -5,8 +5,10 @@
 package com.sina.weibo.agent.extensions.cline
 
 import com.intellij.openapi.project.Project
+import com.sina.weibo.agent.extensions.ExtensionManagerFactory
 import com.sina.weibo.agent.extensions.ExtensionProvider
-import com.sina.weibo.agent.extensions.ExtensionConfiguration as BaseExtensionConfiguration
+import com.sina.weibo.agent.extensions.ExtensionType
+import com.sina.weibo.agent.extensions.ExtensionMetadata
 
 /**
  * Cline AI extension provider implementation
@@ -21,12 +23,12 @@ class ClineExtensionProvider : ExtensionProvider {
     
     override fun initialize(project: Project) {
         // Initialize cline extension configuration
-        val extensionConfig = com.sina.weibo.agent.extensions.roo.ExtensionConfiguration.getInstance(project)
+        val extensionConfig = com.sina.weibo.agent.extensions.common.ExtensionConfiguration.getInstance(project)
         extensionConfig.initialize()
         
         // Initialize extension manager factory if needed
         try {
-            val extensionManagerFactory = com.sina.weibo.agent.extensions.roo.ExtensionManagerFactory.getInstance(project)
+            val extensionManagerFactory = ExtensionManagerFactory.getInstance(project)
             extensionManagerFactory.initialize()
         } catch (e: Exception) {
             // If ExtensionManagerFactory is not available, continue without it
@@ -36,8 +38,8 @@ class ClineExtensionProvider : ExtensionProvider {
     
     override fun isAvailable(project: Project): Boolean {
         // Check if cline extension files exist
-        val extensionConfig = com.sina.weibo.agent.extensions.roo.ExtensionConfiguration.getInstance(project)
-        val config = extensionConfig.getConfig(com.sina.weibo.agent.extensions.roo.ExtensionType.CLINE)
+        val extensionConfig = com.sina.weibo.agent.extensions.common.ExtensionConfiguration.getInstance(project)
+        val config = extensionConfig.getConfig(ExtensionType.CLINE)
         
         // First check project paths
         val projectPath = project.basePath
@@ -71,11 +73,11 @@ class ClineExtensionProvider : ExtensionProvider {
         return true
     }
     
-    override fun getConfiguration(project: Project): BaseExtensionConfiguration {
-        val extensionConfig = com.sina.weibo.agent.extensions.roo.ExtensionConfiguration.getInstance(project)
-        val config = extensionConfig.getConfig(com.sina.weibo.agent.extensions.roo.ExtensionType.CLINE)
+    override fun getConfiguration(project: Project): ExtensionMetadata {
+        val extensionConfig = com.sina.weibo.agent.extensions.common.ExtensionConfiguration.getInstance(project)
+        val config = extensionConfig.getConfig(ExtensionType.CLINE)
         
-        return object : BaseExtensionConfiguration {
+        return object : ExtensionMetadata {
             override fun getCodeDir(): String = config.codeDir
             override fun getPublisher(): String = config.publisher
             override fun getVersion(): String = config.version

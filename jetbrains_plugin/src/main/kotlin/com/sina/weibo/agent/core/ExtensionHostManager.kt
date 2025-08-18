@@ -29,6 +29,7 @@ import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
 import com.sina.weibo.agent.extensions.ExtensionManager as GlobalExtensionManager
 import com.sina.weibo.agent.extensions.ExtensionProvider
+import com.sina.weibo.agent.extensions.ExtensionMetadata
 import java.io.File
 
 /**
@@ -376,7 +377,7 @@ class ExtensionHostManager : Disposable {
     /**
      * Get extension path from configuration
      */
-    private fun getExtensionPath(extensionConfig: com.sina.weibo.agent.extensions.ExtensionConfiguration): String? {
+    private fun getExtensionPath(extensionConfig: ExtensionMetadata): String? {
         // First check project paths
         val projectPath = project.basePath
         if (projectPath != null) {

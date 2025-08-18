@@ -151,7 +151,10 @@ class ExtensionSwitcher(private val project: Project) {
                 // Step 3: Restart extension process
                 restartExtensionProcess(forceRestart)
                 
-                // Step 4: Notify UI components
+                // Step 4: Update button configuration
+                updateButtonConfiguration(extensionId)
+                
+                // Step 5: Notify UI components
                 notifyExtensionChanged(extensionId)
                 
                 LOG.info("Extension switching completed successfully: $extensionId")
@@ -252,6 +255,21 @@ class ExtensionSwitcher(private val project: Project) {
     }
     
     /**
+     * Update button configuration for the new extension
+     */
+    private suspend fun updateButtonConfiguration(extensionId: String) {
+        withContext(Dispatchers.Main) {
+            try {
+                val buttonManager = DynamicButtonManager.getInstance(project)
+                buttonManager.setCurrentExtension(extensionId)
+                LOG.info("Button configuration updated for extension: $extensionId")
+            } catch (e: Exception) {
+                LOG.warn("Failed to update button configuration", e)
+            }
+        }
+    }
+    
+    /**
      * Notify UI components about extension change
      */
     private suspend fun notifyExtensionChanged(extensionId: String) {
@@ -284,17 +302,12 @@ class ExtensionSwitcher(private val project: Project) {
             try {
                 LOG.info("Attempting to restore previous extension")
                 
-                // Get previous extension ID from configuration
-                val config = ExtensionConfigurationManager.getInstance(project)
-                val previousExtensionId = config.getPreviousExtensionId()
+                // Note: Previous extension restoration not implemented yet
+                // For now, we'll just log that restoration was attempted
+                LOG.info("Extension restoration attempted but not implemented yet")
                 
-                if (previousExtensionId != null) {
-                    val extensionManager = ExtensionManager.getInstance(project)
-                    extensionManager.setCurrentProvider(previousExtensionId)
-                    extensionManager.initializeCurrentProvider()
-                    
-                    LOG.info("Restored previous extension: $previousExtensionId")
-                }
+                // TODO: Implement previous extension tracking in ExtensionConfigurationManager
+                // This would require storing the previous extension ID when switching
             } catch (e: Exception) {
                 LOG.error("Failed to restore previous extension", e)
             }

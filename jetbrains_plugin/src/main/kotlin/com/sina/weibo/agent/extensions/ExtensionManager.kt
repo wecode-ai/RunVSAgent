@@ -124,15 +124,29 @@ class ExtensionManager(private val project: Project) {
             } catch (e: Exception) {
                 LOG.warn("Failed to update configuration manager", e)
             }
-            
-            // Notify listeners
-            try {
-                project.messageBus.syncPublisher(ExtensionChangeListener.EXTENSION_CHANGE_TOPIC)
-                    .onExtensionChanged(extensionId)
-            } catch (e: Exception) {
-                LOG.warn("Failed to notify extension change listeners", e)
-            }
-            
+                    try {
+                        val buttonManager = DynamicButtonManager.getInstance(project)
+                        buttonManager.setCurrentExtension(extensionId)
+                    } catch (e: Exception) {
+                        LOG.warn("Failed to update button configuration", e)
+                    }
+                    
+                    // Notify listeners
+                    try {
+                        project.messageBus.syncPublisher(ExtensionChangeListener.EXTENSION_CHANGE_TOPIC)
+                            .onExtensionChanged(extensionId)
+                    } catch (e: Exception) {
+                        LOG.warn("Failed to notify extension change listeners", e)
+                    }
+                    
+                    // Update dynamic button manager
+                    try {
+                        val buttonManager = DynamicButtonManager.getInstance(project)
+                        buttonManager.setCurrentExtension(extensionId)
+                    } catch (e: Exception) {
+                        LOG.warn("Failed to update button configuration", e)
+                    }
+                    
             LOG.info("Switched to extension provider: $extensionId (was: ${oldProvider?.getExtensionId()})")
             return true
         } else {

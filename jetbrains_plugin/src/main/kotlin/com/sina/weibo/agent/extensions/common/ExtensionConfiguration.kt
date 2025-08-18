@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package com.sina.weibo.agent.extensions.roo
+package com.sina.weibo.agent.extensions.common
 
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.sina.weibo.agent.extensions.ExtensionType
 import java.util.Properties
 import java.io.File
 
@@ -21,7 +21,7 @@ class ExtensionConfiguration(private val project: Project) {
     
     // Current active extension type
     @Volatile
-    private var currentExtensionType: ExtensionType = ExtensionType.getDefault()
+    private var currentExtensionType: ExtensionType = ExtensionType.Companion.getDefault()
     
     // Extension configurations cache
     private val extensionConfigs = mutableMapOf<ExtensionType, ExtensionConfig>()
@@ -43,13 +43,13 @@ class ExtensionConfiguration(private val project: Project) {
         LOG.info("Initializing extension configuration")
         
         // Load configurations for all extension types
-        ExtensionType.getAllTypes().forEach { extensionType ->
+        ExtensionType.Companion.getAllTypes().forEach { extensionType ->
             loadConfiguration(extensionType)
         }
         
         // Set current extension type from properties or use default
         val configuredType = getConfiguredExtensionType()
-        currentExtensionType = configuredType ?: ExtensionType.getDefault()
+        currentExtensionType = configuredType ?: ExtensionType.Companion.getDefault()
         
         LOG.info("Extension configuration initialized, current type: ${currentExtensionType.code}")
     }
@@ -109,7 +109,7 @@ class ExtensionConfiguration(private val project: Project) {
                 properties.load(configFile.inputStream())
                 val typeCode = properties.getProperty("extension.type")
                 if (typeCode != null) {
-                    ExtensionType.fromCode(typeCode)
+                    ExtensionType.Companion.fromCode(typeCode)
                 } else null
             } else null
         } catch (e: Exception) {
@@ -174,20 +174,14 @@ data class ExtensionConfig(
                 ExtensionType.CLINE -> ExtensionConfig(
                     extensionType = extensionType,
                     codeDir = "cline",
-                    displayName = "Cline AI",
+                    displayName = "Cline",
                     description = "AI-powered coding assistant with advanced features",
                     publisher = "Cline-AI",
                     version = "1.0.0",
                     mainFile = "./dist/extension.js",
                     activationEvents = listOf("onStartupFinished"),
                     engines = mapOf("vscode" to "^1.0.0"),
-                    capabilities = mapOf(
-                        "ai" to true,
-                        "codeCompletion" to true,
-                        "codeExplanation" to true,
-                        "codeFix" to true,
-                        "codeImprovement" to true
-                    ),
+                    capabilities = emptyMap(),
                     extensionDependencies = emptyList()
                 )
             }

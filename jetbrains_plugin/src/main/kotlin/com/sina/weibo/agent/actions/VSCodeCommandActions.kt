@@ -8,8 +8,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.sina.weibo.agent.core.PluginContext
-import com.sina.weibo.agent.core.ServiceProxyRegistry
+
 /**
  * Executes a VSCode command with the given command ID.
  * This function uses the RPC protocol to communicate with the extension host.
@@ -17,123 +16,40 @@ import com.sina.weibo.agent.core.ServiceProxyRegistry
  * @param commandId The identifier of the command to execute
  * @param project The current project context
  */
-fun executeCommand(commandId: String, project: Project?) {
-    val proxy =
-        project?.getService(PluginContext::class.java)?.getRPCProtocol()?.getProxy(ServiceProxyRegistry.ExtHostContext.ExtHostCommands)
-    proxy?.executeContributedCommand(commandId, emptyList())
-}
+fun executeCommand(commandId: String, project: Project?, vararg args: Any?) {
+    val logger = com.intellij.openapi.diagnostic.Logger.getInstance("VSCodeCommandActions")
+    logger.info("🔍 executeCommand called with commandId: $commandId")
 
-/**
- * Action that handles clicks on the Plus button in the UI.
- * Executes the corresponding VSCode command when triggered.
- */
-class PlusButtonClickAction : AnAction() {
-    private val logger: Logger = Logger.getInstance(PlusButtonClickAction::class.java)
-    private val commandId: String = "roo-cline.plusButtonClicked"
-
-    /**
-     * Performs the action when the Plus button is clicked.
-     *
-     * @param e The action event containing context information
-     */
-    override fun actionPerformed(e: AnActionEvent) {
-        logger.info("Plus button clicked")
-        executeCommand(commandId,e.project)
+    if (project == null) {
+        logger.warn("❌ Project is null, cannot execute command")
+        return
     }
-}
 
-/**
- * Action that handles clicks on the Prompts button in the UI.
- * Executes the corresponding VSCode command when triggered.
- */
-class PromptsButtonClickAction : AnAction() {
-    private val logger: Logger = Logger.getInstance(PromptsButtonClickAction::class.java)
-    private val commandId: String = "roo-cline.promptsButtonClicked"
+    try {
+        val pluginContext = project.getService(com.sina.weibo.agent.core.PluginContext::class.java)
+        if (pluginContext == null) {
+            logger.warn("❌ PluginContext not found")
+            return
+        }
 
-    /**
-     * Performs the action when the Prompts button is clicked.
-     *
-     * @param e The action event containing context information
-     */
-    override fun actionPerformed(e: AnActionEvent) {
-        logger.info("Prompts button clicked")
-        executeCommand(commandId, e.project)
-    }
-}
+        val rpcProtocol = pluginContext.getRPCProtocol()
+        if (rpcProtocol == null) {
+            logger.warn("❌ RPC Protocol not found")
+            return
+        }
 
-/**
- * Action that handles clicks on the MCP button in the UI.
- * Executes the corresponding VSCode command when triggered.
- */
-class MCPButtonClickAction : AnAction() {
-    private val logger: Logger = Logger.getInstance(MCPButtonClickAction::class.java)
-    private val commandId: String = "roo-cline.mcpButtonClicked"
+        val proxy = rpcProtocol.getProxy(com.sina.weibo.agent.core.ServiceProxyRegistry.ExtHostContext.ExtHostCommands)
+        if (proxy == null) {
+            logger.warn("❌ ExtHostCommands proxy not found")
+            return
+        }
 
-    /**
-     * Performs the action when the MCP button is clicked.
-     *
-     * @param e The action event containing context information
-     */
-    override fun actionPerformed(e: AnActionEvent) {
-        logger.info("MCP button clicked")
-        executeCommand(commandId, e.project)
-    }
-}
+        logger.info("🔍 Executing command via RPC: $commandId, argsCount=${args.size}")
+        proxy.executeContributedCommand(commandId)
+        logger.info("✅ Command sent to Extension Host: $commandId")
 
-/**
- * Action that handles clicks on the History button in the UI.
- * Executes the corresponding VSCode command when triggered.
- */
-class HistoryButtonClickAction : AnAction() {
-    private val logger: Logger = Logger.getInstance(HistoryButtonClickAction::class.java)
-    private val commandId: String = "roo-cline.historyButtonClicked"
-
-    /**
-     * Performs the action when the History button is clicked.
-     *
-     * @param e The action event containing context information
-     */
-    override fun actionPerformed(e: AnActionEvent) {
-        logger.info("History button clicked")
-        executeCommand(commandId, e.project)
-    }
-}
-
-/**
- * Action that handles clicks on the Settings button in the UI.
- * Executes the corresponding VSCode command when triggered.
- */
-class SettingsButtonClickAction : AnAction() {
-    private val logger: Logger = Logger.getInstance(SettingsButtonClickAction::class.java)
-    private val commandId: String = "roo-cline.settingsButtonClicked"
-
-    /**
-     * Performs the action when the Settings button is clicked.
-     *
-     * @param e The action event containing context information
-     */
-    override fun actionPerformed(e: AnActionEvent) {
-        logger.info("Settings button clicked")
-        executeCommand(commandId, e.project)
-    }
-}
-
-/**
- * Action that handles clicks on the Marketplace button in the UI.
- * Executes the corresponding VSCode command when triggered.
- */
-class MarketplaceButtonClickAction : AnAction() {
-    private val logger: Logger = Logger.getInstance(MarketplaceButtonClickAction::class.java)
-    private val commandId: String = "roo-cline.marketplaceButtonClicked"
-
-    /**
-     * Performs the action when the Marketplace button is clicked.
-     *
-     * @param e The action event containing context information
-     */
-    override fun actionPerformed(e: AnActionEvent) {
-        logger.info("Marketplace button clicked")
-        executeCommand(commandId, e.project)
+    } catch (e: Exception) {
+        logger.error("❌ Error executing command: $commandId", e)
     }
 }
 
@@ -143,7 +59,8 @@ class MarketplaceButtonClickAction : AnAction() {
  *
  * @property getWebViewInstance Function that returns the current WebView instance or null if not available
  */
-class OpenDevToolsAction(private val getWebViewInstance: () -> com.sina.weibo.agent.webview.WebViewInstance?) : AnAction("Open Developer Tools") {
+class OpenDevToolsAction(private val getWebViewInstance: () -> com.sina.weibo.agent.webview.WebViewInstance?) :
+    AnAction("Open Developer Tools") {
     private val logger: Logger = Logger.getInstance(OpenDevToolsAction::class.java)
 
     /**

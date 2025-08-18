@@ -77,7 +77,7 @@ class WecoderPlugin : StartupActivity.DumbAware {
         try {
             // Initialize extension configuration manager
             val configManager = com.sina.weibo.agent.extensions.ExtensionConfigurationManager.getInstance(project)
-            configManager.loadFromProjectConfig()
+            configManager.initialize()
             
             // Initialize global extension manager
             val extensionManager = com.sina.weibo.agent.extensions.ExtensionManager.getInstance(project)
@@ -85,10 +85,12 @@ class WecoderPlugin : StartupActivity.DumbAware {
             
             // Set extension provider from configuration
             val configuredExtensionId = configManager.getCurrentExtensionId()
-            extensionManager.setCurrentProvider(configuredExtensionId)
-            
-            // Initialize current extension provider
-            extensionManager.initializeCurrentProvider()
+            if (configuredExtensionId != null) {
+                extensionManager.setCurrentProvider(configuredExtensionId)
+                
+                // Initialize current extension provider
+                extensionManager.initializeCurrentProvider()
+            }
             
             // Initialize plugin service
             val pluginService = getInstance(project)

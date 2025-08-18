@@ -47,7 +47,7 @@ interface ExtensionProvider {
      * @param project Current project
      * @return Extension configuration
      */
-    fun getConfiguration(project: Project): ExtensionConfiguration
+    fun getConfiguration(project: Project): ExtensionMetadata
     
     /**
      * Dispose extension resources
@@ -58,7 +58,7 @@ interface ExtensionProvider {
 /**
  * Extension configuration interface
  */
-interface ExtensionConfiguration {
+interface ExtensionMetadata {
     /**
      * Get extension directory name
      * @return Directory name where extension files are located

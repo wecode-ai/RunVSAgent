@@ -5,8 +5,9 @@
 package com.sina.weibo.agent.extensions.roo
 
 import com.intellij.openapi.project.Project
+import com.sina.weibo.agent.extensions.ExtensionManagerFactory
 import com.sina.weibo.agent.extensions.ExtensionProvider
-import com.sina.weibo.agent.extensions.ExtensionConfiguration as BaseExtensionConfiguration
+import com.sina.weibo.agent.extensions.ExtensionMetadata
 
 /**
  * Roo Code extension provider implementation
@@ -21,7 +22,7 @@ class RooExtensionProvider : ExtensionProvider {
     
     override fun initialize(project: Project) {
         // Initialize roo extension configuration
-        val extensionConfig = ExtensionConfiguration.getInstance(project)
+        val extensionConfig = com.sina.weibo.agent.extensions.common.ExtensionConfiguration.getInstance(project)
         extensionConfig.initialize()
         
         // Initialize extension manager factory
@@ -31,7 +32,7 @@ class RooExtensionProvider : ExtensionProvider {
     
     override fun isAvailable(project: Project): Boolean {
         // Check if roo-code extension files exist
-        val extensionConfig = ExtensionConfiguration.getInstance(project)
+        val extensionConfig = com.sina.weibo.agent.extensions.common.ExtensionConfiguration.getInstance(project)
         val config = extensionConfig.getCurrentConfig()
         
         // First check project paths
@@ -66,11 +67,11 @@ class RooExtensionProvider : ExtensionProvider {
         return true
     }
     
-    override fun getConfiguration(project: Project): BaseExtensionConfiguration {
-        val extensionConfig = ExtensionConfiguration.getInstance(project)
+    override fun getConfiguration(project: Project): ExtensionMetadata {
+        val extensionConfig = com.sina.weibo.agent.extensions.common.ExtensionConfiguration.getInstance(project)
         val config = extensionConfig.getCurrentConfig()
         
-        return object : BaseExtensionConfiguration {
+        return object : ExtensionMetadata {
             override fun getCodeDir(): String = config.codeDir
             override fun getPublisher(): String = config.publisher
             override fun getVersion(): String = config.version

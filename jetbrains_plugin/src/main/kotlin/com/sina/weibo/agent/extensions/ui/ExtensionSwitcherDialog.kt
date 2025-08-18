@@ -114,9 +114,10 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
         statusLabel.preferredSize = Dimension(200, 40)
         panel.add(statusLabel)
         
-        // Auto-switch option
+        // Auto-switch option (not implemented yet)
         autoSwitchCheckBox = JBCheckBox("Remember this choice for future projects")
-        autoSwitchCheckBox.isSelected = configManager.isAutoSwitchEnabled()
+        autoSwitchCheckBox.isSelected = false // Default to false until implemented
+        autoSwitchCheckBox.isEnabled = false // Disable until implemented
         panel.add(autoSwitchCheckBox)
         
         panel.add(Box.createVerticalGlue())
@@ -261,7 +262,8 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
         if (result == Messages.YES) {
             // Update configuration
             configManager.setCurrentExtensionId(targetExtensionId)
-            configManager.setAutoSwitchEnabled(autoSwitchCheckBox.isSelected)
+            // Note: Auto-switch functionality not implemented yet
+            // configManager.setAutoSwitchEnabled(autoSwitchCheckBox.isSelected)
             
             // Perform switch
             performExtensionSwitch(targetExtensionId)

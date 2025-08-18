@@ -13,5 +13,7 @@ import com.sina.weibo.agent.ipc.proxy.LazyPromise
 
 interface ExtHostCommandsProxy {
     fun executeContributedCommand(id: String, args: List<Any?>) : LazyPromise
+    fun executeContributedCommand(id: String, vararg args: Any?) : LazyPromise
+    fun executeContributedCommand(id: String): LazyPromise
     fun getContributedCommandMetadata() : LazyPromise
 }

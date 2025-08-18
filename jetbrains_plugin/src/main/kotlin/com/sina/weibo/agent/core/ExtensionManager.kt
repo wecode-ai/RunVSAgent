@@ -8,13 +8,11 @@ package com.sina.weibo.agent.core
 import com.google.gson.Gson
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
+import com.sina.weibo.agent.extensions.ExtensionMetadata as ExtensionConfigurationInterface
 import com.sina.weibo.agent.ipc.proxy.IRPCProtocol
-import com.sina.weibo.agent.ipc.proxy.ProxyIdentifier
-import com.sina.weibo.agent.ipc.proxy.createProxyIdentifier
 import com.sina.weibo.agent.util.URI
 import com.sina.weibo.agent.util.toCompletableFuture
-import com.sina.weibo.agent.extensions.roo.ExtensionConfig as RooExtensionConfig
-import com.sina.weibo.agent.extensions.ExtensionConfiguration
+import com.sina.weibo.agent.extensions.common.ExtensionConfig as RooExtensionConfig
 import java.io.File
 import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
@@ -84,7 +82,7 @@ class ExtensionManager : Disposable {
      * @param extensionConfig Extension configuration
      * @return Extension description object
      */
-    private fun parseExtensionDescriptionFromNewConfig(extensionPath: String, extensionConfig: com.sina.weibo.agent.extensions.ExtensionConfiguration): ExtensionDescription {
+    private fun parseExtensionDescriptionFromNewConfig(extensionPath: String, extensionConfig: ExtensionConfigurationInterface): ExtensionDescription {
         LOG.info("Parsing extension: $extensionPath")
         
         // Read package.json file
@@ -157,7 +155,7 @@ class ExtensionManager : Disposable {
      * @param extensionConfig Extension configuration
      * @return Extension description object
      */
-    fun registerExtension(extensionPath: String, extensionConfig: com.sina.weibo.agent.extensions.ExtensionConfiguration): ExtensionDescription {
+    fun registerExtension(extensionPath: String, extensionConfig: ExtensionConfigurationInterface): ExtensionDescription {
         val extensionDescription = parseExtensionDescriptionFromNewConfig(extensionPath, extensionConfig)
         extensions[extensionDescription.name] = extensionDescription
         LOG.info("Extension registered: ${extensionDescription.name}")
