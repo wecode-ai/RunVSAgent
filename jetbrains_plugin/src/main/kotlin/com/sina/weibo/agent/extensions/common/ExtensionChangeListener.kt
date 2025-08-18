@@ -1,8 +1,4 @@
-// SPDX-FileCopyrightText: 2025 Weibo, Inc.
-//
-// SPDX-License-Identifier: Apache-2.0
-
-package com.sina.weibo.agent.extensions
+package com.sina.weibo.agent.extensions.common
 
 import com.intellij.util.messages.Topic
 
@@ -11,14 +7,14 @@ import com.intellij.util.messages.Topic
  * Components can implement this interface to be notified when the current extension changes.
  */
 interface ExtensionChangeListener {
-    
+
     /**
      * Called when the current extension changes.
-     * 
+     *
      * @param newExtensionId The ID of the new extension
      */
     fun onExtensionChanged(newExtensionId: String)
-    
+
     companion object {
         /**
          * Topic for extension change events.

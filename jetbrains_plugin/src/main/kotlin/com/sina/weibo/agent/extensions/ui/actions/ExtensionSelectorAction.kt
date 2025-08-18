@@ -2,14 +2,14 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package com.sina.weibo.agent.extensions.actions
+package com.sina.weibo.agent.extensions.ui.actions
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.diagnostic.Logger
 import com.sina.weibo.agent.extensions.ui.ExtensionSelector
-import com.sina.weibo.agent.extensions.ExtensionManager
+import com.sina.weibo.agent.extensions.core.ExtensionManager
 
 /**
  * Action to show extension selector dialog
@@ -24,7 +24,7 @@ class ExtensionSelectorAction : AnAction() {
             // Optionally restart the extension or show a notification
             val extensionManager = ExtensionManager.getInstance(project)
             val currentProvider = extensionManager.getCurrentProvider()
-            com.intellij.openapi.diagnostic.Logger.getInstance(this::class.java)
+            Logger.getInstance(this::class.java)
                 .info("Extension changed to: ${currentProvider?.getExtensionId()}")
         }
     }

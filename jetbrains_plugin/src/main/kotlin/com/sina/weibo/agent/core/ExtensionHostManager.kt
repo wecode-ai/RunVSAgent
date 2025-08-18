@@ -27,9 +27,9 @@ import java.nio.channels.SocketChannel
 import java.nio.file.Paths
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
-import com.sina.weibo.agent.extensions.ExtensionManager as GlobalExtensionManager
-import com.sina.weibo.agent.extensions.ExtensionProvider
-import com.sina.weibo.agent.extensions.ExtensionMetadata
+import com.sina.weibo.agent.extensions.core.ExtensionManager as GlobalExtensionManager
+import com.sina.weibo.agent.extensions.config.ExtensionProvider
+import com.sina.weibo.agent.extensions.config.ExtensionMetadata
 import java.io.File
 
 /**

@@ -2,16 +2,18 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package com.sina.weibo.agent.extensions.actions
+package com.sina.weibo.agent.extensions.ui.actions
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import com.sina.weibo.agent.extensions.ExtensionManager
+import com.sina.weibo.agent.extensions.core.ExtensionManager
 import com.sina.weibo.agent.core.PluginContext
 import com.sina.weibo.agent.core.ServiceProxyRegistry
+import com.sina.weibo.agent.webview.WebViewManager
 
 /**
  * Action to check extension status and diagnose issues
@@ -21,7 +23,7 @@ class ExtensionStatusChecker : AnAction("Check Extension Status") {
     private val logger = Logger.getInstance(ExtensionStatusChecker::class.java)
     
     override fun actionPerformed(e: AnActionEvent) {
-        val project = e.getData(com.intellij.openapi.actionSystem.CommonDataKeys.PROJECT) ?: return
+        val project = e.getData(CommonDataKeys.PROJECT) ?: return
         
         val status = checkExtensionStatus(project)
         showStatusDialog(status)
@@ -82,7 +84,7 @@ class ExtensionStatusChecker : AnAction("Check Extension Status") {
         
         // Check WebView status
         try {
-            val webViewManager = project.getService(com.sina.weibo.agent.webview.WebViewManager::class.java)
+            val webViewManager = project.getService(WebViewManager::class.java)
             if (webViewManager != null) {
                 sb.appendLine("\n🌐 WebView Status:")
                 val latestWebView = webViewManager.getLatestWebView()

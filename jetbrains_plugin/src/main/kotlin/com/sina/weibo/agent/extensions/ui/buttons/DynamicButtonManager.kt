@@ -2,20 +2,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package com.sina.weibo.agent.extensions
+package com.sina.weibo.agent.extensions.ui.buttons
 
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
-import com.sina.weibo.agent.extensions.ExtensionButtonProvider
-import com.sina.weibo.agent.extensions.cline.ClineButtonProvider
-import com.sina.weibo.agent.extensions.roo.RooCodeButtonProvider
+import com.sina.weibo.agent.extensions.core.ExtensionManager
+import com.sina.weibo.agent.extensions.plugin.cline.ClineButtonProvider
+import com.sina.weibo.agent.extensions.plugin.roo.RooCodeButtonProvider
 
 /**
  * Dynamic button manager that controls which buttons are visible based on the current extension type.
@@ -48,7 +45,7 @@ class DynamicButtonManager(private val project: Project) {
         
         // Get current extension from extension manager
         try {
-            val extensionManager = ExtensionManager.getInstance(project)
+            val extensionManager = ExtensionManager.Companion.getInstance(project)
             val currentProvider = extensionManager.getCurrentProvider()
             currentExtensionId = currentProvider?.getExtensionId()
             logger.info("Dynamic button manager initialized with extension: $currentExtensionId")

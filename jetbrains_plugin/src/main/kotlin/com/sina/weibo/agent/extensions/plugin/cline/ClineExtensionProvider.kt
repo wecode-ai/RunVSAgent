@@ -2,13 +2,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package com.sina.weibo.agent.extensions.cline
+package com.sina.weibo.agent.extensions.plugin.cline
 
 import com.intellij.openapi.project.Project
-import com.sina.weibo.agent.extensions.ExtensionManagerFactory
-import com.sina.weibo.agent.extensions.ExtensionProvider
-import com.sina.weibo.agent.extensions.ExtensionType
-import com.sina.weibo.agent.extensions.ExtensionMetadata
+import com.sina.weibo.agent.extensions.config.ExtensionConfiguration
+import com.sina.weibo.agent.extensions.core.ExtensionManagerFactory
+import com.sina.weibo.agent.extensions.config.ExtensionProvider
+import com.sina.weibo.agent.extensions.common.ExtensionType
+import com.sina.weibo.agent.extensions.config.ExtensionMetadata
+import com.sina.weibo.agent.util.PluginConstants
+import com.sina.weibo.agent.util.PluginResourceUtil
+import java.io.File
 
 /**
  * Cline AI extension provider implementation
@@ -23,7 +27,7 @@ class ClineExtensionProvider : ExtensionProvider {
     
     override fun initialize(project: Project) {
         // Initialize cline extension configuration
-        val extensionConfig = com.sina.weibo.agent.extensions.common.ExtensionConfiguration.getInstance(project)
+        val extensionConfig = ExtensionConfiguration.getInstance(project)
         extensionConfig.initialize()
         
         // Initialize extension manager factory if needed
@@ -38,7 +42,7 @@ class ClineExtensionProvider : ExtensionProvider {
     
     override fun isAvailable(project: Project): Boolean {
         // Check if cline extension files exist
-        val extensionConfig = com.sina.weibo.agent.extensions.common.ExtensionConfiguration.getInstance(project)
+        val extensionConfig = ExtensionConfiguration.getInstance(project)
         val config = extensionConfig.getConfig(ExtensionType.CLINE)
         
         // First check project paths
@@ -50,18 +54,18 @@ class ClineExtensionProvider : ExtensionProvider {
                 "$projectPath/../../${config.codeDir}"
             )
             
-            if (possiblePaths.any { java.io.File(it).exists() }) {
+            if (possiblePaths.any { File(it).exists() }) {
                 return true
             }
         }
         
         // Then check plugin resources (for built-in extensions)
         try {
-            val pluginResourcePath = com.sina.weibo.agent.util.PluginResourceUtil.getResourcePath(
-                com.sina.weibo.agent.util.PluginConstants.PLUGIN_ID, 
+            val pluginResourcePath = PluginResourceUtil.getResourcePath(
+                PluginConstants.PLUGIN_ID,
                 config.codeDir
             )
-            if (pluginResourcePath != null && java.io.File(pluginResourcePath).exists()) {
+            if (pluginResourcePath != null && File(pluginResourcePath).exists()) {
                 return true
             }
         } catch (e: Exception) {
@@ -74,7 +78,7 @@ class ClineExtensionProvider : ExtensionProvider {
     }
     
     override fun getConfiguration(project: Project): ExtensionMetadata {
-        val extensionConfig = com.sina.weibo.agent.extensions.common.ExtensionConfiguration.getInstance(project)
+        val extensionConfig = ExtensionConfiguration.getInstance(project)
         val config = extensionConfig.getConfig(ExtensionType.CLINE)
         
         return object : ExtensionMetadata {

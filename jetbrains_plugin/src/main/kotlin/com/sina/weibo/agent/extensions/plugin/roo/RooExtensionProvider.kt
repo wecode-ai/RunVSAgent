@@ -2,12 +2,16 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package com.sina.weibo.agent.extensions.roo
+package com.sina.weibo.agent.extensions.plugin.roo
 
 import com.intellij.openapi.project.Project
-import com.sina.weibo.agent.extensions.ExtensionManagerFactory
-import com.sina.weibo.agent.extensions.ExtensionProvider
-import com.sina.weibo.agent.extensions.ExtensionMetadata
+import com.sina.weibo.agent.extensions.config.ExtensionConfiguration
+import com.sina.weibo.agent.extensions.core.ExtensionManagerFactory
+import com.sina.weibo.agent.extensions.config.ExtensionProvider
+import com.sina.weibo.agent.extensions.config.ExtensionMetadata
+import com.sina.weibo.agent.util.PluginConstants
+import com.sina.weibo.agent.util.PluginResourceUtil
+import java.io.File
 
 /**
  * Roo Code extension provider implementation
@@ -22,7 +26,7 @@ class RooExtensionProvider : ExtensionProvider {
     
     override fun initialize(project: Project) {
         // Initialize roo extension configuration
-        val extensionConfig = com.sina.weibo.agent.extensions.common.ExtensionConfiguration.getInstance(project)
+        val extensionConfig = ExtensionConfiguration.getInstance(project)
         extensionConfig.initialize()
         
         // Initialize extension manager factory
@@ -32,7 +36,7 @@ class RooExtensionProvider : ExtensionProvider {
     
     override fun isAvailable(project: Project): Boolean {
         // Check if roo-code extension files exist
-        val extensionConfig = com.sina.weibo.agent.extensions.common.ExtensionConfiguration.getInstance(project)
+        val extensionConfig = ExtensionConfiguration.getInstance(project)
         val config = extensionConfig.getCurrentConfig()
         
         // First check project paths
@@ -44,18 +48,18 @@ class RooExtensionProvider : ExtensionProvider {
                 "$projectPath/../../${config.codeDir}"
             )
             
-            if (possiblePaths.any { java.io.File(it).exists() }) {
+            if (possiblePaths.any { File(it).exists() }) {
                 return true
             }
         }
         
         // Then check plugin resources (for built-in extensions)
         try {
-            val pluginResourcePath = com.sina.weibo.agent.util.PluginResourceUtil.getResourcePath(
-                com.sina.weibo.agent.util.PluginConstants.PLUGIN_ID, 
+            val pluginResourcePath = PluginResourceUtil.getResourcePath(
+                PluginConstants.PLUGIN_ID,
                 config.codeDir
             )
-            if (pluginResourcePath != null && java.io.File(pluginResourcePath).exists()) {
+            if (pluginResourcePath != null && File(pluginResourcePath).exists()) {
                 return true
             }
         } catch (e: Exception) {
@@ -68,7 +72,7 @@ class RooExtensionProvider : ExtensionProvider {
     }
     
     override fun getConfiguration(project: Project): ExtensionMetadata {
-        val extensionConfig = com.sina.weibo.agent.extensions.common.ExtensionConfiguration.getInstance(project)
+        val extensionConfig = ExtensionConfiguration.getInstance(project)
         val config = extensionConfig.getCurrentConfig()
         
         return object : ExtensionMetadata {

@@ -5,7 +5,8 @@
 package com.sina.weibo.agent.extensions
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.sina.weibo.agent.extensions.roo.RooExtensionProvider
+import com.sina.weibo.agent.extensions.core.ExtensionManager
+import com.sina.weibo.agent.extensions.plugin.roo.RooExtensionProvider
 
 /**
  * Test class for extension decoupling functionality

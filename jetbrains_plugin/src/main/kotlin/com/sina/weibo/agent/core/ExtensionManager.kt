@@ -8,11 +8,11 @@ package com.sina.weibo.agent.core
 import com.google.gson.Gson
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
-import com.sina.weibo.agent.extensions.ExtensionMetadata as ExtensionConfigurationInterface
+import com.sina.weibo.agent.extensions.config.ExtensionMetadata as ExtensionConfigurationInterface
 import com.sina.weibo.agent.ipc.proxy.IRPCProtocol
 import com.sina.weibo.agent.util.URI
 import com.sina.weibo.agent.util.toCompletableFuture
-import com.sina.weibo.agent.extensions.common.ExtensionConfig as RooExtensionConfig
+import com.sina.weibo.agent.extensions.config.ExtensionConfig as RooExtensionConfig
 import java.io.File
 import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture

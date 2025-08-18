@@ -121,7 +121,7 @@ SPDX-License-Identifier: Apache-2.0
     <actions>
         <action id="RunVSAgent.extensionSwitcher"
                 icon="AllIcons.Actions.Refresh"
-                class="com.sina.weibo.agent.extensions.actions.ExtensionSwitcherAction"
+                class="com.sina.weibo.agent.extensions.ui.actions.ExtensionSwitcherAction"
                 text="Switch Extension Provider"
                 description="Switch to a different extension provider">
             <override-text place="GoToAction" text="Switch Extension" />
@@ -131,16 +131,16 @@ SPDX-License-Identifier: Apache-2.0
         
         <!-- Dynamic toolbar group - buttons will be populated based on current extension -->
         <group id="WecoderToolbarGroup">
+            <group id="RunVSAgent.DynamicExtensionActions"
+                   class="com.sina.weibo.agent.extensions.ui.actions.DynamicExtensionActionsGroup"
+                   text="Extension Actions"
+                   description="Dynamic extension-specific actions" />
             <reference ref="RunVSAgent.extensionSwitcher" />
             <action id="RunVSAgent.extensionStatusChecker"
                     icon="AllIcons.General.InspectionsOK"
-                    class="com.sina.weibo.agent.extensions.actions.ExtensionStatusChecker"
+                    class="com.sina.weibo.agent.extensions.ui.actions.ExtensionStatusChecker"
                     text="Check Extension Status"
                     description="Check extension status and diagnose issues" />
-            <group id="RunVSAgent.DynamicExtensionActions" 
-                   class="com.sina.weibo.agent.extensions.actions.DynamicExtensionActionsGroup"
-                   text="Extension Actions" 
-                   description="Dynamic extension-specific actions" />
         </group>
 
         <group id="RunVSAgent.RightClickMenu" text="RunVSAgent" description="RunVSAgent main menu"  icon="/icons/weibo_logo_13px.svg" popup="true">
@@ -158,7 +158,7 @@ SPDX-License-Identifier: Apache-2.0
         <!-- Right-click menu for extension-specific actions -->
         <group id="RunVSAgent.RightClick.ExtensionActions" text="Extension Actions" description="Extension-specific actions">
             <group id="RunVSAgent.RightClick.DynamicExtensionActions" 
-                   class="com.sina.weibo.agent.extensions.actions.DynamicExtensionActionsGroup"
+                   class="com.sina.weibo.agent.extensions.ui.actions.DynamicExtensionActionsGroup"
                    text="Extension Actions" 
                    description="Dynamic extension-specific actions" />
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
@@ -169,7 +169,7 @@ SPDX-License-Identifier: Apache-2.0
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <reference ref="RunVSAgent.extensionSwitcher" />
             <group id="RunVSAgent.MainMenu.DynamicExtensionActions" 
-                   class="com.sina.weibo.agent.extensions.actions.DynamicExtensionActionsGroup"
+                   class="com.sina.weibo.agent.extensions.ui.actions.DynamicExtensionActionsGroup"
                    text="Extension Actions" 
                    description="Dynamic extension-specific actions" />
         </group>

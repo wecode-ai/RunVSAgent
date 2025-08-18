@@ -1,4 +1,4 @@
-package com.sina.weibo.agent.extensions
+package com.sina.weibo.agent.extensions.common
 
 /**
  * Extension type enum for Roo Code
@@ -7,7 +7,6 @@ package com.sina.weibo.agent.extensions
 enum class ExtensionType(val code: String, val displayName: String, val description: String) {
     ROO_CODE("roo-code", "Roo Code", "AI-powered code assistant"),
     CLINE("cline", "Cline AI", "AI-powered coding assistant with advanced features"),
-//    CUSTOM("custom", "Custom Extension", "Custom AI extension");
     ;
 
     companion object {

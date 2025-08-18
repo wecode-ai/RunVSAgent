@@ -1,11 +1,12 @@
-package com.sina.weibo.agent.extensions
+package com.sina.weibo.agent.extensions.core
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.sina.weibo.agent.core.ExtensionManager
-import com.sina.weibo.agent.extensions.common.ExtensionConfig
-import com.sina.weibo.agent.extensions.common.ExtensionConfiguration
+import com.sina.weibo.agent.extensions.common.ExtensionType
+import com.sina.weibo.agent.extensions.config.ExtensionConfig
+import com.sina.weibo.agent.extensions.config.ExtensionConfiguration
 import com.sina.weibo.agent.util.PluginConstants
 import com.sina.weibo.agent.util.PluginResourceUtil
 import java.io.File
@@ -41,7 +42,7 @@ class ExtensionManagerFactory(private val project: Project) {
         val extensionConfig = ExtensionConfiguration.Companion.getInstance(project)
 
         // Create extension managers for all supported types
-        ExtensionType.getAllTypes().forEach { extensionType ->
+        ExtensionType.Companion.getAllTypes().forEach { extensionType ->
             createExtensionManager(extensionType, extensionConfig.getConfig(extensionType))
         }
 

@@ -28,6 +28,8 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.jcef.JBCefApp
 import com.intellij.openapi.application.ApplicationInfo
 import com.sina.weibo.agent.core.*
+import com.sina.weibo.agent.extensions.core.ExtensionConfigurationManager
+import com.sina.weibo.agent.extensions.core.ExtensionManager
 import com.sina.weibo.agent.util.ExtensionUtils
 import com.sina.weibo.agent.util.PluginConstants
 import com.sina.weibo.agent.util.PluginResourceUtil
@@ -76,11 +78,11 @@ class WecoderPlugin : StartupActivity.DumbAware {
 
         try {
             // Initialize extension configuration manager
-            val configManager = com.sina.weibo.agent.extensions.ExtensionConfigurationManager.getInstance(project)
+            val configManager = ExtensionConfigurationManager.getInstance(project)
             configManager.initialize()
             
             // Initialize global extension manager
-            val extensionManager = com.sina.weibo.agent.extensions.ExtensionManager.getInstance(project)
+            val extensionManager = ExtensionManager.getInstance(project)
             extensionManager.initialize()
             
             // Set extension provider from configuration

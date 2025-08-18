@@ -1,21 +1,22 @@
-// SPDX-FileCopyrightText: 2025 Weibo, Inc.
-//
-// SPDX-License-Identifier: Apache-2.0
-
-package com.sina.weibo.agent.extensions
+package com.sina.weibo.agent.extensions.core
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
-import com.sina.weibo.agent.core.ExtensionHostManager
-import com.sina.weibo.agent.core.ExtensionProcessManager
-import com.sina.weibo.agent.core.ExtensionSocketServer
-import com.sina.weibo.agent.core.ExtensionUnixDomainSocketServer
-import com.sina.weibo.agent.util.ExtensionUtils
 import com.intellij.openapi.util.SystemInfo
-import kotlinx.coroutines.*
+import com.sina.weibo.agent.core.ExtensionUnixDomainSocketServer
+import com.sina.weibo.agent.core.ISocketServer
+import com.sina.weibo.agent.extensions.common.ExtensionChangeListener
+import com.sina.weibo.agent.extensions.ui.buttons.DynamicButtonManager
+import com.sina.weibo.agent.plugin.WecoderPluginService
+import com.sina.weibo.agent.util.ExtensionUtils
+import com.sina.weibo.agent.webview.WebViewManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -25,43 +26,43 @@ import java.util.concurrent.CompletableFuture
 @Service(Service.Level.PROJECT)
 class ExtensionSwitcher(private val project: Project) {
     private val LOG = Logger.getInstance(ExtensionSwitcher::class.java)
-    
+
     // Current switching state
     @Volatile
     private var isSwitching = false
-    
+
     // Switching completion future
     private var switchingFuture: CompletableFuture<Boolean>? = null
-    
+
     // Coroutine scope for switching operations
     private val switchingScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    
+
     companion object {
         fun getInstance(project: Project): ExtensionSwitcher {
             return project.getService(ExtensionSwitcher::class.java)
                 ?: error("ExtensionSwitcher not found")
         }
     }
-    
+
     /**
      * Check if required services are available
      */
     private fun checkServicesAvailability(): Boolean {
         return try {
-            val pluginService = project.getService(com.sina.weibo.agent.plugin.WecoderPluginService::class.java)
+            val pluginService = project.getService(WecoderPluginService::class.java)
             if (pluginService == null) {
                 LOG.error("WecoderPluginService not available")
                 return false
             }
-            
+
             // Check if process manager is available
             pluginService.getProcessManager()
             // Note: getProcessManager() should never return null based on the interface
-            
+
             // Check if socket server is available
             pluginService.getSocketServer()
             // Note: getSocketServer() should never return null based on the interface
-            
+
             // Check if UDS server is available (for non-Windows)
 //            if (!SystemInfo.isWindows) {
 //                val udsServer = project.getService(com.sina.weibo.agent.core.ExtensionUnixDomainSocketServer::class.java)
@@ -70,14 +71,14 @@ class ExtensionSwitcher(private val project: Project) {
 //                    return false
 //                }
 //            }
-            
+
             true
         } catch (e: Exception) {
             LOG.error("Error checking services availability", e)
             false
         }
     }
-    
+
     /**
      * Switch to a different extension provider
      * @param extensionId Target extension ID
@@ -89,37 +90,37 @@ class ExtensionSwitcher(private val project: Project) {
             LOG.warn("Extension switching already in progress")
             return CompletableFuture.completedFuture(false)
         }
-        
+
         val extensionManager = ExtensionManager.getInstance(project)
         val targetProvider = extensionManager.getProvider(extensionId)
-        
+
         if (targetProvider == null) {
             LOG.error("Extension provider not found: $extensionId")
             return CompletableFuture.completedFuture(false)
         }
-        
+
         if (!targetProvider.isAvailable(project)) {
             LOG.error("Extension provider not available: $extensionId")
             return CompletableFuture.completedFuture(false)
         }
-        
+
         val currentProvider = extensionManager.getCurrentProvider()
         if (currentProvider?.getExtensionId() == extensionId) {
             LOG.info("Already using extension provider: $extensionId")
             return CompletableFuture.completedFuture(true)
         }
-        
+
         LOG.info("Starting extension switch from ${currentProvider?.getExtensionId()} to $extensionId")
-        
+
         // Check if required services are available
         if (!checkServicesAvailability()) {
             LOG.error("Required services not available, cannot perform extension switch")
             return CompletableFuture.completedFuture(false)
         }
-        
+
         isSwitching = true
         switchingFuture = CompletableFuture()
-        
+
         // Perform switching in background
         switchingScope.launch {
             try {
@@ -132,10 +133,10 @@ class ExtensionSwitcher(private val project: Project) {
                 isSwitching = false
             }
         }
-        
+
         return switchingFuture!!
     }
-    
+
     /**
      * Perform the actual extension switching
      */
@@ -144,19 +145,19 @@ class ExtensionSwitcher(private val project: Project) {
             try {
                 // Step 1: Stop current extension process
                 stopCurrentExtension()
-                
+
                 // Step 2: Update extension manager
                 updateExtensionManager(extensionId)
-                
+
                 // Step 3: Restart extension process
                 restartExtensionProcess(forceRestart)
-                
+
                 // Step 4: Update button configuration
                 updateButtonConfiguration(extensionId)
-                
+
                 // Step 5: Notify UI components
                 notifyExtensionChanged(extensionId)
-                
+
                 LOG.info("Extension switching completed successfully: $extensionId")
                 true
             } catch (e: Exception) {
@@ -171,7 +172,7 @@ class ExtensionSwitcher(private val project: Project) {
             }
         }
     }
-    
+
     /**
      * Stop current extension process
      */
@@ -179,42 +180,42 @@ class ExtensionSwitcher(private val project: Project) {
         withContext(Dispatchers.IO) {
             try {
                 // Get plugin service to access process manager
-                val pluginService = project.getService(com.sina.weibo.agent.plugin.WecoderPluginService::class.java)
-                
+                val pluginService = project.getService(WecoderPluginService::class.java)
+
                 // Stop extension process
                 pluginService.getProcessManager().stop()
-                
+
                 // Stop socket servers
                 pluginService.getSocketServer().stop()
-                
+
                 // Get UDS server if available
-                val udsServer = project.getService(com.sina.weibo.agent.core.ExtensionUnixDomainSocketServer::class.java)
+                val udsServer = project.getService(ExtensionUnixDomainSocketServer::class.java)
                 udsServer?.stop()
-                
+
                 LOG.info("Current extension process stopped")
             } catch (e: Exception) {
                 LOG.warn("Error stopping current extension", e)
             }
         }
     }
-    
+
     /**
      * Update extension manager with new provider
      */
     private suspend fun updateExtensionManager(extensionId: String) {
         withContext(Dispatchers.Main) {
             val extensionManager = ExtensionManager.getInstance(project)
-            
+
             // Set new extension provider
             extensionManager.setCurrentProvider(extensionId)
-            
+
             // Initialize new provider
             extensionManager.initializeCurrentProvider()
-            
+
             LOG.info("Extension manager updated with new provider: $extensionId")
         }
     }
-    
+
     /**
      * Restart extension process
      */
@@ -224,28 +225,28 @@ class ExtensionSwitcher(private val project: Project) {
         // TODO: Implement conditional restart logic based on forceRestart parameter
         withContext(Dispatchers.IO) {
             try {
-                val pluginService = project.getService(com.sina.weibo.agent.plugin.WecoderPluginService::class.java)
+                val pluginService = project.getService(WecoderPluginService::class.java)
                 val projectPath = project.basePath ?: ""
-                
+
                 // Start socket server
-                val server: com.sina.weibo.agent.core.ISocketServer = if (SystemInfo.isWindows) {
+                val server: ISocketServer = if (SystemInfo.isWindows) {
                     pluginService.getSocketServer()
                 } else {
                     pluginService.getSocketServer()
                 }
-                
+
                 val portOrPath = server.start(projectPath)
                 if (!ExtensionUtils.isValidPortOrPath(portOrPath)) {
                     throw IllegalStateException("Failed to start socket server")
                 }
-                
+
                 LOG.info("Socket server restarted on: $portOrPath")
-                
+
                 // Start extension process
                 if (!pluginService.getProcessManager().start(portOrPath)) {
                     throw IllegalStateException("Failed to start extension process")
                 }
-                
+
                 LOG.info("Extension process restarted successfully")
             } catch (e: Exception) {
                 LOG.error("Error restarting extension process", e)
@@ -253,14 +254,14 @@ class ExtensionSwitcher(private val project: Project) {
             }
         }
     }
-    
+
     /**
      * Update button configuration for the new extension
      */
     private suspend fun updateButtonConfiguration(extensionId: String) {
         withContext(Dispatchers.Main) {
             try {
-                val buttonManager = DynamicButtonManager.getInstance(project)
+                val buttonManager = DynamicButtonManager.Companion.getInstance(project)
                 buttonManager.setCurrentExtension(extensionId)
                 LOG.info("Button configuration updated for extension: $extensionId")
             } catch (e: Exception) {
@@ -268,7 +269,7 @@ class ExtensionSwitcher(private val project: Project) {
             }
         }
     }
-    
+
     /**
      * Notify UI components about extension change
      */
@@ -276,7 +277,7 @@ class ExtensionSwitcher(private val project: Project) {
         withContext(Dispatchers.Main) {
             // Notify WebView manager if available
             try {
-                val webViewManager = project.getService(com.sina.weibo.agent.webview.WebViewManager::class.java)
+                val webViewManager = project.getService(WebViewManager::class.java)
                 // Note: WebViewManager may not have onExtensionChanged method yet
                 // This will be implemented when WebViewManager supports extension changes
                 // For now, we just check if it's available but don't use it
@@ -287,13 +288,13 @@ class ExtensionSwitcher(private val project: Project) {
                 // WebViewManager not available or doesn't support extension changes yet
                 LOG.debug("WebViewManager not available: ${e.message}")
             }
-            
+
             // Notify other components
             project.messageBus.syncPublisher(ExtensionChangeListener.EXTENSION_CHANGE_TOPIC)
                 .onExtensionChanged(extensionId)
         }
     }
-    
+
     /**
      * Restore previous extension on failure
      */
@@ -301,11 +302,11 @@ class ExtensionSwitcher(private val project: Project) {
         withContext(Dispatchers.Main) {
             try {
                 LOG.info("Attempting to restore previous extension")
-                
+
                 // Note: Previous extension restoration not implemented yet
                 // For now, we'll just log that restoration was attempted
                 LOG.info("Extension restoration attempted but not implemented yet")
-                
+
                 // TODO: Implement previous extension tracking in ExtensionConfigurationManager
                 // This would require storing the previous extension ID when switching
             } catch (e: Exception) {
@@ -313,17 +314,17 @@ class ExtensionSwitcher(private val project: Project) {
             }
         }
     }
-    
+
     /**
      * Check if switching is in progress
      */
     fun isSwitching(): Boolean = isSwitching
-    
+
     /**
      * Wait for current switching to complete
      */
     fun waitForSwitching(): CompletableFuture<Boolean>? = switchingFuture
-    
+
     /**
      * Cancel current switching operation
      */
@@ -335,7 +336,7 @@ class ExtensionSwitcher(private val project: Project) {
             LOG.info("Extension switching cancelled")
         }
     }
-    
+
     /**
      * Dispose resources
      */

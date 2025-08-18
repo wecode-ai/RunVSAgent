@@ -1,8 +1,4 @@
-// SPDX-FileCopyrightText: 2025 Weibo, Inc.
-//
-// SPDX-License-Identifier: Apache-2.0
-
-package com.sina.weibo.agent.extensions
+package com.sina.weibo.agent.extensions.core
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Logger
@@ -16,17 +12,17 @@ import java.util.Properties
  */
 @Service(Service.Level.PROJECT)
 class ExtensionConfigurationManager(private val project: Project) {
-    
+
     private val logger = Logger.getInstance(ExtensionConfigurationManager::class.java)
-    
+
     // Configuration file path
     private val configFile: File
         get() = File(project.basePath ?: "", ".vscode-agent")
-    
+
     // Current extension ID
     @Volatile
     private var currentExtensionId: String? = null
-    
+
     companion object {
         /**
          * Get extension configuration manager instance
@@ -36,7 +32,7 @@ class ExtensionConfigurationManager(private val project: Project) {
                 ?: error("ExtensionConfigurationManager not found")
         }
     }
-    
+
     /**
      * Initialize the configuration manager
      */
@@ -44,7 +40,7 @@ class ExtensionConfigurationManager(private val project: Project) {
         logger.info("Initializing extension configuration manager")
         loadConfiguration()
     }
-    
+
     /**
      * Load configuration from file
      */
@@ -62,7 +58,7 @@ class ExtensionConfigurationManager(private val project: Project) {
             logger.warn("Failed to load configuration", e)
         }
     }
-    
+
     /**
      * Save configuration to file
      */
@@ -70,24 +66,24 @@ class ExtensionConfigurationManager(private val project: Project) {
         try {
             val properties = Properties()
             currentExtensionId?.let { properties.setProperty("extension.type", it) }
-            
+
             // Ensure directory exists
             configFile.parentFile?.mkdirs()
-            
+
             properties.store(configFile.outputStream(), "RunVSAgent Extension Configuration")
             logger.info("Configuration saved: current extension = $currentExtensionId")
         } catch (e: Exception) {
             logger.warn("Failed to save configuration", e)
         }
     }
-    
+
     /**
      * Get current extension ID
      */
     fun getCurrentExtensionId(): String? {
         return currentExtensionId
     }
-    
+
     /**
      * Set current extension ID
      */
@@ -96,7 +92,7 @@ class ExtensionConfigurationManager(private val project: Project) {
         currentExtensionId = extensionId
         saveConfiguration()
     }
-    
+
     /**
      * Get configuration for a specific extension
      */
@@ -116,7 +112,7 @@ class ExtensionConfigurationManager(private val project: Project) {
             emptyMap()
         }
     }
-    
+
     /**
      * Set configuration for a specific extension
      */
@@ -124,28 +120,28 @@ class ExtensionConfigurationManager(private val project: Project) {
         try {
             val basePath = project.basePath ?: ""
             val extensionConfigFile = File(basePath, ".vscode-agent.$extensionId")
-            
+
             // Ensure directory exists
             extensionConfigFile.parentFile?.mkdirs()
-            
+
             val properties = Properties()
             config.forEach { (key, value) ->
                 properties.setProperty(key, value)
             }
-            
+
             properties.store(extensionConfigFile.outputStream(), "Extension Configuration for $extensionId")
             logger.info("Configuration saved for extension: $extensionId")
         } catch (e: Exception) {
             logger.warn("Failed to save extension configuration for: $extensionId", e)
         }
     }
-    
+
     /**
      * Get all available extension configurations
      */
     fun getAllExtensionConfigurations(): Map<String, Map<String, String>> {
         val configs = mutableMapOf<String, Map<String, String>>()
-        
+
         try {
             val basePath = project.basePath ?: ""
             if (basePath.isNotEmpty()) {
@@ -166,10 +162,10 @@ class ExtensionConfigurationManager(private val project: Project) {
         } catch (e: Exception) {
             logger.warn("Failed to get all extension configurations", e)
         }
-        
+
         return configs
     }
-    
+
     /**
      * Dispose the configuration manager
      */

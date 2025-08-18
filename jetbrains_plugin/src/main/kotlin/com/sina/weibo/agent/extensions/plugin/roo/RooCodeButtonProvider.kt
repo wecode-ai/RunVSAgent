@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package com.sina.weibo.agent.extensions.roo
+package com.sina.weibo.agent.extensions.plugin.roo
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -10,9 +10,9 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.icons.AllIcons
 import com.sina.weibo.agent.actions.*
-import com.sina.weibo.agent.extensions.ExtensionButtonProvider
-import com.sina.weibo.agent.extensions.ButtonType
-import com.sina.weibo.agent.extensions.ButtonConfiguration
+import com.sina.weibo.agent.extensions.ui.buttons.ExtensionButtonProvider
+import com.sina.weibo.agent.extensions.ui.buttons.ButtonType
+import com.sina.weibo.agent.extensions.ui.buttons.ButtonConfiguration
 
 /**
  * Roo Code extension button provider.

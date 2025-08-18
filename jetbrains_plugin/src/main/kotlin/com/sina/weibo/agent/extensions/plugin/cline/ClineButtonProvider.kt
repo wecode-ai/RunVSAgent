@@ -2,15 +2,19 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package com.sina.weibo.agent.extensions.cline
+package com.sina.weibo.agent.extensions.plugin.cline
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.project.Project
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.ui.Messages
 import com.sina.weibo.agent.actions.*
-import com.sina.weibo.agent.extensions.ExtensionButtonProvider
-import com.sina.weibo.agent.extensions.ButtonType
-import com.sina.weibo.agent.extensions.ButtonConfiguration
+import com.sina.weibo.agent.extensions.ui.buttons.ExtensionButtonProvider
+import com.sina.weibo.agent.extensions.ui.buttons.ButtonType
+import com.sina.weibo.agent.extensions.ui.buttons.ButtonConfiguration
+import com.sina.weibo.agent.webview.WebViewManager
 
 /**
  * Cline extension button provider.
@@ -52,8 +56,8 @@ class ClineButtonProvider : ExtensionButtonProvider {
                 templatePresentation.description = "New task"
             }
             
-            override fun actionPerformed(e: com.intellij.openapi.actionSystem.AnActionEvent) {
-                val logger = com.intellij.openapi.diagnostic.Logger.getInstance(this::class.java)
+            override fun actionPerformed(e: AnActionEvent) {
+                val logger = Logger.getInstance(this::class.java)
                 logger.info("🔍 Cline Plus button clicked, command: cline.plusButtonClicked")
                 logger.info("🔍 Project: ${e.project?.name}")
                 
@@ -61,7 +65,7 @@ class ClineButtonProvider : ExtensionButtonProvider {
                 val project = e.project
                 if (project != null) {
                     try {
-                        val webViewManager = project.getService(com.sina.weibo.agent.webview.WebViewManager::class.java)
+                        val webViewManager = project.getService(WebViewManager::class.java)
                         if (webViewManager != null) {
                             val latestWebView = webViewManager.getLatestWebView()
 
@@ -72,7 +76,7 @@ class ClineButtonProvider : ExtensionButtonProvider {
                             } else {
                                 logger.warn("⚠️ No WebView instances available")
                                 // Show user-friendly message
-                                com.intellij.openapi.ui.Messages.showWarningDialog(
+                                Messages.showWarningDialog(
                                     project,
                                     "No active WebView found. Please ensure the Cline extension is properly initialized.",
                                     "WebView Not Available"
@@ -97,13 +101,13 @@ class ClineButtonProvider : ExtensionButtonProvider {
     private fun createMcpButton(): AnAction {
         return object : AnAction() {
             init {
-                templatePresentation.icon = AllIcons.Actions.Execute
+                templatePresentation.icon = AllIcons.Webreferences.Server
                 templatePresentation.text = "MCP"
                 templatePresentation.description = "MCP"
             }
 
-            override fun actionPerformed(e: com.intellij.openapi.actionSystem.AnActionEvent) {
-                com.intellij.openapi.diagnostic.Logger.getInstance(this::class.java).info("Mcp button clicked")
+            override fun actionPerformed(e: AnActionEvent) {
+                Logger.getInstance(this::class.java).info("Mcp button clicked")
                 executeCommand("cline.mcpButtonClicked", e.project)
             }
         }
@@ -120,8 +124,8 @@ class ClineButtonProvider : ExtensionButtonProvider {
                 templatePresentation.description = "History"
             }
             
-            override fun actionPerformed(e: com.intellij.openapi.actionSystem.AnActionEvent) {
-                com.intellij.openapi.diagnostic.Logger.getInstance(this::class.java).info("History button clicked")
+            override fun actionPerformed(e: AnActionEvent) {
+                Logger.getInstance(this::class.java).info("History button clicked")
                 executeCommand("cline.historyButtonClicked", e.project)
             }
         }
@@ -138,8 +142,8 @@ class ClineButtonProvider : ExtensionButtonProvider {
                 templatePresentation.description = "Account"
             }
 
-            override fun actionPerformed(e: com.intellij.openapi.actionSystem.AnActionEvent) {
-                com.intellij.openapi.diagnostic.Logger.getInstance(this::class.java).info("Account button clicked")
+            override fun actionPerformed(e: AnActionEvent) {
+                Logger.getInstance(this::class.java).info("Account button clicked")
                 executeCommand("cline.accountButtonClicked", e.project)
             }
         }
@@ -156,8 +160,8 @@ class ClineButtonProvider : ExtensionButtonProvider {
                 templatePresentation.description = "Setting"
             }
             
-            override fun actionPerformed(e: com.intellij.openapi.actionSystem.AnActionEvent) {
-                com.intellij.openapi.diagnostic.Logger.getInstance(this::class.java).info("Settings button clicked")
+            override fun actionPerformed(e: AnActionEvent) {
+                Logger.getInstance(this::class.java).info("Settings button clicked")
                 executeCommand("cline.settingsButtonClicked", e.project)
             }
         }

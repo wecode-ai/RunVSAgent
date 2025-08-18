@@ -2,18 +2,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package com.sina.weibo.agent.extensions.actions
+package com.sina.weibo.agent.extensions.ui.actions
 
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.DumbAware
-import com.sina.weibo.agent.actions.*
-import com.sina.weibo.agent.extensions.ExtensionManager
-import com.sina.weibo.agent.extensions.ExtensionProvider
-import com.sina.weibo.agent.extensions.ExtensionChangeListener
-import com.sina.weibo.agent.extensions.cline.ClineButtonProvider
-import com.sina.weibo.agent.extensions.roo.RooCodeButtonProvider
+import com.sina.weibo.agent.extensions.core.ExtensionManager
+import com.sina.weibo.agent.extensions.config.ExtensionProvider
+import com.sina.weibo.agent.extensions.common.ExtensionChangeListener
+import com.sina.weibo.agent.extensions.plugin.cline.ClineButtonProvider
+import com.sina.weibo.agent.extensions.plugin.roo.RooCodeButtonProvider
 
 /**
  * Dynamic extension actions group that shows different buttons based on the current extension type.

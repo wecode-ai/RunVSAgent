@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package com.sina.weibo.agent.extensions
+package com.sina.weibo.agent.extensions.config
 
 import com.intellij.openapi.project.Project
 

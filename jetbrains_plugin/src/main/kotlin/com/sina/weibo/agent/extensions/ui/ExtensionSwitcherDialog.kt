@@ -11,11 +11,9 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBCheckBox
 import javax.swing.JButton
-import com.intellij.ui.dsl.builder.*
-import com.intellij.util.ui.JBUI
-import com.sina.weibo.agent.extensions.ExtensionManager
-import com.sina.weibo.agent.extensions.ExtensionSwitcher
-import com.sina.weibo.agent.extensions.ExtensionConfigurationManager
+import com.sina.weibo.agent.extensions.core.ExtensionManager
+import com.sina.weibo.agent.extensions.core.ExtensionSwitcher
+import com.sina.weibo.agent.extensions.core.ExtensionConfigurationManager
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.*

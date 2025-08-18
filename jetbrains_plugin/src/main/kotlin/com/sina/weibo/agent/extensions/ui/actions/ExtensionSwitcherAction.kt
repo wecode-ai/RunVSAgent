@@ -2,19 +2,15 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package com.sina.weibo.agent.extensions.actions
+package com.sina.weibo.agent.extensions.ui.actions
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.Presentation
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.actionSystem.ActionPlaces
-import com.intellij.openapi.actionSystem.ActionToolbar
-import com.sina.weibo.agent.extensions.ExtensionManager
-import com.sina.weibo.agent.extensions.ExtensionSwitcher
+import com.sina.weibo.agent.extensions.core.ExtensionManager
+import com.sina.weibo.agent.extensions.core.ExtensionSwitcher
 import com.sina.weibo.agent.extensions.ui.ExtensionSwitcherDialog
-import com.sina.weibo.agent.extensions.ExtensionConfigurationManager
 
 /**
  * Extension switcher action

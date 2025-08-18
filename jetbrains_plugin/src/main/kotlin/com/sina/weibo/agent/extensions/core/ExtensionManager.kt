@@ -2,11 +2,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package com.sina.weibo.agent.extensions
+package com.sina.weibo.agent.extensions.core
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.sina.weibo.agent.extensions.common.ExtensionChangeListener
+import com.sina.weibo.agent.extensions.config.ExtensionProvider
+import com.sina.weibo.agent.extensions.plugin.cline.ClineExtensionProvider
+import com.sina.weibo.agent.extensions.plugin.roo.RooExtensionProvider
+import com.sina.weibo.agent.extensions.ui.buttons.DynamicButtonManager
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -54,11 +60,11 @@ class ExtensionManager(private val project: Project) {
      */
     private fun registerExtensionProviders() {
         // Register Roo Code extension provider
-        val rooProvider = com.sina.weibo.agent.extensions.roo.RooExtensionProvider()
+        val rooProvider = RooExtensionProvider()
         registerExtensionProvider(rooProvider)
 
         // Register Cline AI extension provider
-        val clineProvider = com.sina.weibo.agent.extensions.cline.ClineExtensionProvider()
+        val clineProvider = ClineExtensionProvider()
         registerExtensionProvider(clineProvider)
 
         // TODO: Register other extension providers here
@@ -158,8 +164,8 @@ class ExtensionManager(private val project: Project) {
     /**
      * Switch extension provider with restart
      */
-    fun switchExtensionProvider(extensionId: String, forceRestart: Boolean = false): java.util.concurrent.CompletableFuture<Boolean> {
-        val extensionSwitcher = ExtensionSwitcher.getInstance(project)
+    fun switchExtensionProvider(extensionId: String, forceRestart: Boolean = false): CompletableFuture<Boolean> {
+        val extensionSwitcher = ExtensionSwitcher.Companion.getInstance(project)
         return extensionSwitcher.switchExtension(extensionId, forceRestart)
     }
     

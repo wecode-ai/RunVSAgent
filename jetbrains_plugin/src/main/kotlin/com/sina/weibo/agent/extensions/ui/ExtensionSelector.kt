@@ -11,8 +11,8 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.dsl.builder.*
-import com.sina.weibo.agent.extensions.ExtensionManager
-import com.sina.weibo.agent.extensions.ExtensionProvider
+import com.sina.weibo.agent.extensions.core.ExtensionManager
+import com.sina.weibo.agent.extensions.config.ExtensionProvider
 import java.awt.Dimension
 import javax.swing.DefaultListModel
 
