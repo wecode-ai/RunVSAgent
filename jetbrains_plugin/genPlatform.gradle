@@ -7,21 +7,19 @@ import java.security.MessageDigest
 
 
 tasks.register('genPlatform', Zip) {
-    doFirst {
-        download(project)
-    }
+    download(project)
     from(new File(project.buildDir, "genPlatform/gen"))
     into("")
     destinationDirectory = project.projectDir
     archiveFileName = "platform.zip"
 }
-
 def download(Project project){
 
     def version = project.findProperty("vscodeVersion")
     String windows_x64 = "https://update.code.visualstudio.com/${version}/win32-x64-archive/stable"
     String mac_x64 = "https://update.code.visualstudio.com/${version}/darwin/stable"
     String mac_arm64  = "https://update.code.visualstudio.com/${version}/darwin-arm64/stable"
+    String linux_x64 = "https://update.code.visualstudio.com/${version}/linux-x64/stable"
     // To support other platforms, need to synchronously modify the initPlatfromFiles method in WecoderPlugin
 
     def list = [] // node_module directories for multiple platforms
@@ -29,7 +27,12 @@ def download(Project project){
     def projectBuild = new File(project.buildDir,"genPlatform")
     projectBuild.mkdirs();
     println "Downloading Windows platform files"
-    new File(projectBuild,"windows-x64.zip") << new URL(windows_x64).openStream()
+    def windowsZipFile = new File(projectBuild,"windows-x64.zip")
+    if (!windowsZipFile.exists()) {
+        windowsZipFile << new URL(windows_x64).openStream()
+    } else {
+        println "Windows platform file already exists, skipping download"
+    }
 
     def windowsDir = new File(projectBuild, "windows-x64")
     copy {
@@ -40,7 +43,12 @@ def download(Project project){
     list << new File(windowsDir, "resources/app/windows-x64")
 
     println "Downloading Mac x64 platform files"
-    new File(projectBuild,"darwin-x64.zip") << new URL(mac_x64).openStream()
+    def macX64ZipFile = new File(projectBuild,"darwin-x64.zip")
+    if (!macX64ZipFile.exists()) {
+        macX64ZipFile << new URL(mac_x64).openStream()
+    } else {
+        println "Mac x64 platform file already exists, skipping download"
+    }
 
     def macX64Dir = new File(projectBuild, "darwin-x64")
     copy {
@@ -51,7 +59,12 @@ def download(Project project){
     list << new File(macX64Dir, "Visual Studio Code.app/Contents/Resources/app/darwin-x64")
 
     println "Downloading Mac arm64 platform files"
-    new File(projectBuild,"darwin-arm64.zip") << new URL(mac_arm64).openStream()
+    def macArm64ZipFile = new File(projectBuild,"darwin-arm64.zip")
+    if (!macArm64ZipFile.exists()) {
+        macArm64ZipFile << new URL(mac_arm64).openStream()
+    } else {
+        println "Mac arm64 platform file already exists, skipping download"
+    }
 
     def macArm64Dir = new File(projectBuild, "darwin-arm64")
     copy {
@@ -60,6 +73,22 @@ def download(Project project){
     }
     new File(macArm64Dir, "Visual Studio Code.app/Contents/Resources/app/node_modules").renameTo(new File(macArm64Dir, "Visual Studio Code.app/Contents/Resources/app/darwin-arm64"))
     list << new File(macArm64Dir, "Visual Studio Code.app/Contents/Resources/app/darwin-arm64")
+
+    println "Downloading Linux x64 platform files"
+    def linuxZipFile = new File(projectBuild,"linux-x64.zip")
+    if (!linuxZipFile.exists()) {
+        linuxZipFile << new URL(linux_x64).openStream()
+    } else {
+        println "Linux x64 platform file already exists, skipping download"
+    }
+
+    def linuxDir = new File(projectBuild, "linux-x64")
+    copy {
+        from(tarTree(resources.gzip(projectBuild.toPath().resolve("linux-x64.zip"))))
+        into(linuxDir)
+    }
+    new File(linuxDir, "VSCode-linux-x64/resources/app/node_modules").renameTo(new File(linuxDir, "VSCode-linux-x64/resources/app/linux-x64"))
+    list << new File(linuxDir, "VSCode-linux-x64/resources/app/linux-x64")
 
     def targetDir = new File(projectBuild, "gen/node_modules")
     def txtFile = new File(projectBuild, "gen/platform.txt")

@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.sina.weibo.agent.commands.CommandRegistry
 import com.sina.weibo.agent.commands.ICommand
 import com.sina.weibo.agent.editor.registerOpenEditorAPICommands
+import com.sina.weibo.agent.terminal.registerTerminalAPICommands
 import com.sina.weibo.agent.util.doInvokeMethod
 import kotlin.reflect.full.functions
 
@@ -66,6 +67,7 @@ class MainThreadCommands(val project: Project) : MainThreadCommandsShape {
      */
     init {
         registerOpenEditorAPICommands(project,registry);
+        registerTerminalAPICommands(project,registry);
         //TODO other commands
     }
     /**

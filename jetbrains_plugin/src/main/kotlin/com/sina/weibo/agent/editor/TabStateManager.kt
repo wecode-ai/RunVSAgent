@@ -7,6 +7,7 @@ package com.sina.weibo.agent.editor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Tab State Manager
@@ -18,9 +19,8 @@ class TabStateManager(var project: Project) {
     private val logger = Logger.getInstance(TabStateManager::class.java)
     // MARK: - State storage
     private var state = TabsState()
-    private var lastNotifiedState = TabsState()
-    private val tabHandles = mutableMapOf<String, TabHandle>()
-    private val groupHandles = mutableMapOf<Int, TabGroupHandle>()
+    private val tabHandles = ConcurrentHashMap<String, TabHandle>()
+    private val groupHandles = ConcurrentHashMap<Int, TabGroupHandle>()
     private val tabStateService :TabStateService
     init {
         tabStateService = TabStateService(project)
@@ -354,7 +354,7 @@ tabHandles[tab.id] = handle
  * Holds the state of all tab groups
  */
 data class TabsState(
-    val groups: MutableMap<Int, EditorTabGroupDto> = mutableMapOf()
+    val groups: MutableMap<Int, EditorTabGroupDto> = ConcurrentHashMap()
 )
 
 /**

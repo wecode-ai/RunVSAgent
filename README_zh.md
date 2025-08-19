@@ -82,7 +82,7 @@ graph TB
 
 ## 📦 安装
 
-### 从 JetBrains Marketplace 下载（推荐）
+### [从 JetBrains Marketplace 下载](https://plugins.jetbrains.com/plugin/28068-runvsagent)（推荐）
 
 **推荐方式**：我们建议优先从 JetBrains Marketplace 下载和安装插件，这是最便捷和安全的安装方式。
 

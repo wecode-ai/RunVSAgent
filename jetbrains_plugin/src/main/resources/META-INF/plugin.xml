@@ -68,15 +68,21 @@ SPDX-License-Identifier: Apache-2.0
    
    <!-- Change notes for the plugin -->
    <change-notes><![CDATA[
-        <h3>Version 0.2.0</h3>
+        <h3>Version 0.1.7</h3>
         <ul>
-            <li>Complete extension decoupling with modular architecture</li>
-            <li>Roo Code extension moved to independent package</li>
-            <li>Generic extension provider interface for easy extension development</li>
-            <li>Unified extension management system</li>
-            <li>Enhanced UI for extension selection</li>
+            <li>Updated Roo Code version to 3.25.15 with latest AI coding assistant features</li>
+            <li>Added support for no proxy configuration in restricted network environments</li>
+            <li>Added support for @terminal for improved user experience</li>
         </ul>
-        
+
+        <h3>Version 0.1.6</h3>
+        <ul>
+            <li>Added proxy support for extension host to enable usage in restricted network environments</li>
+            <li>Fixed ConcurrentModificationException in EditorAndDocManager for improved stability</li>
+            <li>Updated Roo Code version to 3.25.10 with latest AI coding assistant features</li>
+            <li>Fixed an intermittent issue where an extra "}" character would appear at the end of the file.</li>
+        </ul>
+
         <h3>Version 0.1.5</h3>
         <ul>
             <li>Added system information display while webview is loading</li>
@@ -86,12 +92,7 @@ SPDX-License-Identifier: Apache-2.0
             <li>Improved README with star history and updated contributor information</li>
         </ul>
         
-        <h3>Version 0.1.4</h3>
-        <ul>
-            <li>Initial release with support for VSCode-based coding agents</li>
-            <li>Compatibility with JetBrains IDE 2023.1+</lit >
-            <li>Support for Roo Code AI assistant</li>
-        </ul>
+
    ]]></change-notes>
 
     <!-- Product and plugin compatibility requirements.
@@ -128,7 +129,7 @@ SPDX-License-Identifier: Apache-2.0
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt S" />
         </action>
 
-        
+
         <!-- Dynamic toolbar group - buttons will be populated based on current extension -->
         <group id="WecoderToolbarGroup">
             <group id="RunVSAgent.DynamicExtensionActions"
@@ -157,9 +158,9 @@ SPDX-License-Identifier: Apache-2.0
 
         <!-- Right-click menu for extension-specific actions -->
         <group id="RunVSAgent.RightClick.ExtensionActions" text="Extension Actions" description="Extension-specific actions">
-            <group id="RunVSAgent.RightClick.DynamicExtensionActions" 
+            <group id="RunVSAgent.RightClick.DynamicExtensionActions"
                    class="com.sina.weibo.agent.extensions.ui.actions.DynamicExtensionActionsGroup"
-                   text="Extension Actions" 
+                   text="Extension Actions"
                    description="Dynamic extension-specific actions" />
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </group>
@@ -168,9 +169,9 @@ SPDX-License-Identifier: Apache-2.0
         <group id="RunVSAgent.MainMenu" text="RunVSAgent" description="RunVSAgent main menu">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <reference ref="RunVSAgent.extensionSwitcher" />
-            <group id="RunVSAgent.MainMenu.DynamicExtensionActions" 
+            <group id="RunVSAgent.MainMenu.DynamicExtensionActions"
                    class="com.sina.weibo.agent.extensions.ui.actions.DynamicExtensionActionsGroup"
-                   text="Extension Actions" 
+                   text="Extension Actions"
                    description="Dynamic extension-specific actions" />
         </group>
     </actions>

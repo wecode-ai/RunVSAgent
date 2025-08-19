@@ -11,6 +11,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.sina.weibo.agent.plugin.DEBUG_MODE
 import com.sina.weibo.agent.plugin.WecoderPluginService
 import com.sina.weibo.agent.util.PluginResourceUtil
+import com.sina.weibo.agent.util.ProxyConfigUtil
 import java.io.File
 import java.util.concurrent.TimeUnit
 import com.sina.weibo.agent.util.ExtensionUtils
@@ -91,7 +92,7 @@ class ExtensionProcessManager : Disposable {
 
                 NotificationUtil.showError(
                     "Node.js version too low",
-                    "Current Node.js version is $nodeVersion, please upgrade to $MIN_REQUIRED_NODE_VERSION or higher for better compatibility."
+                    "Current Node.js($nodePath) version is $nodeVersion, please upgrade to $MIN_REQUIRED_NODE_VERSION or higher for better compatibility."
                 )
                 
                 return false
@@ -121,9 +122,8 @@ class ExtensionProcessManager : Disposable {
                 envVars["VSCODE_EXTHOST_SOCKET_PORT"] = portOrPath.toString()
             }
 
-
-            // Create process builder
-            val builder = ProcessBuilder(
+            // Build command line arguments
+            val commandArgs = mutableListOf(
                 nodePath,
                 "--experimental-global-webcrypto",
                 "--no-deprecation",
@@ -133,36 +133,25 @@ class ExtensionProcessManager : Disposable {
                 "--vscode-socket-host=${envVars["VSCODE_EXTHOST_SOCKET_HOST"]}",
                 "--vscode-will-send-socket=${envVars["VSCODE_EXTHOST_WILL_SEND_SOCKET"]}"
             )
-
- //            // Prepare environment variables
-//            val envVars = builder.environment() //HashMap<String, String>(System.getenv())
-//
- //            // Add key environment variables
-//            envVars["VSCODE_EXTHOST_WILL_SEND_SOCKET"] = "1"
-//            envVars["VSCODE_EXTHOST_SOCKET_HOST"] = "127.0.0.1"
-//            envVars["VSCODE_EXTHOST_SOCKET_PORT"] = port.toString()
-//
- //            // Configure debug options
-//            if (DEBUG_MODE) {
-//                envVars["NODE_OPTIONS"] = "--inspect-brk"
-//            } else {
-//                envVars["NODE_OPTIONS"] = "--inspect"
-//            }
-//
- //            // Ensure the extension process can find node_modules
-//            val nodeModulesPath = findNodeModulesPath()
-//            if (nodeModulesPath != null) {
-//                LOG.info("Using node_modules path: $nodeModulesPath")
-//                envVars["NODE_PATH"] = nodeModulesPath
-//            }
-//
- //            // Plugin code directory
-//            val pluginCodeDir = findPluginCodeDir()
-//            if (pluginCodeDir != null) {
-//                LOG.info("Using plugin code directory: $pluginCodeDir")
-//                envVars["PLUGIN_CODE_DIR"] = pluginCodeDir
-//            }
             
+            // Get and set proxy configuration
+            try {
+                val proxyEnvVars = ProxyConfigUtil.getProxyEnvVarsForProcessStart()
+                
+                // Add proxy environment variables
+                envVars.putAll(proxyEnvVars)
+                
+                // Log proxy configuration if used
+                if (proxyEnvVars.isNotEmpty()) {
+                    LOG.info("Applied proxy configuration for process startup")
+                }
+            } catch (e: Exception) {
+                LOG.warn("Failed to configure proxy settings", e)
+            }
+            
+            // Create process builder
+            val builder = ProcessBuilder(commandArgs)
+
             // Print environment variables
             LOG.info("Environment variables:")
             envVars.forEach { (key, value) ->
@@ -436,4 +425,4 @@ class ExtensionProcessManager : Disposable {
     override fun dispose() {
         stop()
     }
-} 
+}

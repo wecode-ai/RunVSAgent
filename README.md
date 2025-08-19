@@ -82,7 +82,7 @@ graph TB
 
 ## 📦 Installation
 
-### Download from JetBrains Marketplace (Recommended)
+### [Download from JetBrains Marketplace](https://plugins.jetbrains.com/plugin/28068-runvsagent) (Recommended)
 
 **Recommended Method**: We recommend downloading and installing the plugin from JetBrains Marketplace first, as this is the most convenient and secure installation method.
 

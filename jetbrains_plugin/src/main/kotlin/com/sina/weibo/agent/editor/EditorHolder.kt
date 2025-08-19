@@ -182,7 +182,7 @@ class EditorHolder(
             if (startOffset < 0 || endOffset > textLength || startOffset > endOffset) {
                 return false
             }
-            val end = (lineCount < (edit.textEdit.range.endLineNumber - 1))
+            val end = (endLine < (edit.textEdit.range.endLineNumber - 1))
             val newText = edit.textEdit.text.replace("\r\n", "\n")
             val newContent = content.substring(0, startOffset) + newText + (if (!end) content.substring(endOffset) else "")
             ApplicationManager.getApplication().invokeAndWait {

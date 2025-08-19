@@ -48,8 +48,6 @@ apply("genPlatform.gradle")
 ext {
     set("debugMode", project.findProperty("debugMode") ?: "none")
     set("debugResource", project.projectDir.resolve("../debug-resources").absolutePath)
-    // set("vscodePlugin", project.findProperty("vscodePlugin") ?: "roo-code")
-    // set("extensionType", project.findProperty("extensionType") ?: "roo-code")
     // Support multiple extension types
     set("supportedExtensions", listOf("roo-code", "cline"))
 }
@@ -61,7 +59,6 @@ project.afterEvaluate {
 fun Sync.prepareSandbox() {
     // Set duplicate strategy to include files, with later sources taking precedence
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    val pluginName = "jetbrains_plugin"
     // ---- Copy logging helpers ----
     data class CopyPlan(val label: String, val src: File, val intoPath: String)
     val copyPlans = mutableListOf<CopyPlan>()
@@ -71,7 +68,7 @@ fun Sync.prepareSandbox() {
 
     if (ext.get("debugMode") == "idea") {
         // Support multiple extensions in debug mode
-        val supportedExtensions = ext.get("supportedExtensions") as List<String>
+        val supportedExtensions = ext.get("supportedExtensions") as List<*>
         supportedExtensions.forEach { extensionType ->
             val srcThemes = File("${project.projectDir.absolutePath}/src/main/resources/themes/")
             plan("themes -> debug-resources/${extensionType}", srcThemes, "${ext.get("debugResource")}/${extensionType}/src/integrations/theme/default-themes/")

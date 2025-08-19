@@ -386,7 +386,7 @@ build_idea_plugin() {
     fi
     
     # Build plugin with debugMode property
-    execute_cmd "$gradle_cmd -PdebugMode=$debug_mode buildPlugin" "IDEA plugin build"
+    execute_cmd "$gradle_cmd -PdebugMode=$debug_mode buildPlugin --info" "IDEA plugin build"
     
     # Find generated plugin
     local plugin_file

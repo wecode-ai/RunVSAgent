@@ -13,6 +13,7 @@ import com.sina.weibo.agent.ipc.proxy.RPCProtocol
 import com.sina.weibo.agent.ipc.proxy.logger.FileRPCProtocolLogger
 import com.sina.weibo.agent.ipc.proxy.uri.IURITransformer
 import com.sina.weibo.agent.theme.ThemeManager
+import com.sina.weibo.agent.util.ProxyConfigUtil
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -45,17 +46,37 @@ class RPCManager(
             logger.info("Starting to initialize plugin environment")
             runBlocking {
                 // Get ExtHostConfiguration proxy
-                val extHostConfiguration = rpcProtocol.getProxy(ServiceProxyRegistry.ExtHostContext.ExtHostConfiguration)
-                
+                val extHostConfiguration =
+                    rpcProtocol.getProxy(ServiceProxyRegistry.ExtHostContext.ExtHostConfiguration)
+
                 // Send empty configuration model
                 logger.info("Sending configuration information to extension process")
-                val themeName = if (ThemeManager.getInstance().isDarkThemeForce()) "Default Dark Modern" else "Default Light Modern"
-                
+                val themeName =
+                    if (ThemeManager.getInstance().isDarkThemeForce()) "Default Dark Modern" else "Default Light Modern"
+
                 // Create empty configuration model
-                val emptyMap = mapOf("contents" to emptyMap<String, Any>(), "keys" to emptyList<String>(), "overrides" to emptyList<String>())
+                val emptyMap = mapOf(
+                    "contents" to emptyMap<String, Any>(),
+                    "keys" to emptyList<String>(),
+                    "overrides" to emptyList<String>()
+                )
+                // Get proxy configuration
+                val httpProxyConfig = ProxyConfigUtil.getHttpProxyConfigForInitialization()
+                
+                // Build configuration contents
+                val contentsBuilder = mutableMapOf<String, Any>(
+                    "workbench" to mapOf("colorTheme" to themeName)
+                )
+                
+                // Add proxy configuration if available
+                httpProxyConfig?.let {
+                    contentsBuilder["http"] = it
+                    logger.info("Using proxy configuration for initialization: $it")
+                }
+                
                 val emptyConfigModel = mapOf(
                     "defaults" to mapOf(
-                        "contents" to mapOf("workbench" to mapOf("colorTheme" to themeName)),
+                        "contents" to contentsBuilder,
                         "keys" to emptyList<String>(),
                         "overrides" to emptyList<String>()
                     ),
@@ -67,17 +88,17 @@ class RPCManager(
                     "folders" to emptyList<Any>(),
                     "configurationScopes" to emptyList<Any>()
                 )
-                
+
                 // Directly call the interface method
                 extHostConfiguration.initializeConfiguration(emptyConfigModel)
-                
+
                 // Get ExtHostWorkspace proxy
                 val extHostWorkspace = rpcProtocol.getProxy(ServiceProxyRegistry.ExtHostContext.ExtHostWorkspace)
-                
+
                 // Get current workspace data
                 logger.info("Getting current workspace data")
                 val workspaceData = project.getService(WorkspaceManager::class.java).getCurrentWorkspaceData()
-                
+
                 // If workspace data is obtained, send it to extension process, otherwise send null
                 if (workspaceData != null) {
                     logger.info("Sending workspace data to extension process: ${workspaceData.name}, folders: ${workspaceData.folders.size}")
@@ -102,19 +123,19 @@ class RPCManager(
     private fun setupDefaultProtocols() {
         logger.info("Setting up default protocol handlers")
         PluginContext.getInstance(project).setRPCProtocol(rpcProtocol)
-        
+
         // MainThreadErrors
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadErrors, MainThreadErrors())
-        
+
         // MainThreadConsole
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadConsole, MainThreadConsole())
-        
+
         // MainThreadLogger
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadLogger, MainThreadLogger())
-        
+
         // MainThreadCommands
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadCommands, MainThreadCommands(project))
-        
+
         // MainThreadDebugService
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadDebugService, MainThreadDebugService())
 
@@ -127,7 +148,7 @@ class RPCManager(
      */
     private fun setupExtensionRequiredProtocols() {
         logger.info("Setting up required protocol handlers for plugins")
-        
+
         // MainThreadExtensionService
         val mainThreadExtensionService = MainThreadExtensionService(extensionManager, rpcProtocol)
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadExtensionService, mainThreadExtensionService)
@@ -136,7 +157,10 @@ class RPCManager(
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadTelemetry, MainThreadTelemetry())
 
         // MainThreadTerminalShellIntegration - use new architecture, pass project parameter
-        rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadTerminalShellIntegration, MainThreadTerminalShellIntegration(project))
+        rpcProtocol.set(
+            ServiceProxyRegistry.MainContext.MainThreadTerminalShellIntegration,
+            MainThreadTerminalShellIntegration(project)
+        )
 
         // MainThreadTerminalService - use new architecture, pass project parameter
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadTerminalService, MainThreadTerminalService(project))
@@ -174,25 +198,28 @@ class RPCManager(
      */
     private fun setupWeCodeRequiredProtocols() {
         logger.info("Setting up required protocol handlers for WeCode")
-        
+
         // MainThreadTextEditors
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadTextEditors, MainThreadTextEditors(project))
-        
+
         // MainThreadStorage
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadStorage, MainThreadStorage())
 
         // MainThreadOutputService
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadOutputService, MainThreadOutputService())
-        
+
         // MainThreadWebviewViews
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadWebviewViews, MainThreadWebviewViews(project))
-        
+
         // MainThreadDocumentContentProviders
-        rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadDocumentContentProviders, MainThreadDocumentContentProviders())
-        
+        rpcProtocol.set(
+            ServiceProxyRegistry.MainContext.MainThreadDocumentContentProviders,
+            MainThreadDocumentContentProviders()
+        )
+
         // MainThreadUrls
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadUrls, MainThreadUrls())
-        
+
         // MainThreadLanguageFeatures
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadLanguageFeatures, MainThreadLanguageFeatures())
 
@@ -205,10 +232,13 @@ class RPCManager(
 
     private fun setupRooCodeFuncitonProtocols() {
         logger.info("Setting up protocol handlers required for RooCode specific functionality")
-        
+
         // MainThreadFileSystemEventService
-        rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadFileSystemEventService, MainThreadFileSystemEventService())
-        
+        rpcProtocol.set(
+            ServiceProxyRegistry.MainContext.MainThreadFileSystemEventService,
+            MainThreadFileSystemEventService()
+        )
+
         // MainThreadSecretState
         rpcProtocol.set(ServiceProxyRegistry.MainContext.MainThreadSecretState, MainThreadSecretState())
     }
