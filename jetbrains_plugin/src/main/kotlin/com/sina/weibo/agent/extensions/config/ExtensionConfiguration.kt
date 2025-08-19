@@ -10,6 +10,8 @@ import com.intellij.openapi.project.Project
 import com.sina.weibo.agent.extensions.common.ExtensionType
 import java.util.Properties
 import java.io.File
+import com.sina.weibo.agent.util.PluginConstants
+import com.sina.weibo.agent.util.ConfigFileUtils
 
 /**
  * Extension configuration manager for Roo Code
@@ -103,14 +105,10 @@ class ExtensionConfiguration(private val project: Project) {
      */
     private fun getConfiguredExtensionType(): ExtensionType? {
         return try {
-            val properties = Properties()
-            val configFile = File(project.basePath ?: "", ".vscode-agent")
-            if (configFile.exists()) {
-                properties.load(configFile.inputStream())
-                val typeCode = properties.getProperty("extension.type")
-                if (typeCode != null) {
-                    ExtensionType.Companion.fromCode(typeCode)
-                } else null
+            val properties = ConfigFileUtils.loadMainConfig(project.basePath)
+            val typeCode = properties.getProperty(PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY)
+            if (typeCode != null) {
+                ExtensionType.Companion.fromCode(typeCode)
             } else null
         } catch (e: Exception) {
             LOG.warn("Failed to read extension type configuration", e)
@@ -124,10 +122,9 @@ class ExtensionConfiguration(private val project: Project) {
     private fun saveCurrentExtensionType() {
         try {
             val properties = Properties()
-            properties.setProperty("extension.type", currentExtensionType.code)
+            properties.setProperty(PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY, currentExtensionType.code)
             
-            val configFile = File(project.basePath ?: "", ".vscode-agent")
-            properties.store(configFile.outputStream(), "VSCode Agent Configuration")
+            ConfigFileUtils.saveMainConfig(project.basePath, properties, "VSCode Agent Configuration")
             
             LOG.info("Saved extension type configuration: ${currentExtensionType.code}")
         } catch (e: Exception) {

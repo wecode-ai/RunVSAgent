@@ -77,42 +77,144 @@ class WecoderPlugin : StartupActivity.DumbAware {
         )
 
         try {
-            // Initialize extension configuration manager
+            // 1. 首先初始化配置管理器
             val configManager = ExtensionConfigurationManager.getInstance(project)
             configManager.initialize()
             
-            // Initialize global extension manager
-            val extensionManager = ExtensionManager.getInstance(project)
-            extensionManager.initialize()
-            
-            // Set extension provider from configuration
-            val configuredExtensionId = configManager.getCurrentExtensionId()
-            if (configuredExtensionId != null) {
-                extensionManager.setCurrentProvider(configuredExtensionId)
-                
-                // Initialize current extension provider
-                extensionManager.initializeCurrentProvider()
+            // 2. 等待配置加载完成
+            var retryCount = 0
+            val maxRetries = 10
+            while (!configManager.isConfigurationLoaded() && retryCount < maxRetries) {
+                Thread.sleep(100)
+                retryCount++
             }
             
-            // Initialize plugin service
-            val pluginService = getInstance(project)
-            pluginService.initialize(project)
+            // 3. 验证配置有效性
+            if (!canProceedWithInitialization(configManager)) {
+                // 检查是否允许自动创建默认配置（通过系统属性控制）
+                val allowAutoCreate = System.getProperty("runvsagent.auto.create.config", "false").toBoolean()
+                if (allowAutoCreate) {
+                    LOG.info("Auto-creation of default configuration is enabled, attempting to create...")
+                    configManager.createDefaultConfiguration()
+                    
+                    // 再次验证配置
+                    if (canProceedWithInitialization(configManager)) {
+                        LOG.info("Default configuration created successfully, continuing initialization")
+                    } else {
+                        LOG.warn("Failed to create valid configuration, plugin initialization paused")
+                        LOG.warn("Please manually create or fix ${PluginConstants.ConfigFiles.MAIN_CONFIG_FILE} file")
+                        LOG.warn("Then restart the IDE or reload the project to continue")
+                        return // 暂停初始化
+                    }
+                } else {
+                    // 不自动创建默认配置，真正暂停初始化
+                    LOG.warn("Plugin initialization paused due to invalid configuration")
+                    LOG.warn("To enable auto-creation of default configuration, set system property: -Drunvsagent.auto.create.config=true")
+                    LOG.warn("Or manually create/fix ${PluginConstants.ConfigFiles.MAIN_CONFIG_FILE} file")
+                    LOG.warn("Then restart the IDE or reload the project to continue")
+                    return // 真正暂停初始化
+                }
+            }
             
-            // Initialize WebViewManager and register to project Disposer
-            val webViewManager = project.getService(WebViewManager::class.java)
-            Disposer.register(project, webViewManager)
-            
-            // Register project-level resource disposal
-            Disposer.register(project, Disposable {
-                LOG.info("Disposing RunVSAgent plugin for project: ${project.name}")
-                pluginService.dispose()
-                extensionManager.dispose()
-                SystemObjectProvider.dispose()
-            })
-            
-            LOG.info("RunVSAgent plugin initialized successfully for project: ${project.name}")
+            // 4. 只有在配置有效时才初始化ExtensionManager
+            val configuredExtensionId = configManager.getCurrentExtensionId()
+            if (configuredExtensionId != null) {
+                val extensionManager = ExtensionManager.getInstance(project)
+                extensionManager.initialize(configuredExtensionId) // 传入配置的extensionId
+                
+                // 初始化当前extension provider
+                extensionManager.initializeCurrentProvider()
+                
+                // 5. 继续其他初始化...
+                val pluginService = getInstance(project)
+                pluginService.initialize(project)
+                
+                // 初始化WebViewManager并注册到project Disposer
+                val webViewManager = project.getService(WebViewManager::class.java)
+                Disposer.register(project, webViewManager)
+                
+                // 启动配置监控
+                startConfigurationMonitoring(project, configManager)
+                
+                // 注册项目级资源清理
+                Disposer.register(project, Disposable {
+                    LOG.info("Disposing RunVSAgent plugin for project: ${project.name}")
+                    pluginService.dispose()
+                    extensionManager.dispose()
+                    SystemObjectProvider.dispose()
+                })
+                
+                LOG.info("RunVSAgent plugin initialized successfully for project: ${project.name}")
+            } else {
+                LOG.error("Configuration is valid but no extension ID found, plugin initialization paused")
+                return
+            }
         } catch (e: Exception) {
             LOG.error("Failed to initialize RunVSAgent plugin", e)
+        }
+    }
+    
+    /**
+     * Check if plugin can proceed with initialization
+     */
+    private fun canProceedWithInitialization(configManager: ExtensionConfigurationManager): Boolean {
+        if (!configManager.isConfigurationLoaded()) {
+            LOG.warn("Configuration not yet loaded, cannot proceed with initialization")
+            return false
+        }
+        
+        if (!configManager.isConfigurationValid()) {
+            LOG.warn("Configuration is invalid, cannot proceed with initialization")
+            return false
+        }
+        
+        val extensionId = configManager.getCurrentExtensionId()
+        if (extensionId.isNullOrBlank()) {
+            LOG.warn("No valid extension ID found in configuration")
+            return false
+        }
+        
+        LOG.info("Configuration validation passed, extension ID: $extensionId")
+        return true
+    }
+    
+    /**
+     * Start configuration monitoring to detect changes
+     */
+    private fun startConfigurationMonitoring(project: Project, configManager: ExtensionConfigurationManager) {
+        // Start background monitoring thread
+        Thread {
+            try {
+                while (!project.isDisposed) {
+                    Thread.sleep(5000) // Check every 5 seconds
+                    
+                    if (!project.isDisposed) {
+                        configManager.checkConfigurationChange()
+                        
+                        // Log configuration status periodically
+                        if (!configManager.isConfigurationValid()) {
+                            val errorMsg = configManager.getConfigurationError() ?: "Unknown configuration error"
+                            LOG.warn("Configuration still invalid: $errorMsg")
+                            LOG.warn("Configuration file: ${configManager.getConfigurationFilePath()}")
+                            LOG.warn("Plugin functionality is paused due to invalid configuration")
+                            LOG.warn("Please fix the configuration and restart the IDE to continue")
+                        } else {
+                            // Log successful configuration status occasionally
+                            if (System.currentTimeMillis() % 60000 < 5000) { // Log every minute
+                                LOG.info("Configuration status: Valid (${configManager.getCurrentExtensionId()})")
+                            }
+                        }
+                    }
+                }
+            } catch (e: InterruptedException) {
+                LOG.info("Configuration monitoring interrupted")
+            } catch (e: Exception) {
+                LOG.error("Error in configuration monitoring", e)
+            }
+        }.apply {
+            isDaemon = true
+            name = "RunVSAgent-ConfigMonitor"
+            start()
         }
     }
 }
@@ -193,9 +295,9 @@ class WecoderPluginService(private var currentProject: Project) : Disposable {
                     configStream.close()
                     
                     // Read debug mode config
-                    val debugModeStr = properties.getProperty("debug.mode", "none").lowercase()
+                    val debugModeStr = properties.getProperty(PluginConstants.ConfigFiles.DEBUG_MODE_KEY, "none").lowercase()
                     DEBUG_TYPE = DEBUG_MODE.fromString(debugModeStr)
-                    DEBUG_RESOURCE = properties.getProperty("debug.resource", null)
+                    DEBUG_RESOURCE = properties.getProperty(PluginConstants.ConfigFiles.DEBUG_RESOURCE_KEY, null)
 
                     Logger.getInstance(WecoderPluginService::class.java).info("Read debug mode from config file: $DEBUG_MODE")
                 } else {
@@ -232,6 +334,22 @@ class WecoderPluginService(private var currentProject: Project) : Disposable {
         // DEBUG_MODE is no longer set directly in code, now read from config file
         if (isInitialized) {
             LOG.info("WecoderPluginService already initialized")
+            return
+        }
+        
+        // Check if extension configuration is valid before proceeding
+        val configManager = ExtensionConfigurationManager.getInstance(project)
+        if (!configManager.isConfigurationValid()) {
+            LOG.warn("Plugin service initialization skipped: Invalid configuration")
+            initializationComplete.complete(false)
+            return
+        }
+        
+        // Check if extension manager is properly initialized
+        val extensionManager = ExtensionManager.getInstance(project)
+        if (!extensionManager.isProperlyInitialized()) {
+            LOG.warn("Plugin service initialization skipped: Extension manager not properly initialized")
+            initializationComplete.complete(false)
             return
         }
         

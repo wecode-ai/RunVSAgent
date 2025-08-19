@@ -5,6 +5,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import java.io.File
 import java.util.Properties
+import com.sina.weibo.agent.util.PluginConstants
+import com.sina.weibo.agent.util.ConfigFileUtils
 
 /**
  * Extension configuration manager.
@@ -17,11 +19,22 @@ class ExtensionConfigurationManager(private val project: Project) {
 
     // Configuration file path
     private val configFile: File
-        get() = File(project.basePath ?: "", ".vscode-agent")
+        get() = File(project.basePath ?: "", PluginConstants.ConfigFiles.MAIN_CONFIG_FILE)
 
     // Current extension ID
     @Volatile
     private var currentExtensionId: String? = null
+    
+    // Configuration validation status
+    @Volatile
+    private var isConfigurationValid = false
+    
+    // Configuration loading status
+    @Volatile
+    private var isConfigurationLoaded = false
+    
+    // Configuration loading time
+    private var configurationLoadTime: Long? = null
 
     companion object {
         /**
@@ -40,23 +53,153 @@ class ExtensionConfigurationManager(private val project: Project) {
         logger.info("Initializing extension configuration manager")
         loadConfiguration()
     }
+    
+    /**
+     * Check if configuration is valid and ready for use
+     */
+    fun isConfigurationValid(): Boolean {
+        return isConfigurationValid
+    }
+    
+    /**
+     * Check if configuration has been loaded
+     */
+    fun isConfigurationLoaded(): Boolean {
+        return isConfigurationLoaded
+    }
+    
+    /**
+     * Get configuration loading time
+     */
+    fun getConfigurationLoadTime(): Long? {
+        return configurationLoadTime
+    }
+    
+    /**
+     * Get configuration validation error message if any
+     */
+    fun getConfigurationError(): String? {
+        return if (isConfigurationLoaded && !isConfigurationValid) {
+            val extensionId = currentExtensionId // 创建局部变量避免并发问题
+            when {
+                extensionId == null -> "No extension type configured. Please set '${PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY}' in ${PluginConstants.ConfigFiles.MAIN_CONFIG_FILE} file"
+                extensionId.isBlank() -> "Extension type is empty. Please set a valid value for '${PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY}' in ${PluginConstants.ConfigFiles.MAIN_CONFIG_FILE} file"
+                else -> "Invalid extension type: '$extensionId'. Please check the value of '${PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY}' in ${PluginConstants.ConfigFiles.MAIN_CONFIG_FILE} file"
+            }
+        } else null
+    }
+    
+    /**
+     * Get detailed configuration status information
+     */
+    fun getConfigurationStatus(): String {
+        return buildString {
+            append("Configuration Status: ")
+            if (isConfigurationLoaded) {
+                if (isConfigurationValid) {
+                    val extensionId = currentExtensionId // 创建局部变量避免并发问题
+                    append("VALID ($extensionId)")
+                } else {
+                    append("INVALID - ${getConfigurationError()}")
+                }
+            } else {
+                append("LOADING")
+            }
+            append(" | File: ${getConfigurationFilePath()}")
+        }
+    }
+    
+    /**
+     * Get detailed debug information for troubleshooting
+     */
+    fun getDebugInfo(): String {
+        return buildString {
+            append("=== Configuration Debug Info ===\n")
+            append("Configuration loaded: $isConfigurationLoaded\n")
+            append("Configuration valid: $isConfigurationValid\n")
+            append("Current extension ID: $currentExtensionId\n")
+            append("Config file path: ${getConfigurationFilePath()}\n")
+            append("Config file exists: ${configFile.exists()}\n")
+            
+            if (configFile.exists()) {
+                append("Config file size: ${configFile.length()} bytes\n")
+                append("Config file last modified: ${java.util.Date(configFile.lastModified())}\n")
+                
+                try {
+                    val properties = Properties()
+                    properties.load(configFile.inputStream())
+                    append("Config file content:\n")
+                    properties.stringPropertyNames().forEach { key ->
+                        append("  $key = ${properties.getProperty(key)}\n")
+                    }
+                } catch (e: Exception) {
+                    append("Failed to read config file: ${e.message}\n")
+                }
+            }
+            
+            append("Project base path: ${project.basePath}\n")
+            append("================================")
+        }
+    }
+    
+    /**
+     * Get recovery suggestions for invalid configuration
+     */
+    fun getRecoverySuggestions(): List<String> {
+        return if (isConfigurationLoaded && !isConfigurationValid) {
+            listOf(
+                "1. Check if ${PluginConstants.ConfigFiles.MAIN_CONFIG_FILE} file exists in project root",
+                "2. Ensure '${PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY}' property is set to a valid extension ID",
+                "3. Valid extension types: roo-code, cline, custom",
+                "4. Try running 'createDefaultConfiguration()' to generate a template",
+                "5. Check file permissions and ensure the file is readable"
+            )
+        } else {
+            emptyList()
+        }
+    }
 
     /**
      * Load configuration from file
      */
     private fun loadConfiguration() {
         try {
-            if (configFile.exists()) {
-                val properties = Properties()
-                properties.load(configFile.inputStream())
-                currentExtensionId = properties.getProperty("extension.type")
-                logger.info("Loaded configuration: current extension = $currentExtensionId")
+            isConfigurationLoaded = false
+            isConfigurationValid = false
+            configurationLoadTime = System.currentTimeMillis()
+            
+            if (ConfigFileUtils.mainConfigExists(project.basePath)) {
+                val properties = ConfigFileUtils.loadMainConfig(project.basePath)
+                currentExtensionId = properties.getProperty(PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY)
+                
+                // Validate configuration
+                isConfigurationValid = validateConfiguration(currentExtensionId)
+                
+                if (isConfigurationValid) {
+                    logger.info("Loaded valid configuration: current extension = $currentExtensionId")
+                } else {
+                    logger.warn("Configuration loaded but invalid: extension type is null or empty")
+                }
             } else {
-                logger.info("No configuration file found, using default settings")
+                logger.warn("No configuration file found at: ${configFile.absolutePath}")
+                currentExtensionId = null
+                isConfigurationValid = false
             }
+            
+            isConfigurationLoaded = true
         } catch (e: Exception) {
-            logger.warn("Failed to load configuration", e)
+            logger.error("Failed to load configuration", e)
+            currentExtensionId = null
+            isConfigurationValid = false
+            isConfigurationLoaded = true
         }
+    }
+    
+    /**
+     * Validate configuration
+     */
+    private fun validateConfiguration(extensionId: String?): Boolean {
+        return !extensionId.isNullOrBlank()
     }
 
     /**
@@ -65,15 +208,75 @@ class ExtensionConfigurationManager(private val project: Project) {
     private fun saveConfiguration() {
         try {
             val properties = Properties()
-            currentExtensionId?.let { properties.setProperty("extension.type", it) }
+            currentExtensionId?.let { properties.setProperty(PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY, it) }
 
-            // Ensure directory exists
-            configFile.parentFile?.mkdirs()
-
-            properties.store(configFile.outputStream(), "RunVSAgent Extension Configuration")
-            logger.info("Configuration saved: current extension = $currentExtensionId")
+            logger.info("Saving configuration to file: ${configFile.absolutePath}")
+            logger.info("Configuration content: ${PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY}=$currentExtensionId")
+            
+            ConfigFileUtils.saveMainConfig(project.basePath, properties)
+            
+            // Verify the file was created and contains the expected content
+            if (configFile.exists()) {
+                val savedProperties = Properties()
+                savedProperties.load(configFile.inputStream())
+                val savedExtensionId = savedProperties.getProperty(PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY)
+                logger.info("Configuration saved successfully. File content: ${PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY}=$savedExtensionId")
+            } else {
+                logger.error("Configuration file was not created after save operation")
+            }
         } catch (e: Exception) {
-            logger.warn("Failed to save configuration", e)
+            logger.error("Failed to save configuration", e)
+            throw e // Re-throw to let caller know about the failure
+        }
+    }
+
+    /**
+     * Reload configuration from file
+     */
+    fun reloadConfiguration() {
+        logger.info("Reloading configuration")
+        loadConfiguration()
+    }
+    
+    /**
+     * Check if configuration has changed and reload if necessary
+     */
+    fun checkConfigurationChange() {
+        try {
+            if (configFile.exists()) {
+                val lastModified = configFile.lastModified()
+                // Simple change detection - could be enhanced with file watcher
+                if (lastModified > (System.currentTimeMillis() - 5000)) { // Check if modified in last 5 seconds
+                    logger.info("Configuration file changed, reloading...")
+                    reloadConfiguration()
+                }
+            }
+        } catch (e: Exception) {
+            logger.warn("Error checking configuration change", e)
+        }
+    }
+    
+    /**
+     * Get configuration file path for user reference
+     */
+    fun getConfigurationFilePath(): String {
+        return configFile.absolutePath
+    }
+    
+    /**
+     * Create default configuration file with template
+     */
+    fun createDefaultConfiguration() {
+        try {
+            if (!ConfigFileUtils.mainConfigExists(project.basePath)) {
+                ConfigFileUtils.createDefaultMainConfig(project.basePath)
+                logger.info("Created default configuration file at: ${configFile.absolutePath}")
+                
+                // Reload configuration
+                reloadConfiguration()
+            }
+        } catch (e: Exception) {
+            logger.error("Failed to create default configuration", e)
         }
     }
 
@@ -90,7 +293,14 @@ class ExtensionConfigurationManager(private val project: Project) {
     fun setCurrentExtensionId(extensionId: String) {
         logger.info("Setting current extension ID to: $extensionId")
         currentExtensionId = extensionId
+        
+        // Save configuration to file
         saveConfiguration()
+        
+        // Reload configuration to ensure it's properly loaded and validated
+        reloadConfiguration()
+        
+        logger.info("Extension ID set and configuration reloaded: $extensionId, valid: $isConfigurationValid")
     }
 
     /**
@@ -98,11 +308,8 @@ class ExtensionConfigurationManager(private val project: Project) {
      */
     fun getExtensionConfiguration(extensionId: String): Map<String, String> {
         return try {
-            val basePath = project.basePath ?: ""
-            val extensionConfigFile = File(basePath, ".vscode-agent.$extensionId")
-            if (extensionConfigFile.exists()) {
-                val properties = Properties()
-                properties.load(extensionConfigFile.inputStream())
+            if (ConfigFileUtils.extensionConfigExists(project.basePath, extensionId)) {
+                val properties = ConfigFileUtils.loadExtensionConfig(project.basePath, extensionId)
                 properties.stringPropertyNames().associateWith { properties.getProperty(it) }
             } else {
                 emptyMap()
@@ -118,18 +325,12 @@ class ExtensionConfigurationManager(private val project: Project) {
      */
     fun setExtensionConfiguration(extensionId: String, config: Map<String, String>) {
         try {
-            val basePath = project.basePath ?: ""
-            val extensionConfigFile = File(basePath, ".vscode-agent.$extensionId")
-
-            // Ensure directory exists
-            extensionConfigFile.parentFile?.mkdirs()
-
             val properties = Properties()
             config.forEach { (key, value) ->
                 properties.setProperty(key, value)
             }
 
-            properties.store(extensionConfigFile.outputStream(), "Extension Configuration for $extensionId")
+            ConfigFileUtils.saveExtensionConfig(project.basePath, extensionId, properties)
             logger.info("Configuration saved for extension: $extensionId")
         } catch (e: Exception) {
             logger.warn("Failed to save extension configuration for: $extensionId", e)
@@ -143,20 +344,11 @@ class ExtensionConfigurationManager(private val project: Project) {
         val configs = mutableMapOf<String, Map<String, String>>()
 
         try {
-            val basePath = project.basePath ?: ""
-            if (basePath.isNotEmpty()) {
-                val baseDir = File(basePath)
-                if (baseDir.exists() && baseDir.isDirectory) {
-                    val files = baseDir.listFiles { file ->
-                        file.name.startsWith(".vscode-agent.") && file.name != ".vscode-agent"
-                    }
-                    files?.forEach { file ->
-                        val extensionId = file.name.substring(".vscode-agent.".length)
-                        val config = getExtensionConfiguration(extensionId)
-                        if (config.isNotEmpty()) {
-                            configs[extensionId] = config
-                        }
-                    }
+            val extensionIds = ConfigFileUtils.listExtensionConfigFiles(project.basePath)
+            extensionIds.forEach { extensionId ->
+                val config = getExtensionConfiguration(extensionId)
+                if (config.isNotEmpty()) {
+                    configs[extensionId] = config
                 }
             }
         } catch (e: Exception) {

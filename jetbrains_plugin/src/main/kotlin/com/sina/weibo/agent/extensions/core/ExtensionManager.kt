@@ -42,17 +42,65 @@ class ExtensionManager(private val project: Project) {
     
     /**
      * Initialize extension manager
+     * @param configuredExtensionId The extension ID from configuration, if null will not set any default provider
      */
-    fun initialize() {
-        LOG.info("Initializing extension manager")
+    fun initialize(configuredExtensionId: String? = null) {
+        LOG.info("Initializing extension manager with configured extension: $configuredExtensionId")
         
         // Register all available extension providers
         registerExtensionProviders()
         
-        // Set default extension provider
-        setDefaultExtensionProvider()
+        if (configuredExtensionId != null) {
+            // 如果配置了特定的extension，直接设置
+            val provider = extensionProviders[configuredExtensionId]
+            if (provider != null && provider.isAvailable(project)) {
+                currentProvider = provider
+                LOG.info("Set configured extension provider: $configuredExtensionId")
+            } else {
+                LOG.warn("Configured extension provider not available: $configuredExtensionId")
+                // 不设置默认provider，让系统保持未初始化状态
+                currentProvider = null
+            }
+        } else {
+            // 只有在没有配置时才设置默认provider（可选）
+            LOG.info("No extension configured, skipping default provider setup")
+            // 注释掉自动设置默认provider的逻辑
+            // setDefaultExtensionProvider()
+        }
         
         LOG.info("Extension manager initialized")
+    }
+    
+    /**
+     * Initialize extension manager with default behavior (backward compatibility)
+     */
+    fun initialize() {
+        initialize(null)
+    }
+    
+    /**
+     * Check if configuration is valid for this extension manager
+     */
+    fun isConfigurationValid(): Boolean {
+        return currentProvider != null && currentProvider!!.isAvailable(project)
+    }
+    
+    /**
+     * Get configuration validation error message if any
+     */
+    fun getConfigurationError(): String? {
+        return if (currentProvider == null) {
+            "No extension provider set"
+        } else if (!currentProvider!!.isAvailable(project)) {
+            "Extension provider '${currentProvider!!.getExtensionId()}' is not available"
+        } else null
+    }
+    
+    /**
+     * Check if extension manager is properly initialized with a valid provider
+     */
+    fun isProperlyInitialized(): Boolean {
+        return currentProvider != null && currentProvider!!.isAvailable(project)
     }
     
     /**
