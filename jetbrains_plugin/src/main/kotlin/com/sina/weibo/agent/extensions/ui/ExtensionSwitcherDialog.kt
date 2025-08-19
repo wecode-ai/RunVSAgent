@@ -14,8 +14,13 @@ import javax.swing.JButton
 import com.sina.weibo.agent.extensions.core.ExtensionManager
 import com.sina.weibo.agent.extensions.core.ExtensionSwitcher
 import com.sina.weibo.agent.extensions.core.ExtensionConfigurationManager
+import com.sina.weibo.agent.extensions.core.VsixManager
+import com.sina.weibo.agent.extensions.config.ExtensionProvider
+import com.sina.weibo.agent.util.PluginResourceUtil
+import com.sina.weibo.agent.util.PluginConstants
 import java.awt.BorderLayout
 import java.awt.Dimension
+import java.io.File
 import javax.swing.*
 import javax.swing.event.ListSelectionListener
 
@@ -33,6 +38,8 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
     private lateinit var extensionList: JBList<ExtensionItem>
     private lateinit var descriptionLabel: JBLabel
     private lateinit var statusLabel: JBLabel
+    private lateinit var resourceStatusLabel: JBLabel
+    private lateinit var uploadVsixButton: JButton
     private lateinit var autoSwitchCheckBox: JBCheckBox
     private lateinit var switchButton: JButton
     private lateinit var cancelButton: JButton
@@ -56,7 +63,22 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
         val displayName: String,
         val description: String,
         val isAvailable: Boolean,
-        val isCurrent: Boolean
+        val isCurrent: Boolean,
+        val resourceStatus: ResourceStatus
+    )
+    
+    /**
+     * Resource status information
+     */
+    private data class ResourceStatus(
+        val projectResourceExists: Boolean,
+        val projectResourcePath: String?,
+        val pluginResourceExists: Boolean,
+        val pluginResourcePath: String?,
+        val vsixResourceExists: Boolean,
+        val vsixResourcePath: String?,
+        val statusText: String,
+        val statusIcon: String
     )
     
     /**
@@ -70,6 +92,56 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
         extensionList = JBList<ExtensionItem>()
         extensionList.selectionMode = ListSelectionModel.SINGLE_SELECTION
         extensionList.addListSelectionListener(createListSelectionListener())
+        
+        // Set custom cell renderer to show resource status
+        extensionList.setCellRenderer { list, value, index, isSelected, cellHasFocus ->
+            val label = JBLabel()
+            if (value is ExtensionItem) {
+                val resourceIcon = when {
+                    value.resourceStatus.projectResourceExists -> "🟢"
+                    value.resourceStatus.vsixResourceExists -> "🔵"
+                    value.resourceStatus.pluginResourceExists -> "🟡"
+                    else -> "🔴"
+                }
+                
+                val displayText = "${resourceIcon} ${value.displayName}"
+                if (value.isCurrent) {
+                    label.text = "<html><b>$displayText</b> <i>(Current)</i></html>"
+                } else {
+                    label.text = displayText
+                }
+                
+                // Set tooltip with detailed resource information
+                val tooltipText = buildString {
+                    append("Extension: ${value.displayName}\n")
+                    append("Status: ${value.resourceStatus.statusText}\n")
+                    if (value.resourceStatus.projectResourceExists) {
+                        append("Local Path: ${value.resourceStatus.projectResourcePath}\n")
+                    }
+                    if (value.resourceStatus.vsixResourceExists) {
+                        append("VSIX Path: ${value.resourceStatus.vsixResourcePath}\n")
+                    }
+                    if (value.resourceStatus.pluginResourceExists) {
+                        append("Plugin Path: ${value.resourceStatus.pluginResourcePath}\n")
+                    }
+                    if (!value.resourceStatus.projectResourceExists && !value.resourceStatus.vsixResourceExists && !value.resourceStatus.pluginResourceExists) {
+                        append("⚠️ Warning: No resource files found!")
+                    }
+                }
+                label.toolTipText = tooltipText
+                
+                // Set background color based on selection
+                if (isSelected) {
+                    label.background = list.selectionBackground
+                    label.foreground = list.selectionForeground
+                } else {
+                    label.background = list.background
+                    label.foreground = list.foreground
+                }
+                label.isOpaque = true
+            }
+            label
+        }
         
         val listScrollPane = JScrollPane(extensionList)
         listScrollPane.preferredSize = Dimension(300, 200)
@@ -91,7 +163,18 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
      */
     private fun createTopPanel(): JPanel {
         val panel = JPanel()
+        panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
+        
+        // Main title
         panel.add(JBLabel("Select Extension Provider:"))
+        
+        // Status legend
+        val legendText = "<html><b>Resource Status Legend:</b><br>" +
+                "🟢 Local Resources | 🔵 VSIX Installation | 🟡 Built-in Resources | 🔴 No Resources</html>"
+        val legendLabel = JBLabel(legendText)
+        legendLabel.preferredSize = Dimension(400, 50)
+        panel.add(legendLabel)
+        
         return panel
     }
     
@@ -111,6 +194,17 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
         statusLabel = JBLabel("")
         statusLabel.preferredSize = Dimension(200, 40)
         panel.add(statusLabel)
+        
+        // Resource Status
+        resourceStatusLabel = JBLabel("")
+        resourceStatusLabel.preferredSize = Dimension(200, 60)
+        panel.add(resourceStatusLabel)
+        
+        // Upload VSIX Button
+        uploadVsixButton = JButton("Upload VSIX File")
+        uploadVsixButton.preferredSize = Dimension(150, 30)
+        uploadVsixButton.addActionListener { uploadVsixFile() }
+        panel.add(uploadVsixButton)
         
         // Auto-switch option (not implemented yet)
         autoSwitchCheckBox = JBCheckBox("Remember this choice for future projects")
@@ -171,12 +265,14 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
         val availableProviders = extensionManager.getAvailableProviders()
         
         availableProviders.forEach { provider ->
+            val resourceStatus = checkExtensionResourceStatus(provider, project)
             val item = ExtensionItem(
                 id = provider.getExtensionId(),
                 displayName = provider.getDisplayName(),
                 description = provider.getDescription(),
                 isAvailable = provider.isAvailable(project),
-                isCurrent = provider == currentProvider
+                isCurrent = provider == currentProvider,
+                resourceStatus = resourceStatus
             )
             extensionItems.add(item)
         }
@@ -202,6 +298,175 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
             else -> "Available"
         }
         statusLabel.text = statusText
+        
+        // Update resource status display
+        updateResourceStatusDisplay(item.resourceStatus)
+        
+        // Update upload button state
+        updateUploadButtonState(item.resourceStatus)
+    }
+    
+    /**
+     * Update upload button state based on resource status
+     */
+    private fun updateUploadButtonState(resourceStatus: ResourceStatus) {
+        val needsUpload = !resourceStatus.projectResourceExists && 
+                         !resourceStatus.vsixResourceExists && 
+                         !resourceStatus.pluginResourceExists
+        
+        // Always show the upload button, but enable it only when needed
+        uploadVsixButton.isVisible = true
+        
+        if (needsUpload) {
+            uploadVsixButton.text = "Upload VSIX File"
+            uploadVsixButton.isEnabled = true
+            uploadVsixButton.toolTipText = "Upload VSIX file to install extension resources"
+        } else {
+            uploadVsixButton.text = "Resources Available"
+            uploadVsixButton.isEnabled = false
+            uploadVsixButton.toolTipText = "Extension resources are already available"
+        }
+    }
+    
+    /**
+     * Upload VSIX file for the selected extension
+     */
+    private fun uploadVsixFile() {
+        val selectedItem = selectedExtensionId?.let { id ->
+            extensionItems.find { it.id == id }
+        }
+        
+        if (selectedItem == null) {
+            Messages.showWarningDialog(
+                "Please select an extension first.",
+                "No Extension Selected"
+            )
+            return
+        }
+        
+        val success = VsixUploadDialog.show(
+            project,
+            selectedItem.id,
+            selectedItem.displayName
+        )
+        
+        if (success) {
+            // Refresh the extension list to show updated status
+            loadExtensions()
+            updateUI()
+            
+            // Show success message
+            Messages.showInfoMessage(
+                "VSIX file uploaded successfully for ${selectedItem.displayName}.\n" +
+                "The extension should now be available.",
+                "Upload Complete"
+            )
+        }
+    }
+    
+    /**
+     * Check extension resource status
+     */
+    private fun checkExtensionResourceStatus(provider: ExtensionProvider, project: Project): ResourceStatus {
+        val extensionConfig = provider.getConfiguration(project)
+        
+        // Check project paths first
+        val projectPath = project.basePath
+        var projectResourceExists = false
+        var projectResourcePath: String? = null
+        
+        if (projectPath != null) {
+            val possiblePaths = listOf(
+                "$projectPath/${extensionConfig.getCodeDir()}",
+                "$projectPath/../${extensionConfig.getCodeDir()}",
+                "$projectPath/../../${extensionConfig.getCodeDir()}"
+            )
+            
+            for (path in possiblePaths) {
+                if (File(path).exists()) {
+                    projectResourceExists = true
+                    projectResourcePath = path
+                    break
+                }
+            }
+        }
+        
+        // Check plugin resources
+        var pluginResourceExists = false
+        var pluginResourcePath: String? = null
+        
+        try {
+            val pluginPath = PluginResourceUtil.getResourcePath(
+                PluginConstants.PLUGIN_ID,
+                extensionConfig.getCodeDir()
+            )
+            if (pluginPath != null && File(pluginPath).exists()) {
+                pluginResourceExists = true
+                pluginResourcePath = pluginPath
+            }
+        } catch (e: Exception) {
+            // Ignore exceptions when checking plugin resources
+        }
+        
+        // Check VSIX installation
+        val vsixManager = VsixManager.getInstance()
+        val extensionId = provider.getExtensionId()
+        val vsixResourceExists = vsixManager.hasVsixInstallation(extensionId)
+        val vsixResourcePath = if (vsixResourceExists) {
+            vsixManager.getVsixInstallationPath(extensionId)
+        } else null
+        
+        // Determine status text and icon
+        val (statusText, statusIcon) = when {
+            projectResourceExists -> "✓ Local Resources Found" to "🟢"
+            vsixResourceExists -> "✓ VSIX Installation Found" to "🔵"
+            pluginResourceExists -> "✓ Built-in Resources Found" to "🟡"
+            else -> "⚠ No Resources Found" to "🔴"
+        }
+        
+        return ResourceStatus(
+            projectResourceExists = projectResourceExists,
+            projectResourcePath = projectResourcePath,
+            pluginResourceExists = pluginResourceExists,
+            pluginResourcePath = pluginResourcePath,
+            vsixResourceExists = vsixResourceExists,
+            vsixResourcePath = vsixResourcePath,
+            statusText = statusText,
+            statusIcon = statusIcon
+        )
+    }
+    
+    /**
+     * Update resource status display
+     */
+    private fun updateResourceStatusDisplay(resourceStatus: ResourceStatus) {
+        val statusHtml = buildString {
+            append("<html><b>Resource Status:</b><br>")
+            append("${resourceStatus.statusIcon} ${resourceStatus.statusText}<br><br>")
+            
+            if (resourceStatus.projectResourceExists) {
+                append("<b>Local Path:</b><br>")
+                append("<code>${resourceStatus.projectResourcePath}</code><br><br>")
+            }
+            
+            if (resourceStatus.vsixResourceExists) {
+                append("<b>VSIX Installation:</b><br>")
+                append("<code>${resourceStatus.vsixResourcePath}</code><br><br>")
+            }
+            
+            if (resourceStatus.pluginResourceExists) {
+                append("<b>Plugin Path:</b><br>")
+                append("<code>${resourceStatus.pluginResourcePath}</code><br>")
+            }
+            
+            if (!resourceStatus.projectResourceExists && !resourceStatus.vsixResourceExists && !resourceStatus.pluginResourceExists) {
+                append("<font color='red'>⚠️ Warning: No resource files found!</font><br>")
+                append("This extension may not function properly.<br>")
+                append("You can upload a VSIX file to install the extension.")
+            }
+        }
+        
+        resourceStatusLabel.text = statusHtml
     }
     
     /**
@@ -212,10 +477,30 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
             extensionItems.find { it.id == id }
         }
         
+        // Allow switching even if the extension doesn't have resources
+        // The user can upload VSIX after switching
         switchButton.isEnabled = selectedItem != null && 
                                 selectedItem.isAvailable && 
                                 !selectedItem.isCurrent &&
                                 !extensionSwitcher.isSwitching()
+        
+        // Update button text to indicate VSIX upload possibility
+        if (selectedItem != null && !selectedItem.isCurrent) {
+            val hasResources = selectedItem.resourceStatus.projectResourceExists || 
+                              selectedItem.resourceStatus.vsixResourceExists || 
+                              selectedItem.resourceStatus.pluginResourceExists
+            
+            if (hasResources) {
+                switchButton.text = "Switch Extension"
+                switchButton.toolTipText = "Switch to ${selectedItem.displayName}"
+            } else {
+                switchButton.text = "Switch & Upload VSIX"
+                switchButton.toolTipText = "Switch to ${selectedItem.displayName} and upload VSIX file for resources"
+            }
+        } else {
+            switchButton.text = "Switch Extension"
+            switchButton.toolTipText = "Select an extension to switch to"
+        }
     }
     
     /**

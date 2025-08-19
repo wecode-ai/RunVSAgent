@@ -97,6 +97,7 @@ fun Sync.prepareSandbox() {
 
         from("${vscodePluginDir.path}/extension") { into("${intellij.pluginName.get()}/${ext.get("vscodePlugin")}") }
         from("src/main/resources/themes/") { into("${intellij.pluginName.get()}/${ext.get("vscodePlugin")}/integrations/theme/default-themes/") }
+        from("src/main/resources/themes/") { into("${intellij.pluginName.get()}/themes/") }
 
         // The platform.zip file required for release mode is associated with the code in ../base/vscode, currently using version 1.100.0. If upgrading this code later
         // Need to modify the vscodeVersion value in gradle.properties, then execute the task named genPlatform, which will generate a new platform.zip file for submission

@@ -380,11 +380,10 @@ class ExtensionHostManager : Disposable {
     private fun getExtensionPath(extensionConfig: ExtensionMetadata): String? {
         // First check project paths
         val projectPath = project.basePath
+        val homeDir = System.getProperty("user.home")
         if (projectPath != null) {
             val possiblePaths = listOf(
-                "$projectPath/${extensionConfig.getCodeDir()}",
-                "$projectPath/../${extensionConfig.getCodeDir()}",
-                "$projectPath/../../${extensionConfig.getCodeDir()}"
+                "$homeDir/.run-vs-agent/${extensionConfig.getCodeDir()}"
             )
             
             val foundPath = possiblePaths.find { File(it).exists() }

@@ -49,7 +49,10 @@ class ExtensionSwitcherAction : AnAction() {
         val extensionManager = ExtensionManager.getInstance(project)
         val availableProviders = extensionManager.getAvailableProviders()
         
-        if (availableProviders.size < 2) {
+        // Since we now support uploading VSIX files after startup,
+        // we show the button even if there's only one extension
+        // The user can still switch to upload VSIX for the same extension
+        if (availableProviders.isEmpty()) {
             presentation.isEnabledAndVisible = false
             presentation.text = "No Extensions Available"
             return
@@ -63,15 +66,15 @@ class ExtensionSwitcherAction : AnAction() {
         when (e.place) {
             ActionPlaces.TOOLBAR -> {
                 presentation.text = "Switch ($currentExtensionName)"
-                presentation.description = "Switch to a different extension provider"
+                presentation.description = "Switch to a different extension provider or upload VSIX"
             }
             ActionPlaces.MAIN_MENU -> {
                 presentation.text = "Switch Extension Provider"
-                presentation.description = "Switch to a different extension provider"
+                presentation.description = "Switch to a different extension provider or upload VSIX"
             }
             else -> {
                 presentation.text = "Switch Extension ($currentExtensionName)"
-                presentation.description = "Switch to a different extension provider"
+                presentation.description = "Switch to a different extension provider or upload VSIX"
             }
         }
         

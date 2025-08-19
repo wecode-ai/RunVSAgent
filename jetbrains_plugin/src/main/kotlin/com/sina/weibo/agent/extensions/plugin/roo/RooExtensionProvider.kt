@@ -5,6 +5,7 @@
 package com.sina.weibo.agent.extensions.plugin.roo
 
 import com.intellij.openapi.project.Project
+import com.sina.weibo.agent.extensions.common.ExtensionType
 import com.sina.weibo.agent.extensions.config.ExtensionConfiguration
 import com.sina.weibo.agent.extensions.core.ExtensionManagerFactory
 import com.sina.weibo.agent.extensions.config.ExtensionProvider
@@ -73,8 +74,8 @@ class RooExtensionProvider : ExtensionProvider {
     
     override fun getConfiguration(project: Project): ExtensionMetadata {
         val extensionConfig = ExtensionConfiguration.getInstance(project)
-        val config = extensionConfig.getCurrentConfig()
-        
+        val config = extensionConfig.getConfig(ExtensionType.ROO_CODE);
+
         return object : ExtensionMetadata {
             override fun getCodeDir(): String = config.codeDir
             override fun getPublisher(): String = config.publisher
