@@ -19,7 +19,7 @@ class ExtensionConfigurationManager(private val project: Project) {
 
     // Configuration file path
     private val configFile: File
-        get() = File(project.basePath ?: "", PluginConstants.ConfigFiles.MAIN_CONFIG_FILE)
+        get() = File(PluginConstants.ConfigFiles.getMainConfigPath())
 
     // Current extension ID
     @Volatile
@@ -168,8 +168,8 @@ class ExtensionConfigurationManager(private val project: Project) {
             isConfigurationValid = false
             configurationLoadTime = System.currentTimeMillis()
             
-            if (ConfigFileUtils.mainConfigExists(project.basePath)) {
-                val properties = ConfigFileUtils.loadMainConfig(project.basePath)
+            if (ConfigFileUtils.mainConfigExists()) {
+                val properties = ConfigFileUtils.loadMainConfig()
                 currentExtensionId = properties.getProperty(PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY)
                 
                 // Validate configuration
@@ -213,7 +213,7 @@ class ExtensionConfigurationManager(private val project: Project) {
             logger.info("Saving configuration to file: ${configFile.absolutePath}")
             logger.info("Configuration content: ${PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY}=$currentExtensionId")
             
-            ConfigFileUtils.saveMainConfig(project.basePath, properties)
+            ConfigFileUtils.saveMainConfig(properties)
             
             // Verify the file was created and contains the expected content
             if (configFile.exists()) {
@@ -264,23 +264,6 @@ class ExtensionConfigurationManager(private val project: Project) {
     }
     
     /**
-     * Create default configuration file with template
-     */
-    fun createDefaultConfiguration() {
-        try {
-            if (!ConfigFileUtils.mainConfigExists(project.basePath)) {
-                ConfigFileUtils.createDefaultMainConfig(project.basePath)
-                logger.info("Created default configuration file at: ${configFile.absolutePath}")
-                
-                // Reload configuration
-                reloadConfiguration()
-            }
-        } catch (e: Exception) {
-            logger.error("Failed to create default configuration", e)
-        }
-    }
-
-    /**
      * Get current extension ID
      */
     fun getCurrentExtensionId(): String? {
@@ -308,8 +291,8 @@ class ExtensionConfigurationManager(private val project: Project) {
      */
     fun getExtensionConfiguration(extensionId: String): Map<String, String> {
         return try {
-            if (ConfigFileUtils.extensionConfigExists(project.basePath, extensionId)) {
-                val properties = ConfigFileUtils.loadExtensionConfig(project.basePath, extensionId)
+            if (ConfigFileUtils.extensionConfigExists(extensionId)) {
+                val properties = ConfigFileUtils.loadExtensionConfig(extensionId)
                 properties.stringPropertyNames().associateWith { properties.getProperty(it) }
             } else {
                 emptyMap()
@@ -330,7 +313,7 @@ class ExtensionConfigurationManager(private val project: Project) {
                 properties.setProperty(key, value)
             }
 
-            ConfigFileUtils.saveExtensionConfig(project.basePath, extensionId, properties)
+            ConfigFileUtils.saveExtensionConfig(extensionId, properties)
             logger.info("Configuration saved for extension: $extensionId")
         } catch (e: Exception) {
             logger.warn("Failed to save extension configuration for: $extensionId", e)
@@ -344,7 +327,7 @@ class ExtensionConfigurationManager(private val project: Project) {
         val configs = mutableMapOf<String, Map<String, String>>()
 
         try {
-            val extensionIds = ConfigFileUtils.listExtensionConfigFiles(project.basePath)
+            val extensionIds = ConfigFileUtils.listExtensionConfigFiles()
             extensionIds.forEach { extensionId ->
                 val config = getExtensionConfiguration(extensionId)
                 if (config.isNotEmpty()) {
@@ -356,6 +339,23 @@ class ExtensionConfigurationManager(private val project: Project) {
         }
 
         return configs
+    }
+
+    /**
+     * Create default configuration file with template
+     */
+    fun createDefaultConfiguration() {
+        try {
+            if (!ConfigFileUtils.mainConfigExists()) {
+                ConfigFileUtils.createDefaultMainConfig()
+                logger.info("Created default configuration file at: ${configFile.absolutePath}")
+                
+                // Reload configuration
+                reloadConfiguration()
+            }
+        } catch (e: Exception) {
+            logger.error("Failed to create default configuration", e)
+        }
     }
 
     /**

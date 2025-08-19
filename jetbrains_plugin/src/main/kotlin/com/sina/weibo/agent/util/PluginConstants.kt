@@ -40,17 +40,24 @@ object PluginConstants {
         const val DEBUG_RESOURCE_KEY = "debug.resource"
         
         /**
-         * Get main configuration file path for a project
+         * Get user home directory for configuration storage
          */
-        fun getMainConfigPath(projectBasePath: String?): String {
-            return if (projectBasePath.isNullOrBlank()) MAIN_CONFIG_FILE else "$projectBasePath/$MAIN_CONFIG_FILE"
+        fun getUserConfigDir(): String {
+            return System.getProperty("user.home") + "/.run-vs-agent"
         }
         
         /**
-         * Get extension configuration file path for a project and extension
+         * Get main configuration file path in user home directory
          */
-        fun getExtensionConfigPath(projectBasePath: String?, extensionId: String): String {
-            return if (projectBasePath.isNullOrBlank()) "$EXTENSION_CONFIG_PREFIX$extensionId" else "$projectBasePath/$EXTENSION_CONFIG_PREFIX$extensionId"
+        fun getMainConfigPath(): String {
+            return getUserConfigDir() + "/" + MAIN_CONFIG_FILE
+        }
+        
+        /**
+         * Get extension configuration file path in user home directory
+         */
+        fun getExtensionConfigPath(extensionId: String): String {
+            return getUserConfigDir() + "/" + EXTENSION_CONFIG_PREFIX + extensionId
         }
         
         /**

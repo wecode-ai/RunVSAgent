@@ -105,7 +105,7 @@ class ExtensionConfiguration(private val project: Project) {
      */
     private fun getConfiguredExtensionType(): ExtensionType? {
         return try {
-            val properties = ConfigFileUtils.loadMainConfig(project.basePath)
+            val properties = ConfigFileUtils.loadMainConfig()
             val typeCode = properties.getProperty(PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY)
             if (typeCode != null) {
                 ExtensionType.Companion.fromCode(typeCode)
@@ -124,7 +124,7 @@ class ExtensionConfiguration(private val project: Project) {
             val properties = Properties()
             properties.setProperty(PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY, currentExtensionType.code)
             
-            ConfigFileUtils.saveMainConfig(project.basePath, properties, "VSCode Agent Configuration")
+            ConfigFileUtils.saveMainConfig(properties, "VSCode Agent Configuration")
             
             LOG.info("Saved extension type configuration: ${currentExtensionType.code}")
         } catch (e: Exception) {

@@ -803,7 +803,7 @@ class RunVSAgentToolWindowFactory : ToolWindowFactory {
             val instructions = """
                 📝 手动配置说明
                 
-                1. 在项目根目录创建文件: ${PluginConstants.ConfigFiles.MAIN_CONFIG_FILE}
+                1. 在用户主目录创建配置文件: ${PluginConstants.ConfigFiles.getMainConfigPath()}
                 2. 添加以下内容:
                    ${PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY}=roo-code
                    
