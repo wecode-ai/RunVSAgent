@@ -1,0 +1,24 @@
+{
+  "_comment": "VSCode Extensions Configuration for RunVSAgent",
+  "_description": "This file defines which VSCode extensions should be downloaded and extracted during setup",
+  "_format": "Each extension requires: name, url, version, and optionally description",
+  "extensions": [
+    {
+      "name": "roo-cline",
+      "url": "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/RooVeterinaryInc/vsextensions/roo-cline/3.25.6/vspackage",
+      "version": "3.25.6",
+      "description": "Roo Veterinary AI coding assistant"
+    },
+    {
+      "name": "cline",
+      "url": "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/saoudrizwan/vsextensions/claude-dev/3.25.3/vspackage",
+      "version": "3.25.3",
+      "description": "Claude AI coding assistant"
+    }
+  ],
+  "settings": {
+    "download_retries": 3,
+    "timeout_seconds": 300,
+    "verify_checksum": false
+  }
+}
