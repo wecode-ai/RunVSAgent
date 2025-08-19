@@ -28,16 +28,23 @@ class VsixUploadDialog(
     
     private var selectedVsixFile: File? = null
     private var targetDirectory: String = ""
+    private var hasExistingInstallation: Boolean = false
     
     init {
         title = "Upload VSIX for $extensionName"
         init()
         setupTargetDirectory()
+        checkExistingInstallation()
     }
     
     private fun setupTargetDirectory() {
         val homeDir = System.getProperty("user.home")
         targetDirectory = "$homeDir/.run-vs-agent/$extensionId"
+    }
+    
+    private fun checkExistingInstallation() {
+        val vsixManager = VsixManager.getInstance()
+        hasExistingInstallation = vsixManager.hasVsixInstallation(extensionId)
     }
     
     override fun createCenterPanel() = panel {
@@ -53,6 +60,22 @@ class VsixUploadDialog(
             cell(JBTextField(targetDirectory).apply {
                 isEditable = false
             }).resizableColumn()
+        }
+        
+        // Show current installation status
+        row {
+            val statusText = if (hasExistingInstallation) {
+                "⚠️ Extension already installed - uploading will overwrite existing files"
+            } else {
+                "✅ No existing installation found"
+            }
+            val statusLabel = JBLabel(statusText)
+            statusLabel.foreground = if (hasExistingInstallation) {
+                java.awt.Color(255, 140, 0) // Orange for warning
+            } else {
+                java.awt.Color(0, 128, 0) // Green for success
+            }
+            cell(statusLabel)
         }
         
         row {
@@ -72,7 +95,12 @@ class VsixUploadDialog(
         }
         
         row {
-            label("Note: Only the 'extension' directory contents from the VSIX file will be extracted to the target directory.")
+            val noteText = if (hasExistingInstallation) {
+                "Note: Only the 'extension' directory contents from the VSIX file will be extracted to the target directory. Existing files will be replaced."
+            } else {
+                "Note: Only the 'extension' directory contents from the VSIX file will be extracted to the target directory."
+            }
+            label(noteText)
         }
     }
     
@@ -105,13 +133,38 @@ class VsixUploadDialog(
             return
         }
         
+        // Show confirmation dialog if overwriting existing installation
+        if (hasExistingInstallation) {
+            val result = Messages.showYesNoDialog(
+                "Extension '$extensionName' is already installed.\n\n" +
+                "Uploading this VSIX file will replace all existing files.\n\n" +
+                "Do you want to continue?",
+                "Confirm Overwrite",
+                "Overwrite",
+                "Cancel",
+                Messages.getQuestionIcon()
+            )
+            
+            if (result != Messages.YES) {
+                return
+            }
+        }
+        
         try {
             val vsixManager = VsixManager.getInstance()
             val success = vsixManager.installVsix(selectedVsixFile!!, extensionId)
             if (success) {
+                val message = if (hasExistingInstallation) {
+                    "VSIX file uploaded and extension updated successfully!\n\n" +
+                    "Target directory: $targetDirectory\n" +
+                    "Previous installation has been replaced."
+                } else {
+                    "VSIX file uploaded and extracted successfully to:\n$targetDirectory"
+                }
+                
                 Messages.showInfoMessage(
-                    "VSIX file uploaded and extracted successfully to:\n$targetDirectory",
-                    "Upload Complete"
+                    message,
+                    if (hasExistingInstallation) "Update Complete" else "Upload Complete"
                 )
                 super.doOKAction()
             } else {

@@ -201,8 +201,10 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
         panel.add(resourceStatusLabel)
         
         // Upload VSIX Button
-        uploadVsixButton = JButton("Upload VSIX File")
+        uploadVsixButton = JButton("Select Extension First")
         uploadVsixButton.preferredSize = Dimension(150, 30)
+        uploadVsixButton.isEnabled = false
+        uploadVsixButton.toolTipText = "Please select an extension to upload VSIX file"
         uploadVsixButton.addActionListener { uploadVsixFile() }
         panel.add(uploadVsixButton)
         
@@ -308,23 +310,23 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
     
     /**
      * Update upload button state based on resource status
+     * Always allow re-uploading even if resources exist
      */
     private fun updateUploadButtonState(resourceStatus: ResourceStatus) {
-        val needsUpload = !resourceStatus.projectResourceExists && 
-                         !resourceStatus.vsixResourceExists && 
-                         !resourceStatus.pluginResourceExists
+        val hasResources = resourceStatus.projectResourceExists || 
+                          resourceStatus.vsixResourceExists || 
+                          resourceStatus.pluginResourceExists
         
-        // Always show the upload button, but enable it only when needed
+        // Always show and enable the upload button
         uploadVsixButton.isVisible = true
+        uploadVsixButton.isEnabled = true
         
-        if (needsUpload) {
-            uploadVsixButton.text = "Upload VSIX File"
-            uploadVsixButton.isEnabled = true
-            uploadVsixButton.toolTipText = "Upload VSIX file to install extension resources"
+        if (hasResources) {
+            uploadVsixButton.text = "Re-upload VSIX File"
+            uploadVsixButton.toolTipText = "Upload new VSIX file to update/replace existing extension resources"
         } else {
-            uploadVsixButton.text = "Resources Available"
-            uploadVsixButton.isEnabled = false
-            uploadVsixButton.toolTipText = "Extension resources are already available"
+            uploadVsixButton.text = "Upload VSIX File"
+            uploadVsixButton.toolTipText = "Upload VSIX file to install extension resources"
         }
     }
     
@@ -515,6 +517,20 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
             switchButton.text = "Switch Extension"
             updateSwitchButton()
             cancelButton.isEnabled = true
+        }
+        
+        // Update upload button state for selected item
+        val selectedItem = selectedExtensionId?.let { id ->
+            extensionItems.find { it.id == id }
+        }
+        if (selectedItem != null) {
+            updateUploadButtonState(selectedItem.resourceStatus)
+        } else {
+            // No selection, show upload button but disable it
+            uploadVsixButton.isVisible = true
+            uploadVsixButton.isEnabled = false
+            uploadVsixButton.text = "Select Extension First"
+            uploadVsixButton.toolTipText = "Please select an extension to upload VSIX file"
         }
     }
     

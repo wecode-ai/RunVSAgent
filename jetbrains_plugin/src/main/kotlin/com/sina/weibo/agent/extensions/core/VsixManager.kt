@@ -40,20 +40,31 @@ class VsixManager {
     
     /**
      * Install VSIX file for an extension
+     * Supports overwriting existing installations
      */
     fun installVsix(vsixFile: File, extensionId: String): Boolean {
         return try {
             val targetDir = getExtensionDirectory(extensionId)
             LOG.info("Installing VSIX for extension $extensionId to $targetDir")
             
-            // Create target directory
+            // Check if extension already exists and log the action
+            val existingInstallation = hasVsixInstallation(extensionId)
+            if (existingInstallation) {
+                LOG.info("Extension $extensionId already exists, will overwrite existing installation")
+            }
+            
+            // Create target directory (will be cleaned in extractVsixFile if exists)
             val targetPath = Paths.get(targetDir)
             Files.createDirectories(targetPath)
             
-            // Extract VSIX file
+            // Extract VSIX file (this will automatically clean existing content)
             val success = extractVsixFile(vsixFile, targetDir)
             if (success) {
-                LOG.info("VSIX installation completed successfully for extension $extensionId")
+                if (existingInstallation) {
+                    LOG.info("VSIX installation updated successfully for extension $extensionId")
+                } else {
+                    LOG.info("VSIX installation completed successfully for extension $extensionId")
+                }
             } else {
                 LOG.error("VSIX extraction failed for extension $extensionId")
             }
