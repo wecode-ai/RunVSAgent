@@ -39,7 +39,7 @@ class VsixUploadDialog(
     
     private fun setupTargetDirectory() {
         val homeDir = System.getProperty("user.home")
-        targetDirectory = "$homeDir/.run-vs-agent/$extensionId"
+        targetDirectory = "$homeDir/.run-vs-agent/plugins/$extensionId"
     }
     
     private fun checkExistingInstallation() {

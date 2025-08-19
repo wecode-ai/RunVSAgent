@@ -592,11 +592,14 @@ class WebViewInstance(
                                                 font-size: var(--vscode-font-size);
                                                 margin: 0;
                                                 padding: 0 20px;
+                                                overflow-x: hidden;   /* prevent horizontal scrollbar */
+                                                overflow-y: auto;     /* allow vertical scrolling only */
                                             }
                                             
                                             img, video {
                                                 max-width: 100%;
-                                                max-height: 100%;
+                                                height: auto;        /* keep aspect ratio and avoid vertical overflow */
+                                                display: block;      /* remove inline baseline gaps that can trigger overflow */
                                             }
                                             
                                             a, a code {
@@ -657,6 +660,9 @@ class WebViewInstance(
                                             ::-webkit-scrollbar-corner {
                                                 background-color: var(--vscode-editor-background);
                                             }
+                                            
+                                            *, *::before, *::after { box-sizing: border-box; }
+                                            html, body { width: 100%; height: 100%; }
                                             
                                             ::-webkit-scrollbar-thumb {
                                                 background-color: var(--vscode-scrollbarSlider-background);

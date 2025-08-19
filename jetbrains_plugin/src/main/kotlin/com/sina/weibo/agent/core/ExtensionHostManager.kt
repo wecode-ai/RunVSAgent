@@ -383,7 +383,7 @@ class ExtensionHostManager : Disposable {
         val homeDir = System.getProperty("user.home")
         if (projectPath != null) {
             val possiblePaths = listOf(
-                "$homeDir/.run-vs-agent/${extensionConfig.getCodeDir()}"
+                "$homeDir/.run-vs-agent/plugins/${extensionConfig.getCodeDir()}"
             )
             
             val foundPath = possiblePaths.find { File(it).exists() }

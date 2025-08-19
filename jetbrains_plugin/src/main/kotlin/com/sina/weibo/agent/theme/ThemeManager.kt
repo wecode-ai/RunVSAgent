@@ -72,16 +72,12 @@ class ThemeManager : Disposable {
     fun initialize(resourceRoot: String) {
         logger.info("Initializing theme manager, resource root: $resourceRoot")
         
-        // Set theme resource directory
-        themeResourceDir = Paths.get(resourceRoot, "src", "integrations", "theme", "default-themes")
+        // Set theme resource directory using static method
+        themeResourceDir = getThemeResourceDir(resourceRoot)
         
-        // Check if resource directory exists
-        if (themeResourceDir?.notExists() == true) {
-            themeResourceDir = Paths.get(resourceRoot, "integrations", "theme", "default-themes")
-            if(themeResourceDir?.notExists() == true) {
-                logger.warn("Theme resource directory does not exist: $themeResourceDir")
-                return
-            }
+        if (themeResourceDir == null) {
+            logger.warn("Theme resource directory does not exist for resource root: $resourceRoot")
+            return
         }
         
         logger.info("Theme resource directory set: $themeResourceDir")
@@ -562,6 +558,26 @@ class ThemeManager : Disposable {
     companion object {
         @Volatile
         private var instance: ThemeManager? = null
+        
+        /**
+         * Get theme resource directory path
+         * @param resourceRoot Theme resource root directory
+         * @return Theme resource directory path, or null if directory doesn't exist
+         */
+        fun getThemeResourceDir(resourceRoot: String): Path? {
+            // Try first path: src/integrations/theme/default-themes
+            var themeDir = Paths.get(resourceRoot, "src", "integrations", "theme", "default-themes")
+            
+            if (themeDir.notExists()) {
+                // Try second path: integrations/theme/default-themes
+                themeDir = Paths.get(resourceRoot, "integrations", "theme", "default-themes")
+                if (themeDir.notExists()) {
+                    return null
+                }
+            }
+            
+            return themeDir
+        }
         
         /**
          * Get theme manager instance

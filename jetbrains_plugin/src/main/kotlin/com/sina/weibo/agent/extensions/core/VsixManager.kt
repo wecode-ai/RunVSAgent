@@ -6,6 +6,7 @@ package com.sina.weibo.agent.extensions.core
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.sina.weibo.agent.theme.ThemeManager.Companion.getThemeResourceDir
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -22,7 +23,7 @@ class VsixManager {
     
     companion object {
         private val LOG = Logger.getInstance(VsixManager::class.java)
-        private const val BASE_DIR = ".run-vs-agent"
+        private const val BASE_DIR = ".run-vs-agent/plugins"
         
         /**
          * Get VSIX manager instance
@@ -275,9 +276,14 @@ class VsixManager {
                 LOG.warn("Plugin themes directory not found, skipping themes copy")
                 return
             }
+
+            val integrationsThemeDir = getThemeResourceDir(extensionDir)
+            if (integrationsThemeDir == null) {
+                LOG.warn("Plugin themes directory not found, skipping themes copy")
+                return
+            }
             
             // Create integrations theme directory
-            val integrationsThemeDir = Paths.get(extensionDir, "src", "integrations", "theme", "default-themes")
             Files.createDirectories(integrationsThemeDir)
             
             // Copy theme files
