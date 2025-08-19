@@ -48,8 +48,7 @@ apply("genPlatform.gradle")
 ext {
     set("debugMode", project.findProperty("debugMode") ?: "none")
     set("debugResource", project.projectDir.resolve("../debug-resources").absolutePath)
-    // Support multiple extension types
-    set("supportedExtensions", listOf("roo-code", "cline"))
+    set("vscodePlugin", project.findProperty("vscodePlugin") ?: "roo-code")
 }
 
 project.afterEvaluate {
@@ -59,52 +58,21 @@ project.afterEvaluate {
 fun Sync.prepareSandbox() {
     // Set duplicate strategy to include files, with later sources taking precedence
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    // ---- Copy logging helpers ----
-    data class CopyPlan(val label: String, val src: File, val intoPath: String)
-    val copyPlans = mutableListOf<CopyPlan>()
-    fun plan(label: String, src: File, intoPath: String) {
-        copyPlans += CopyPlan(label, src, intoPath)
-    }
 
     if (ext.get("debugMode") == "idea") {
-        // Support multiple extensions in debug mode
-        val supportedExtensions = ext.get("supportedExtensions") as List<*>
-        supportedExtensions.forEach { extensionType ->
-            val srcThemes = File("${project.projectDir.absolutePath}/src/main/resources/themes/")
-            plan("themes -> debug-resources/${extensionType}", srcThemes, "${ext.get("debugResource")}/${extensionType}/src/integrations/theme/default-themes/")
-            from(srcThemes) {
-                into("${ext.get("debugResource")}/${extensionType}/src/integrations/theme/default-themes/")
-                into("${ext.get("debugResource")}/${extensionType}/integrations/theme/default-themes/")
-            }
+        from("${project.projectDir.absolutePath}/src/main/resources/themes/") {
+            into("${ext.get("debugResource")}/${ext.get("vscodePlugin")}/src/integrations/theme/default-themes/")
         }
         doLast {
-            val supportedExtensions = ext.get("supportedExtensions") as List<String>
-            supportedExtensions.forEach { extensionType ->
-                val vscodePluginDir = File("${ext.get("debugResource")}/${extensionType}")
-                vscodePluginDir.mkdirs()
-                File(vscodePluginDir, ".env").createNewFile()
-            }
-            // Log copy results (IDEA debug mode)
-            logger.lifecycle("==== Copy Report (debug: idea) ====")
-            copyPlans.forEach { p ->
-                val srcExists = p.src.exists()
-                val srcInfo = if (p.src.isDirectory) "dir" else "file"
-                logger.lifecycle("[PLAN] ${p.label}: src=${p.src} (exists=${srcExists}, type=${srcInfo}) -> into='${p.intoPath}'")
-                val destDir = File(destinationDir, p.intoPath)
-                val status = when {
-                    !srcExists -> "SKIPPED (source missing)"
-                    p.src.isFile -> if (File(destDir, p.src.name).exists()) "OK (file copied)" else "FAILED (file missing)"
-                    else -> {
-                        val hasFiles = destDir.exists() && destDir.walkTopDown().any { it.isFile }
-                        if (hasFiles) "OK (files present)" else "FAILED (no files)"
-                    }
-                }
-                logger.lifecycle("[RESULT] ${p.label}: ${status}; dest='${destDir}'")
-            }
+            val vscodePluginDir = File("${ext.get("debugResource")}/${ext.get("vscodePlugin")}")
+            vscodePluginDir.mkdirs()
+            File(vscodePluginDir, ".env").createNewFile()
         }
     } else {
-        // Support multiple extensions in production mode
-        val supportedExtensions = ext.get("supportedExtensions") as List<String>
+        val vscodePluginDir = File("./plugins/${ext.get("vscodePlugin")}")
+        if (!vscodePluginDir.exists()) {
+            throw IllegalStateException("missing plugin dir")
+        }
         val list = mutableListOf<String>()
         val depfile = File("prodDep.txt")
         if (!depfile.exists()) {
@@ -116,43 +84,19 @@ fun Sync.prepareSandbox() {
             }
         }
 
-        val srcDist = File("../extension_host/dist")
-        plan("extension_host dist", srcDist, "${intellij.pluginName.get()}/runtime/")
-        from(srcDist) { into("${intellij.pluginName.get()}/runtime/") }
+        from("../extension_host/dist") { into("${intellij.pluginName.get()}/runtime/") }
+        from("../extension_host/package.json") { into("${intellij.pluginName.get()}/runtime/") }
 
-        val srcPkg = File("../extension_host/package.json")
-        plan("extension_host package.json", srcPkg, "${intellij.pluginName.get()}/runtime/")
-        from(srcPkg) { into("${intellij.pluginName.get()}/runtime/") }
-
-        val srcNodeModules = File("../extension_host/node_modules")
-        plan("extension_host node_modules (filtered)", srcNodeModules, "${intellij.pluginName.get()}/node_modules/")
-        from(srcNodeModules) {
+        // First copy extension_host node_modules
+        from("../extension_host/node_modules") {
             into("${intellij.pluginName.get()}/node_modules/")
-            list.forEach { include(it) }
-        }
-
-        // Copy all supported extensions
-        supportedExtensions.forEach { extensionType ->
-            val vscodePluginDir = File("./plugins/${extensionType}")
-            if (!vscodePluginDir.exists()) {
-                // Create the extension directory if it doesn't exist
-                vscodePluginDir.mkdirs()
-                println("Created extension directory: ${vscodePluginDir.absolutePath}")
-            }
-
-            val srcExt = File("${vscodePluginDir.path}/extension")
-            plan("${extensionType} extension/", srcExt, "${intellij.pluginName.get()}/${extensionType}")
-            from(srcExt) {
-                into("${intellij.pluginName.get()}/${extensionType}")
-                if (srcExt.exists()) {
-                    include("**/*")
-                }
+            list.forEach {
+                include(it)
             }
         }
 
-        val srcThemes = File("src/main/resources/themes/")
-        plan("plugin themes", srcThemes, "${intellij.pluginName.get()}/themes/")
-        from(srcThemes) { into("${intellij.pluginName.get()}/themes/") }
+        from("${vscodePluginDir.path}/extension") { into("${intellij.pluginName.get()}/${ext.get("vscodePlugin")}") }
+        from("src/main/resources/themes/") { into("${intellij.pluginName.get()}/${ext.get("vscodePlugin")}/integrations/theme/default-themes/") }
 
         // The platform.zip file required for release mode is associated with the code in ../base/vscode, currently using version 1.100.0. If upgrading this code later
         // Need to modify the vscodeVersion value in gradle.properties, then execute the task named genPlatform, which will generate a new platform.zip file for submission
@@ -172,37 +116,13 @@ fun Sync.prepareSandbox() {
                 throw IllegalStateException("platform.zip file does not exist or is smaller than 1MB. This file is supported through git lfs and needs to be obtained through git lfs")
             }
 
-            val srcPlatformTxt = File(project.buildDir, "platform/platform.txt")
-            plan("platform.txt", srcPlatformTxt, "${intellij.pluginName.get()}/")
-            from(srcPlatformTxt) { into("${intellij.pluginName.get()}/") }
+            from(File(project.buildDir, "platform/platform.txt")) { into("${intellij.pluginName.get()}/") }
             // Copy platform node_modules last to ensure it takes precedence over extension_host node_modules
-            val srcPlatformNodeModules = File(project.buildDir, "platform/node_modules")
-            plan("platform node_modules", srcPlatformNodeModules, "${intellij.pluginName.get()}/node_modules")
-            from(srcPlatformNodeModules) { into("${intellij.pluginName.get()}/node_modules") }
+            from(File(project.buildDir, "platform/node_modules")) { into("${intellij.pluginName.get()}/node_modules") }
         }
 
         doLast {
-            // Create .env files for all supported extensions
-            supportedExtensions.forEach { extensionType ->
-                File("${destinationDir}/${intellij.pluginName.get()}/${extensionType}/.env").createNewFile()
-            }
-            // Log copy results (production modes)
-            logger.lifecycle("==== Copy Report (mode=${ext.get("debugMode")}) ====")
-            copyPlans.forEach { p ->
-                val srcExists = p.src.exists()
-                val srcInfo = if (p.src.isDirectory) "dir" else "file"
-                logger.lifecycle("[PLAN] ${p.label}: src=${p.src} (exists=${srcExists}, type=${srcInfo}) -> into='${p.intoPath}'")
-                val destDir = File(destinationDir, p.intoPath)
-                val status = when {
-                    !srcExists -> "SKIPPED (source missing)"
-                    p.src.isFile -> if (File(destDir, p.src.name).exists()) "OK (file copied)" else "FAILED (file missing)"
-                    else -> {
-                        val hasFiles = destDir.exists() && destDir.walkTopDown().any { it.isFile }
-                        if (hasFiles) "OK (files present)" else "FAILED (no files)"
-                    }
-                }
-                logger.lifecycle("[RESULT] ${p.label}: ${status}; dest='${destDir}'")
-            }
+            File("${destinationDir}/${intellij.pluginName.get()}/${ext.get("vscodePlugin")}/.env").createNewFile()
         }
     }
 }
@@ -314,7 +234,7 @@ detekt {
     config.setFrom(file("detekt.yml"))
     buildUponDefaultConfig = true
     allRules = false
-    
+
     reports {
         html.required.set(true)
         xml.required.set(true)
