@@ -16,7 +16,7 @@ import com.intellij.openapi.project.Project
  * @param commandId The identifier of the command to execute
  * @param project The current project context
  */
-fun executeCommand(commandId: String, project: Project?, vararg args: Any?) {
+fun executeCommand(commandId: String, project: Project?, vararg args: Any?, hasArgs: Boolean? = true) {
     val logger = com.intellij.openapi.diagnostic.Logger.getInstance("VSCodeCommandActions")
     logger.info("🔍 executeCommand called with commandId: $commandId")
 
@@ -45,7 +45,7 @@ fun executeCommand(commandId: String, project: Project?, vararg args: Any?) {
         }
 
         logger.info("🔍 Executing command via RPC: $commandId, argsCount=${args.size}")
-        if (args.isNotEmpty()) {
+        if (hasArgs == true) {
             proxy.executeContributedCommand(commandId, args)
         } else {
             proxy.executeContributedCommand(commandId)

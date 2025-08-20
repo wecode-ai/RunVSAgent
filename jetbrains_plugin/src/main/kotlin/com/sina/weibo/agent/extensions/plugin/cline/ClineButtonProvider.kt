@@ -71,7 +71,7 @@ class ClineButtonProvider : ExtensionButtonProvider {
 
                             if (latestWebView != null) {
                                 logger.info("✅ WebView instances available, executing command...")
-                                executeCommand("cline.plusButtonClicked", project)
+                                executeCommand("cline.plusButtonClicked", project, hasArgs = false)
                                 logger.info("✅ Command executed successfully")
                             } else {
                                 logger.warn("⚠️ No WebView instances available")
@@ -108,7 +108,7 @@ class ClineButtonProvider : ExtensionButtonProvider {
 
             override fun actionPerformed(e: AnActionEvent) {
                 Logger.getInstance(this::class.java).info("Mcp button clicked")
-                executeCommand("cline.mcpButtonClicked", e.project)
+                executeCommand("cline.mcpButtonClicked", e.project, hasArgs = false)
             }
         }
     }
@@ -126,7 +126,7 @@ class ClineButtonProvider : ExtensionButtonProvider {
             
             override fun actionPerformed(e: AnActionEvent) {
                 Logger.getInstance(this::class.java).info("History button clicked")
-                executeCommand("cline.historyButtonClicked", e.project)
+                executeCommand("cline.historyButtonClicked", e.project, hasArgs = false)
             }
         }
     }
@@ -144,7 +144,7 @@ class ClineButtonProvider : ExtensionButtonProvider {
 
             override fun actionPerformed(e: AnActionEvent) {
                 Logger.getInstance(this::class.java).info("Account button clicked")
-                executeCommand("cline.accountButtonClicked", e.project)
+                executeCommand("cline.accountButtonClicked", e.project, hasArgs = false)
             }
         }
     }
@@ -162,7 +162,7 @@ class ClineButtonProvider : ExtensionButtonProvider {
             
             override fun actionPerformed(e: AnActionEvent) {
                 Logger.getInstance(this::class.java).info("Settings button clicked")
-                executeCommand("cline.settingsButtonClicked", e.project)
+                executeCommand("cline.settingsButtonClicked", e.project, hasArgs = false)
             }
         }
     }

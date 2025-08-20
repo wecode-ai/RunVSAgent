@@ -13,6 +13,7 @@ import com.sina.weibo.agent.extensions.config.ExtensionProvider
 import com.sina.weibo.agent.extensions.common.ExtensionChangeListener
 import com.sina.weibo.agent.extensions.plugin.cline.ClineButtonProvider
 import com.sina.weibo.agent.extensions.plugin.roo.RooCodeButtonProvider
+import com.sina.weibo.agent.extensions.ui.buttons.ExtensionButtonProvider
 
 /**
  * Dynamic extension actions group that shows different buttons based on the current extension type.
@@ -28,9 +29,11 @@ class DynamicExtensionActionsGroup : DefaultActionGroup(), DumbAware, ActionUpda
      *
      * @param e The action event containing context information
      */
+    private var cachedButtonProvider: ExtensionButtonProvider? = null
+    private var cachedExtensionId: String? = null
+    private var cachedActions: List<AnAction>? = null
+    
     override fun update(e: AnActionEvent) {
-        removeAll()
-        
         val project = e.getData(CommonDataKeys.PROJECT)
         if (project == null) {
             e.presentation.isVisible = false
@@ -42,9 +45,22 @@ class DynamicExtensionActionsGroup : DefaultActionGroup(), DumbAware, ActionUpda
             val currentProvider = extensionManager.getCurrentProvider()
             
             if (currentProvider != null) {
-                loadDynamicActions(currentProvider, project)
-                e.presentation.isVisible = true
-                logger.debug("Dynamic actions loaded for extension: ${currentProvider.getExtensionId()}")
+                val extensionId = currentProvider.getExtensionId()
+                
+                // 检查是否需要更新缓存
+                if (cachedExtensionId != extensionId || cachedActions == null) {
+                    updateCachedActions(currentProvider, project)
+                }
+                
+                // 使用缓存的actions
+                if (cachedActions != null) {
+                    removeAll()
+                    cachedActions!!.forEach { action ->
+                        add(action)
+                    }
+                    e.presentation.isVisible = true
+                    logger.debug("Using cached actions for extension: $extensionId")
+                }
             } else {
                 e.presentation.isVisible = false
                 logger.debug("No current extension provider, hiding dynamic actions")
@@ -52,6 +68,29 @@ class DynamicExtensionActionsGroup : DefaultActionGroup(), DumbAware, ActionUpda
         } catch (exception: Exception) {
             logger.warn("Failed to load dynamic actions", exception)
             e.presentation.isVisible = false
+        }
+    }
+    
+    private fun updateCachedActions(provider: ExtensionProvider, project: Project) {
+        val extensionId = provider.getExtensionId()
+        
+        // 创建新的ButtonProvider实例（仅在扩展类型改变时）
+        val buttonProvider = when (extensionId) {
+            "roo-code" -> RooCodeButtonProvider()
+            "cline" -> ClineButtonProvider()
+            else -> null
+        }
+        
+        if (buttonProvider != null) {
+            // 创建并缓存actions
+            val actions = buttonProvider.getButtons(project)
+            
+            // 更新缓存
+            cachedButtonProvider = buttonProvider
+            cachedExtensionId = extensionId
+            cachedActions = actions
+            
+            logger.debug("Updated cached actions for extension: $extensionId, count: ${actions.size}")
         }
     }
     
