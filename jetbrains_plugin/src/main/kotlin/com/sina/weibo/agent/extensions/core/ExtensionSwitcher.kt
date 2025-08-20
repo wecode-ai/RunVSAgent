@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Weibo, Inc.
+//
+// SPDX-License-Identifier: Apache-2.0
+
 package com.sina.weibo.agent.extensions.core
 
 import com.intellij.openapi.components.Service
@@ -21,7 +25,8 @@ import java.util.concurrent.CompletableFuture
 
 /**
  * Extension switcher service
- * Handles runtime switching between different extension providers
+ * Handles switching between different extension providers
+ * Note: Switching now only saves configuration and takes effect on next startup
  */
 @Service(Service.Level.PROJECT)
 class ExtensionSwitcher(private val project: Project) {
@@ -82,7 +87,7 @@ class ExtensionSwitcher(private val project: Project) {
     /**
      * Switch to a different extension provider
      * @param extensionId Target extension ID
-     * @param forceRestart Whether to force restart the extension process
+     * @param forceRestart Whether to force restart the extension process (ignored in new mode)
      * @return Future that completes when switching is done
      */
     fun switchExtension(extensionId: String, forceRestart: Boolean = false): CompletableFuture<Boolean> {
@@ -110,7 +115,7 @@ class ExtensionSwitcher(private val project: Project) {
             return CompletableFuture.completedFuture(true)
         }
 
-        LOG.info("Starting extension switch from ${currentProvider?.getExtensionId()} to $extensionId")
+        LOG.info("Starting extension switch from ${currentProvider?.getExtensionId()} to $extensionId (will take effect on next startup)")
 
         // Check if required services are available
         if (!checkServicesAvailability()) {
@@ -139,119 +144,44 @@ class ExtensionSwitcher(private val project: Project) {
 
     /**
      * Perform the actual extension switching
+     * Note: In new mode, this only saves configuration and updates UI state
      */
     private suspend fun performExtensionSwitch(extensionId: String, forceRestart: Boolean): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                // Step 1: Stop current extension process
-                stopCurrentExtension()
-
-                // Step 2: Update extension manager
+                // Step 1: Update extension manager (this will save configuration)
                 updateExtensionManager(extensionId)
 
-                // Step 3: Restart extension process
-                restartExtensionProcess(forceRestart)
-
-                // Step 4: Update button configuration
+                // Step 2: Update button configuration
                 updateButtonConfiguration(extensionId)
 
-                // Step 5: Notify UI components
+                // Step 3: Notify UI components
                 notifyExtensionChanged(extensionId)
 
-                LOG.info("Extension switching completed successfully: $extensionId")
+                LOG.info("Extension switching configuration saved successfully: $extensionId (will take effect on next startup)")
                 true
             } catch (e: Exception) {
                 LOG.error("Failed to switch extension: ${e.message}", e)
-                // Try to restore previous extension
-                try {
-                    restorePreviousExtension()
-                } catch (restoreException: Exception) {
-                    LOG.error("Failed to restore previous extension", restoreException)
-                }
                 false
             }
         }
     }
 
     /**
-     * Stop current extension process
-     */
-    private suspend fun stopCurrentExtension() {
-        withContext(Dispatchers.IO) {
-            try {
-                // Get plugin service to access process manager
-                val pluginService = project.getService(WecoderPluginService::class.java)
-
-                // Stop extension process
-                pluginService.getProcessManager().stop()
-
-                // Stop socket servers
-                pluginService.getSocketServer().stop()
-
-                // Get UDS server if available
-                val udsServer = project.getService(ExtensionUnixDomainSocketServer::class.java)
-                udsServer?.stop()
-
-                LOG.info("Current extension process stopped")
-            } catch (e: Exception) {
-                LOG.warn("Error stopping current extension", e)
-            }
-        }
-    }
-
-    /**
      * Update extension manager with new provider
+     * This will save the configuration but not restart the process
      */
     private suspend fun updateExtensionManager(extensionId: String) {
         withContext(Dispatchers.Main) {
             val extensionManager = ExtensionManager.getInstance(project)
 
-            // Set new extension provider
-            extensionManager.setCurrentProvider(extensionId)
-
-            // Initialize new provider
-            extensionManager.initializeCurrentProvider()
-
-            LOG.info("Extension manager updated with new provider: $extensionId")
-        }
-    }
-
-    /**
-     * Restart extension process
-     */
-    private suspend fun restartExtensionProcess(forceRestart: Boolean) {
-        // forceRestart parameter is reserved for future use
-        // Currently all restarts are forced
-        // TODO: Implement conditional restart logic based on forceRestart parameter
-        withContext(Dispatchers.IO) {
-            try {
-                val pluginService = project.getService(WecoderPluginService::class.java)
-                val projectPath = project.basePath ?: ""
-
-                // Start socket server
-                val server: ISocketServer = if (SystemInfo.isWindows) {
-                    pluginService.getSocketServer()
-                } else {
-                    pluginService.getSocketServer()
-                }
-
-                val portOrPath = server.start(projectPath)
-                if (!ExtensionUtils.isValidPortOrPath(portOrPath)) {
-                    throw IllegalStateException("Failed to start socket server")
-                }
-
-                LOG.info("Socket server restarted on: $portOrPath")
-
-                // Start extension process
-                if (!pluginService.getProcessManager().start(portOrPath)) {
-                    throw IllegalStateException("Failed to start extension process")
-                }
-
-                LOG.info("Extension process restarted successfully")
-            } catch (e: Exception) {
-                LOG.error("Error restarting extension process", e)
-                throw e
+            // Set new extension provider (this will save configuration)
+            val success = extensionManager.setCurrentProvider(extensionId)
+            if (!success) {
+                throw IllegalStateException("Failed to set extension provider: $extensionId")
             }
+
+            LOG.info("Extension manager updated with new provider: $extensionId (configuration saved)")
         }
     }
 
@@ -292,26 +222,6 @@ class ExtensionSwitcher(private val project: Project) {
             // Notify other components
             project.messageBus.syncPublisher(ExtensionChangeListener.EXTENSION_CHANGE_TOPIC)
                 .onExtensionChanged(extensionId)
-        }
-    }
-
-    /**
-     * Restore previous extension on failure
-     */
-    private suspend fun restorePreviousExtension() {
-        withContext(Dispatchers.Main) {
-            try {
-                LOG.info("Attempting to restore previous extension")
-
-                // Note: Previous extension restoration not implemented yet
-                // For now, we'll just log that restoration was attempted
-                LOG.info("Extension restoration attempted but not implemented yet")
-
-                // TODO: Implement previous extension tracking in ExtensionConfigurationManager
-                // This would require storing the previous extension ID when switching
-            } catch (e: Exception) {
-                LOG.error("Failed to restore previous extension", e)
-            }
         }
     }
 

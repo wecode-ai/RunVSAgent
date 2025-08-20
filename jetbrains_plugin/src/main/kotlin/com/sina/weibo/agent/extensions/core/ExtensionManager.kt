@@ -158,6 +158,7 @@ class ExtensionManager(private val project: Project) {
     
     /**
      * Set current extension provider
+     * Note: This only updates the configuration and UI state, does not restart the extension process
      */
     fun setCurrentProvider(extensionId: String): Boolean {
         val provider = extensionProviders[extensionId]
@@ -165,7 +166,7 @@ class ExtensionManager(private val project: Project) {
             val oldProvider = currentProvider
             currentProvider = provider
             
-            // Initialize new provider
+            // Initialize new provider (but don't restart the process)
             provider.initialize(project)
             
             // Update configuration
@@ -175,30 +176,24 @@ class ExtensionManager(private val project: Project) {
             } catch (e: Exception) {
                 LOG.warn("Failed to update configuration manager", e)
             }
-                    try {
-                        val buttonManager = DynamicButtonManager.getInstance(project)
-                        buttonManager.setCurrentExtension(extensionId)
-                    } catch (e: Exception) {
-                        LOG.warn("Failed to update button configuration", e)
-                    }
-                    
-                    // Notify listeners
-                    try {
-                        project.messageBus.syncPublisher(ExtensionChangeListener.EXTENSION_CHANGE_TOPIC)
-                            .onExtensionChanged(extensionId)
-                    } catch (e: Exception) {
-                        LOG.warn("Failed to notify extension change listeners", e)
-                    }
-                    
-                    // Update dynamic button manager
-                    try {
-                        val buttonManager = DynamicButtonManager.getInstance(project)
-                        buttonManager.setCurrentExtension(extensionId)
-                    } catch (e: Exception) {
-                        LOG.warn("Failed to update button configuration", e)
-                    }
-                    
-            LOG.info("Switched to extension provider: $extensionId (was: ${oldProvider?.getExtensionId()})")
+            
+            // Update button configuration
+            try {
+                val buttonManager = DynamicButtonManager.getInstance(project)
+                buttonManager.setCurrentExtension(extensionId)
+            } catch (e: Exception) {
+                LOG.warn("Failed to update button configuration", e)
+            }
+            
+            // Notify listeners about configuration change
+            try {
+                project.messageBus.syncPublisher(ExtensionChangeListener.EXTENSION_CHANGE_TOPIC)
+                    .onExtensionChanged(extensionId)
+            } catch (e: Exception) {
+                LOG.warn("Failed to notify extension change listeners", e)
+            }
+            
+            LOG.info("Configuration updated to extension provider: $extensionId (was: ${oldProvider?.getExtensionId()}) - will take effect on next startup")
             return true
         } else {
             LOG.warn("Extension provider not found or not available: $extensionId")

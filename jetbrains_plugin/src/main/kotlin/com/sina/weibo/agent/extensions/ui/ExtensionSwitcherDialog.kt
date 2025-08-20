@@ -123,7 +123,7 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
         detailsPanel.add(Box.createVerticalStrut(16))
         detailsPanel.add(switchButton)
         detailsPanel.add(Box.createVerticalStrut(8))
-        detailsPanel.add(setAsDefaultCheckBox)
+//        detailsPanel.add(setAsDefaultCheckBox)
 
         rightPanel.add(detailsPanel, BorderLayout.CENTER)
 
@@ -186,21 +186,76 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
         }
     }
 
-    private fun statusText(item: ExtensionListItem): String = when {
-        item.isCurrent -> "Current"
-        !item.isAvailable -> "Uninstalled"
-        item.resourceStatus.projectResourceExists || item.resourceStatus.vsixResourceExists -> "Installed"
-        else -> "Built-in"
-    }
+    private fun statusText(item: ExtensionListItem): String = getExtensionStatus(item).status
 
-    private fun statusColor(item: ExtensionListItem): Color = when {
-        item.isCurrent -> JBColor.GREEN
-        !item.isAvailable -> JBColor.RED
-        item.resourceStatus.projectResourceExists || item.resourceStatus.vsixResourceExists -> JBColor.BLUE
+    private fun statusColor(item: ExtensionListItem): Color = when (getExtensionStatus(item).status) {
+        "Current" -> JBColor.GREEN
+        "Next Startup" -> JBColor.BLUE
+        "Uninstalled" -> JBColor.RED
+        "Installed" -> JBColor.BLUE
         else -> JBColor.ORANGE
     }
 
     // === Behavior ============================================================================
+    
+    /**
+     * Get extension status information
+     */
+    private data class ExtensionStatus(
+        val status: String,
+        val displayText: String,
+        val icon: String,
+        val buttonText: String
+    )
+    
+    private fun getExtensionStatus(item: ExtensionListItem): ExtensionStatus = when {
+        item.isCurrent -> ExtensionStatus(
+            status = "Current",
+            displayText = "🔄 Currently Running",
+            icon = "🔄",
+            buttonText = "Reload"
+        )
+        isConfiguredForNextStartup(item.id) -> ExtensionStatus(
+            status = "Next Startup", 
+            displayText = "⏭️  Next Startup",
+            icon = "⏭️",
+            buttonText = "Will Activate Next Startup"
+        )
+        !item.isAvailable -> ExtensionStatus(
+            status = "Uninstalled",
+            displayText = "Uninstalled",
+            icon = "",
+            buttonText = "Switch"
+        )
+        item.resourceStatus.projectResourceExists || item.resourceStatus.vsixResourceExists -> ExtensionStatus(
+            status = "Installed",
+            displayText = "✅ Installed",
+            icon = "✅",
+            buttonText = "Switch"
+        )
+        else -> ExtensionStatus(
+            status = "Built-in",
+            displayText = "📦 Built-in",
+            icon = "📦",
+            buttonText = "Switch"
+        )
+    }
+    
+    /**
+     * Check if an extension is configured for next startup
+     */
+    private fun isConfiguredForNextStartup(extensionId: String): Boolean {
+        return extensionId == configManager.getCurrentExtensionId()
+    }
+    
+    /**
+     * Check if an extension is currently running
+     */
+    private fun isCurrentlyRunning(extensionId: String): Boolean {
+        val currentProvider = extensionManager.getCurrentProvider()
+        return currentProvider?.getExtensionId() == extensionId
+    }
+    
     private fun loadExtensions() {
         extensionListItems.clear()
         val current = extensionManager.getCurrentProvider()
@@ -213,7 +268,7 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
                 displayName = p.getDisplayName(),
                 description = p.getDescription(),
                 isAvailable = p.isAvailable(project),
-                isCurrent = p == current,
+                isCurrent = isCurrentlyRunning(p.getExtensionId()),
                 resourceStatus = rs
             )
             extensionListItems.add(item)
@@ -241,11 +296,20 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
         }
 
         descriptionLabel.text = item.description
-        statusLabel.text = "Status: ${statusText(item)}"
         
-        val canSwitch = item.isAvailable && !item.isCurrent && !isSwitching
+        // Enhanced status display
+        val extensionStatus = getExtensionStatus(item)
+        statusLabel.text = "Status: ${extensionStatus.displayText}"
+        
+        // Prevent switching if extension is already configured for next startup
+        val canSwitch = item.isAvailable && 
+                       !item.isCurrent && 
+                       !isConfiguredForNextStartup(item.id) && 
+                       !isSwitching
         switchButton.isEnabled = canSwitch
-        switchButton.text = if (item.isCurrent) "Reload" else "Switch"
+        
+        // Update button text based on state
+        switchButton.text = extensionStatus.buttonText
         
         setAsDefaultCheckBox.isEnabled = item.isAvailable && !item.isCurrent
     }
@@ -268,13 +332,26 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
         val currentProvider = extensionManager.getCurrentProvider()
         val currentId = currentProvider?.getExtensionId()
         
+        // Prevent switching if already configured for next startup
+        if (isConfiguredForNextStartup(target)) {
+            Messages.showInfoMessage(
+                "Extension '$target' is already configured to activate on next startup.\n\n" +
+                "No action needed.",
+                "Already Configured"
+            )
+            return
+        }
+        
         if (currentId == target) {
             performReload(target)
             return
         }
         
         val confirm = Messages.showYesNoDialog(
-            "Are you sure you want to switch from '$currentId' to '$target'?\n\nThis will restart the extension process and may cause brief interruption.",
+            "Are you sure you want to switch from '$currentId' to '$target'?\n\n" +
+            "⚠️  IMPORTANT: The extension will take effect on the next startup of IntelliJ IDEA.\n" +
+            "The current session will continue using the existing extension.\n\n" +
+            "Do you want to continue?",
             "Confirm Extension Switch",
             "Switch",
             "Cancel",
@@ -282,7 +359,6 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
         )
         
         if (confirm == Messages.YES) {
-            configManager.setCurrentExtensionId(target)
             if (setAsDefaultCheckBox.isSelected) {
                 // TODO: Persist as project default
             }
@@ -291,6 +367,16 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
     }
 
     private fun performReload(extensionId: String) {
+        // Prevent reload if extension is already configured for next startup
+        if (isConfiguredForNextStartup(extensionId)) {
+            Messages.showInfoMessage(
+                "Extension '$extensionId' is already configured to activate on next startup.\n\n" +
+                "No reload action needed.",
+                "Already Configured"
+            )
+            return
+        }
+        
         isSwitching = true
         setSwitchingUI(true)
         
@@ -299,11 +385,15 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
                 isSwitching = false
                 setSwitchingUI(false)
                 if (success) {
-                    Messages.showInfoMessage("Extension reloaded successfully: $extensionId", "Reload Complete")
+                    Messages.showInfoMessage(
+                        "Extension configuration updated successfully: $extensionId\n\n" +
+                        "Note: The extension will take effect on the next startup of IntelliJ IDEA.",
+                        "Configuration Updated"
+                    )
                     loadExtensions()
                 } else {
                     val errorMsg = err?.message ?: "Unknown error occurred"
-                    Messages.showErrorDialog("Failed to reload extension: $errorMsg", "Reload Failed")
+                    Messages.showErrorDialog("Failed to update extension configuration: $errorMsg", "Update Failed")
                 }
             }
         }
@@ -318,11 +408,19 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
                 isSwitching = false
                 setSwitchingUI(false)
                 if (success) {
-                    Messages.showInfoMessage("Successfully switched to extension: $target", "Extension Switch Complete")
-                    close(OK_EXIT_CODE)
+                    Messages.showInfoMessage(
+                        "Extension switch configuration saved successfully!\n\n" +
+                        "✅ Extension: $target\n" +
+                        "⚠️  The extension will take effect on the next startup of IntelliJ IDEA.\n" +
+                        "🔄 Please restart IntelliJ IDEA to activate the new extension.",
+                        "Extension Switch Complete"
+                    )
+                    // Refresh the UI to show the new configuration
+                    loadExtensions()
+                    // Don't close the dialog, let user see the updated state
                 } else {
                     val errorMsg = err?.message ?: "Unknown error occurred"
-                    Messages.showErrorDialog("Failed to switch extension: $errorMsg", "Extension Switch Failed")
+                    Messages.showErrorDialog("Failed to save extension switch configuration: $errorMsg", "Configuration Save Failed")
                     loadExtensions()
                 }
             }
@@ -335,11 +433,11 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
         refreshButton.isEnabled = !switching
         
         if (switching) {
-            switchButton.text = "Switching..."
+            switchButton.text = "Saving Configuration..."
         } else {
             val selected = selectedExtensionId?.let { id -> extensionListItems.find { it.id == id } }
             if (selected != null) {
-                switchButton.text = if (selected.isCurrent) "Reload" else "Switch"
+                switchButton.text = getExtensionStatus(selected).buttonText
             } else {
                 switchButton.text = "Switch"
             }
@@ -349,9 +447,9 @@ class ExtensionSwitcherDialog(private val project: Project) : DialogWrapper(proj
     override fun doCancelAction() {
         if (isSwitching) {
             val result = Messages.showYesNoDialog(
-                "Extension switching is in progress. Are you sure you want to cancel?",
-                "Cancel Extension Switch",
-                "Cancel Switch",
+                "Configuration saving is in progress. Are you sure you want to cancel?",
+                "Cancel Configuration Save",
+                "Cancel Save",
                 "Continue Waiting",
                 Messages.getQuestionIcon()
             )
