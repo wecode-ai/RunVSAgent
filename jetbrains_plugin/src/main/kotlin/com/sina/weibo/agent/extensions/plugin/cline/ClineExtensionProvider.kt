@@ -40,11 +40,38 @@ class ClineExtensionProvider : ExtensionProvider {
             // This allows cline to work independently
         }
     }
-    
+
     override fun isAvailable(project: Project): Boolean {
-        // Always return true since we now support uploading VSIX files after startup
-        // The actual resource availability will be checked when needed
-        return true
+        // Check if roo-code extension files exist
+        val extensionConfig = ExtensionConfiguration.getInstance(project)
+        val config = extensionConfig.getConfig(ExtensionType.CLINE)
+
+        // First check project paths
+        val homeDir = System.getProperty("user.home")
+        val possiblePaths = listOf(
+            "$homeDir/.run-vs-agent/plugins/${config.codeDir}"
+        )
+
+        if (possiblePaths.any { File(it).exists() }) {
+            return true
+        }
+
+        // Then check plugin resources (for built-in extensions)
+        try {
+            val pluginResourcePath = PluginResourceUtil.getResourcePath(
+                PluginConstants.PLUGIN_ID,
+                config.codeDir
+            )
+            if (pluginResourcePath != null && File(pluginResourcePath).exists()) {
+                return true
+            }
+        } catch (e: Exception) {
+            // Ignore exceptions when checking plugin resources
+        }
+
+        // For development/testing, always return true if we can't find the files
+        // This allows the extension to work even without the actual extension files
+        return false
     }
     
     override fun getConfiguration(project: Project): ExtensionMetadata {

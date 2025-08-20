@@ -38,20 +38,16 @@ class RooExtensionProvider : ExtensionProvider {
     override fun isAvailable(project: Project): Boolean {
         // Check if roo-code extension files exist
         val extensionConfig = ExtensionConfiguration.getInstance(project)
-        val config = extensionConfig.getCurrentConfig()
+        val config = extensionConfig.getConfig(ExtensionType.ROO_CODE)
         
         // First check project paths
-        val projectPath = project.basePath
-        if (projectPath != null) {
-            val possiblePaths = listOf(
-                "$projectPath/${config.codeDir}",
-                "$projectPath/../${config.codeDir}",
-                "$projectPath/../../${config.codeDir}"
-            )
-            
-            if (possiblePaths.any { File(it).exists() }) {
-                return true
-            }
+        val homeDir = System.getProperty("user.home")
+        val possiblePaths = listOf(
+            "$homeDir/.run-vs-agent/plugins/${config.codeDir}"
+        )
+
+        if (possiblePaths.any { File(it).exists() }) {
+            return true
         }
         
         // Then check plugin resources (for built-in extensions)
@@ -69,7 +65,7 @@ class RooExtensionProvider : ExtensionProvider {
         
         // For development/testing, always return true if we can't find the files
         // This allows the extension to work even without the actual extension files
-        return true
+        return false
     }
     
     override fun getConfiguration(project: Project): ExtensionMetadata {

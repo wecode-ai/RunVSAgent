@@ -77,11 +77,11 @@ class WecoderPlugin : StartupActivity.DumbAware {
         )
 
         try {
-            // 1. 首先初始化配置管理器
+            // 1. First initialize configuration manager
             val configManager = ExtensionConfigurationManager.getInstance(project)
             configManager.initialize()
             
-            // 2. 等待配置加载完成
+            // 2. Wait for configuration loading to complete
             var retryCount = 0
             val maxRetries = 10
             while (!configManager.isConfigurationLoaded() && retryCount < maxRetries) {
@@ -89,54 +89,54 @@ class WecoderPlugin : StartupActivity.DumbAware {
                 retryCount++
             }
             
-            // 3. 验证配置有效性
+            // 3. Validate configuration validity
             if (!canProceedWithInitialization(configManager)) {
-                // 检查是否允许自动创建默认配置（通过系统属性控制）
+                // Check if auto-creation of default configuration is allowed (controlled by system property)
                 val allowAutoCreate = System.getProperty("runvsagent.auto.create.config", "false").toBoolean()
                 if (allowAutoCreate) {
                     LOG.info("Auto-creation of default configuration is enabled, attempting to create...")
                     configManager.createDefaultConfiguration()
                     
-                    // 再次验证配置
+                    // Validate configuration again
                     if (canProceedWithInitialization(configManager)) {
                         LOG.info("Default configuration created successfully, continuing initialization")
                     } else {
                         LOG.warn("Failed to create valid configuration, plugin initialization paused")
                         LOG.warn("Please manually create or fix ${PluginConstants.ConfigFiles.MAIN_CONFIG_FILE} file")
                         LOG.warn("Then restart the IDE or reload the project to continue")
-                        return // 暂停初始化
+                        return // Pause initialization
                     }
                 } else {
-                    // 不自动创建默认配置，真正暂停初始化
+                    // Don't auto-create default configuration, truly pause initialization
                     LOG.warn("Plugin initialization paused due to invalid configuration")
                     LOG.warn("To enable auto-creation of default configuration, set system property: -Drunvsagent.auto.create.config=true")
                     LOG.warn("Or manually create/fix ${PluginConstants.ConfigFiles.MAIN_CONFIG_FILE} file")
                     LOG.warn("Then restart the IDE or reload the project to continue")
-                    return // 真正暂停初始化
+                    return // Truly pause initialization
                 }
             }
             
-            // 4. 只有在配置有效时才初始化ExtensionManager
+            // 4. Only initialize ExtensionManager when configuration is valid
             val configuredExtensionId = configManager.getCurrentExtensionId()
             if (configuredExtensionId != null) {
                 val extensionManager = ExtensionManager.getInstance(project)
-                extensionManager.initialize(configuredExtensionId) // 传入配置的extensionId
+                extensionManager.initialize(configuredExtensionId) // Pass configured extensionId
                 
-                // 初始化当前extension provider
+                // Initialize current extension provider
                 extensionManager.initializeCurrentProvider()
                 
-                // 5. 继续其他初始化...
+                // 5. Continue with other initialization...
                 val pluginService = getInstance(project)
                 pluginService.initialize(project)
                 
-                // 初始化WebViewManager并注册到project Disposer
+                // Initialize WebViewManager and register to project Disposer
                 val webViewManager = project.getService(WebViewManager::class.java)
                 Disposer.register(project, webViewManager)
                 
-                // 启动配置监控
+                // Start configuration monitoring
                 startConfigurationMonitoring(project, configManager)
                 
-                // 注册项目级资源清理
+                // Register project-level resource cleanup
                 Disposer.register(project, Disposable {
                     LOG.info("Disposing RunVSAgent plugin for project: ${project.name}")
                     pluginService.dispose()
@@ -225,7 +225,6 @@ class WecoderPlugin : StartupActivity.DumbAware {
 enum class DEBUG_MODE {
     ALL,    // All debug modes
     IDEA,   // Only IDEA plugin debug
-    RELEASE,   // Only IDEA plugin debug
     NONE;   // Debug not enabled
     
     companion object {
@@ -238,7 +237,6 @@ enum class DEBUG_MODE {
             return when (value.lowercase()) {
                 "all" -> ALL
                 "idea" -> IDEA
-                "release" -> RELEASE
                 "true" -> ALL  // backward compatibility
                 else -> NONE
             }

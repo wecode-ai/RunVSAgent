@@ -45,7 +45,12 @@ fun executeCommand(commandId: String, project: Project?, vararg args: Any?) {
         }
 
         logger.info("🔍 Executing command via RPC: $commandId, argsCount=${args.size}")
-        proxy.executeContributedCommand(commandId)
+        if (args.isNotEmpty()) {
+            proxy.executeContributedCommand(commandId, args)
+        } else {
+            proxy.executeContributedCommand(commandId)
+        }
+
         logger.info("✅ Command sent to Extension Host: $commandId")
 
     } catch (e: Exception) {

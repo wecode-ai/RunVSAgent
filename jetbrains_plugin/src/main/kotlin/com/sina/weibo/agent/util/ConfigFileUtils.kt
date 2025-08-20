@@ -13,6 +13,12 @@ import java.io.IOException
  * Provides unified methods for working with configuration files
  */
 object ConfigFileUtils {
+
+    fun getCurrentExtensionId(): String? {
+        val properties = loadMainConfig()
+        val currentExtensionId = properties.getProperty(PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY)
+        return currentExtensionId
+    }
     
     /**
      * Ensure configuration directory exists

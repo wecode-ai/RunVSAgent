@@ -109,8 +109,6 @@ sealed class SerializedRequestArguments {
  * Corresponds to MessageIO in VSCode
  */
 object MessageIO {
-
-    private val LOG = Logger.getInstance(MessageIO::class.java)
     /**
      * Check whether to use mixed argument serialization
      */
@@ -214,9 +212,6 @@ object MessageIO {
             method = method.substring(1)
         }
         val argsJson = buff.readLongString()
-
-        LOG.info("deserializeRequestJSONArgs: $argsJson")
-        
         val gson = Gson()
         val listType = object : TypeToken<List<Any?>>() {}.type
         val args = gson.fromJson<List<Any?>>(argsJson, listType)

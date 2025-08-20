@@ -80,7 +80,7 @@ class ExtensionConfigurationManager(private val project: Project) {
      */
     fun getConfigurationError(): String? {
         return if (isConfigurationLoaded && !isConfigurationValid) {
-            val extensionId = currentExtensionId // 创建局部变量避免并发问题
+            val extensionId = currentExtensionId // Create local variable to avoid concurrency issues
             when {
                 extensionId == null -> "No extension type configured. Please set '${PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY}' in ${PluginConstants.ConfigFiles.MAIN_CONFIG_FILE} file"
                 extensionId.isBlank() -> "Extension type is empty. Please set a valid value for '${PluginConstants.ConfigFiles.EXTENSION_TYPE_KEY}' in ${PluginConstants.ConfigFiles.MAIN_CONFIG_FILE} file"
@@ -97,7 +97,7 @@ class ExtensionConfigurationManager(private val project: Project) {
             append("Configuration Status: ")
             if (isConfigurationLoaded) {
                 if (isConfigurationValid) {
-                    val extensionId = currentExtensionId // 创建局部变量避免并发问题
+                    val extensionId = currentExtensionId // Create local variable to avoid concurrency issues
                     append("VALID ($extensionId)")
                 } else {
                     append("INVALID - ${getConfigurationError()}")

@@ -51,20 +51,20 @@ class ExtensionManager(private val project: Project) {
         registerExtensionProviders()
         
         if (configuredExtensionId != null) {
-            // 如果配置了特定的extension，直接设置
+            // If a specific extension is configured, set it directly
             val provider = extensionProviders[configuredExtensionId]
             if (provider != null && provider.isAvailable(project)) {
                 currentProvider = provider
                 LOG.info("Set configured extension provider: $configuredExtensionId")
             } else {
                 LOG.warn("Configured extension provider not available: $configuredExtensionId")
-                // 不设置默认provider，让系统保持未初始化状态
+                // Don't set default provider, let system remain uninitialized
                 currentProvider = null
             }
         } else {
-            // 只有在没有配置时才设置默认provider（可选）
+            // Only set default provider when no configuration exists (optional)
             LOG.info("No extension configured, skipping default provider setup")
-            // 注释掉自动设置默认provider的逻辑
+            // Comment out automatic default provider setup logic
             // setDefaultExtensionProvider()
         }
         
@@ -102,22 +102,19 @@ class ExtensionManager(private val project: Project) {
     fun isProperlyInitialized(): Boolean {
         return currentProvider != null && currentProvider!!.isAvailable(project)
     }
+
+    fun getAllExtensions(): List<ExtensionProvider> {
+        return ArrayList<ExtensionProvider>().apply {
+            add(RooExtensionProvider())
+            add(ClineExtensionProvider())
+        }
+    }
     
     /**
      * Register extension providers
      */
     private fun registerExtensionProviders() {
-        // Register Roo Code extension provider
-        val rooProvider = RooExtensionProvider()
-        registerExtensionProvider(rooProvider)
-
-        // Register Cline AI extension provider
-        val clineProvider = ClineExtensionProvider()
-        registerExtensionProvider(clineProvider)
-
-        // TODO: Register other extension providers here
-        // val customProvider = com.sina.weibo.agent.extensions.custom.CustomExtensionProvider()
-        // registerExtensionProvider(customProvider)
+        getAllExtensions().forEach { registerExtensionProvider(it) }
     }
     
     /**

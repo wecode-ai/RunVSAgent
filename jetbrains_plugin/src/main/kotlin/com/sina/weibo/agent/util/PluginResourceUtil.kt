@@ -67,15 +67,14 @@ object PluginResourceUtil {
     /**
      * Load resources in production mode
      */
-    private fun loadProdResource(resourceName: String, plugin: IdeaPluginDescriptor): String {
+    private fun loadProdResource(resourceName: String, plugin: IdeaPluginDescriptor): String? {
         // Load from plugin installation directory (compatible with old version)
         val pluginDir = plugin.pluginPath.toFile()
         val resourceDir = pluginDir.resolve(resourceName)
         if (resourceDir.exists()) {
             return resourceDir.absolutePath
         }
-        
-        throw IllegalStateException("Production environment resource not found: $resourceName")
+        return null
     }
 
     /**
