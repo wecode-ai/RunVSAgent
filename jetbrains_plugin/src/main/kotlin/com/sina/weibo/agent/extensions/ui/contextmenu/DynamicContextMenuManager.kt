@@ -122,17 +122,13 @@ class DynamicContextMenuManager(private val project: Project) {
             // Get the action manager
             val actionManager = com.intellij.openapi.actionSystem.ActionManager.getInstance()
             
-            // Refresh the dynamic context menu actions group
+            // Refresh the dynamic context menu actions group by invalidating the action
+            // This will trigger the UI to refresh without directly calling @ApiStatus.OverrideOnly methods
             val dynamicGroup = actionManager.getAction("RunVSAgent.DynamicExtensionContextMenu")
             dynamicGroup?.let { group ->
-                // Create a dummy event for updating
-                val dummyEvent = com.intellij.openapi.actionSystem.AnActionEvent.createFromAnAction(
-                    group,
-                    null,
-                    "DynamicContextMenuManager",
-                    com.intellij.ide.DataManager.getInstance().dataContext
-                )
-                group.update(dummyEvent)
+                // Use the proper IntelliJ Platform mechanism to refresh the action
+                // Instead of calling update() directly, we invalidate the action
+                actionManager.invalidateAction(group.id)
             }
             
             logger.debug("Context menus refreshed for extension: $currentExtensionId")

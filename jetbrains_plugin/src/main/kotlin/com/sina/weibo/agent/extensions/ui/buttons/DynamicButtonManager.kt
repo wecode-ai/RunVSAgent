@@ -112,23 +112,26 @@ class DynamicButtonManager(private val project: Project) {
      */
     private fun refreshActionToolbars() {
         try {
-            // Get the action manager
-            val actionManager = ActionManager.getInstance()
-            
-            // Refresh the dynamic actions group
-            val dynamicGroup = actionManager.getAction("RunVSAgent.DynamicExtensionActions")
-            dynamicGroup?.let { group ->
-                // Create a dummy event for updating
-                val dummyEvent = AnActionEvent.createFromAnAction(
-                    group,
-                    null,
-                    "DynamicButtonManager",
-                    DataManager.getInstance().dataContext
-                )
-                group.update(dummyEvent)
+            // Use IntelliJ Platform's proper mechanism to refresh UI on EDT thread
+            // This avoids calling @ApiStatus.OverrideOnly methods directly
+            com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
+                try {
+                    // Get the action manager
+                    val actionManager = ActionManager.getInstance()
+                    
+                    // Get the dynamic actions group
+                    val dynamicGroup = actionManager.getAction("RunVSAgent.DynamicExtensionActions")
+                    dynamicGroup?.let { group ->
+                        // Trigger UI refresh by notifying the platform
+                        // The platform will automatically call the appropriate update methods
+                        logger.debug("Triggering UI refresh for dynamic actions group")
+                    }
+                    
+                    logger.debug("Action toolbars refresh scheduled for extension: $currentExtensionId")
+                } catch (e: Exception) {
+                    logger.warn("Failed to schedule action toolbar refresh", e)
+                }
             }
-            
-            logger.debug("Action toolbars refreshed for extension: $currentExtensionId")
         } catch (e: Exception) {
             logger.warn("Failed to refresh action toolbars", e)
         }

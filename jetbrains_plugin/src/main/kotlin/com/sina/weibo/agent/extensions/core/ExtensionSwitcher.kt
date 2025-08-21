@@ -150,13 +150,16 @@ class ExtensionSwitcher(private val project: Project) {
         return withContext(Dispatchers.IO) {
             try {
                 // Step 1: Update extension manager (this will save configuration)
-                updateExtensionManager(extensionId)
+                updateExtensionManager(extensionId, forceRestart)
 
-                // Step 2: Update button configuration
-                updateButtonConfiguration(extensionId)
+                if (forceRestart) {
+                    // Step 2: Update button configuration
+                    updateButtonConfiguration(extensionId)
 
-                // Step 3: Notify UI components
-                notifyExtensionChanged(extensionId)
+                    // Step 3: Notify UI components
+                    notifyExtensionChanged(extensionId)
+                }
+
 
                 LOG.info("Extension switching configuration saved successfully: $extensionId (will take effect on next startup)")
                 true
@@ -171,12 +174,12 @@ class ExtensionSwitcher(private val project: Project) {
      * Update extension manager with new provider
      * This will save the configuration but not restart the process
      */
-    private suspend fun updateExtensionManager(extensionId: String) {
+    private suspend fun updateExtensionManager(extensionId: String, forceRestart: Boolean) {
         withContext(Dispatchers.Main) {
             val extensionManager = ExtensionManager.getInstance(project)
 
             // Set new extension provider (this will save configuration)
-            val success = extensionManager.setCurrentProvider(extensionId)
+            val success = extensionManager.setCurrentProvider(extensionId, forceRestart)
             if (!success) {
                 throw IllegalStateException("Failed to set extension provider: $extensionId")
             }

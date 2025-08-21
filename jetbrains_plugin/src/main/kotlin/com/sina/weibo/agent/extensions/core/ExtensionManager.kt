@@ -160,12 +160,14 @@ class ExtensionManager(private val project: Project) {
      * Set current extension provider
      * Note: This only updates the configuration and UI state, does not restart the extension process
      */
-    fun setCurrentProvider(extensionId: String): Boolean {
+    fun setCurrentProvider(extensionId: String, forceRestart: Boolean? = false): Boolean {
         val provider = extensionProviders[extensionId]
         if (provider != null && provider.isAvailable(project)) {
             val oldProvider = currentProvider
-            currentProvider = provider
-            
+            if (forceRestart == false) {
+                currentProvider = provider
+            }
+
             // Initialize new provider (but don't restart the process)
             provider.initialize(project)
             
@@ -179,16 +181,20 @@ class ExtensionManager(private val project: Project) {
             
             // Update button configuration
             try {
-                val buttonManager = DynamicButtonManager.getInstance(project)
-                buttonManager.setCurrentExtension(extensionId)
+                if (forceRestart == false) {
+                    val buttonManager = DynamicButtonManager.getInstance(project)
+                    buttonManager.setCurrentExtension(extensionId)
+                }
             } catch (e: Exception) {
                 LOG.warn("Failed to update button configuration", e)
             }
             
             // Update context menu configuration
             try {
-                val contextMenuManager = com.sina.weibo.agent.extensions.ui.contextmenu.DynamicContextMenuManager.getInstance(project)
-                contextMenuManager.setCurrentExtension(extensionId)
+                if (forceRestart == false) {
+                    val contextMenuManager = com.sina.weibo.agent.extensions.ui.contextmenu.DynamicContextMenuManager.getInstance(project)
+                    contextMenuManager.setCurrentExtension(extensionId)
+                }
             } catch (e: Exception) {
                 LOG.warn("Failed to update context menu configuration", e)
             }
