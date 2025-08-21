@@ -1,96 +1,74 @@
-// Copyright 2009-2025 Weibo, Inc.
 // SPDX-FileCopyrightText: 2025 Weibo, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package com.sina.weibo.agent.actions
+package com.sina.weibo.agent.extensions.plugin.roo
 
 /**
- * Constants for action names displayed in the UI.
+ * Constants for Roo Code extension action names displayed in the UI.
  * These represent the text shown to users in menus and context options.
  * 
- * @deprecated These constants are deprecated in favor of extension-specific constants.
- * Use RooCodeActionNames for Roo Code extension or Cline-specific constants for Cline extension.
+ * This file contains all the constants that were previously in ActionConstants.kt
+ * for the roo-cline functionality, now organized under the Roo Code extension.
  */
-@Deprecated("Use extension-specific action names instead")
-object ActionNames {
+object RooCodeActionNames {
     /** Action to explain selected code */
-    @Deprecated("Use RooCodeActionNames.EXPLAIN or Cline-specific constants")
-    const val EXPLAIN = "roo-cline: Explain Code"
+    const val EXPLAIN = "Explain Code"
     /** Action to fix issues in selected code */
-    @Deprecated("Use RooCodeActionNames.FIX or Cline-specific constants")
-    const val FIX = "roo-cline: Fix Code"
+    const val FIX = "Fix Code"
     /** Action to fix logical issues in selected code */
-    @Deprecated("Use RooCodeActionNames.FIX_LOGIC or Cline-specific constants")
-    const val FIX_LOGIC = "roo-cline: Fix Logic"
+    const val FIX_LOGIC = "Fix Logic"
     /** Action to improve selected code */
-    @Deprecated("Use RooCodeActionNames.IMPROVE or Cline-specific constants")
-    const val IMPROVE = "roo-cline: Improve Code"
+    const val IMPROVE = "Improve Code"
     /** Action to add selected code to context */
-    @Deprecated("Use RooCodeActionNames.ADD_TO_CONTEXT or Cline-specific constants")
-    const val ADD_TO_CONTEXT = "roo-cline: Add to Context"
+    const val ADD_TO_CONTEXT = "Add to Context"
     /** Action to create a new task */
-    @Deprecated("Use RooCodeActionNames.NEW_TASK or Cline-specific constants")
-    const val NEW_TASK = "roo-cline: New Task"
+    const val NEW_TASK = "New Task"
 }
 
 /**
  * Command identifiers used for internal command registration and execution.
  * These IDs are used to register commands with the IDE.
  * 
- * @deprecated These command IDs are deprecated in favor of extension-specific command IDs.
- * Use RooCodeCommandIds for Roo Code extension or Cline-specific command IDs for Cline extension.
+ * All commands use the roo-cline prefix for backward compatibility.
  */
-@Deprecated("Use extension-specific command IDs instead")
-object CommandIds {
+object RooCodeCommandIds {
     /** Command ID for explaining code */
-    @Deprecated("Use RooCodeCommandIds.EXPLAIN or Cline-specific command IDs")
     const val EXPLAIN = "roo-cline.explainCode"
     /** Command ID for fixing code */
-    @Deprecated("Use RooCodeCommandIds.FIX or Cline-specific command IDs")
     const val FIX = "roo-cline.fixCode"
     /** Command ID for improving code */
-    @Deprecated("Use RooCodeCommandIds.IMPROVE or Cline-specific command IDs")
     const val IMPROVE = "roo-cline.improveCode"
     /** Command ID for adding to context */
-    @Deprecated("Use RooCodeCommandIds.ADD_TO_CONTEXT or Cline-specific command IDs")
     const val ADD_TO_CONTEXT = "roo-cline.addToContext"
     /** Command ID for creating a new task */
-    @Deprecated("Use RooCodeCommandIds.NEW_TASK or Cline-specific command IDs")
     const val NEW_TASK = "roo-cline.newTask"
 }
 
 /** Type alias for prompt type identifiers */
-@Deprecated("Use extension-specific type aliases instead")
-typealias SupportPromptType = String
+typealias RooCodeSupportPromptType = String
 /** Type alias for prompt parameters map */
-@Deprecated("Use extension-specific type aliases instead")
-typealias PromptParams = Map<String, Any?>
+typealias RooCodePromptParams = Map<String, Any?>
 
 /**
  * Data class representing a prompt configuration with a template string.
  * Templates contain placeholders that will be replaced with actual values.
- * 
- * @deprecated This class is deprecated in favor of extension-specific prompt configurations.
- * Use RooCodeSupportPromptConfig for Roo Code extension or Cline-specific prompt configurations for Cline extension.
  */
-@Deprecated("Use extension-specific prompt configurations instead")
-data class SupportPromptConfig(val template: String)
+data class RooCodeSupportPromptConfig(val template: String)
 
 /**
  * Collection of predefined prompt configurations for different use cases.
  * Each configuration contains a template with placeholders for dynamic content.
  * 
- * @deprecated This object is deprecated in favor of extension-specific prompt configurations.
- * Use RooCodeSupportPromptConfigs for Roo Code extension or Cline-specific prompt configurations for Cline extension.
+ * These are the same templates that were previously in ActionConstants.kt,
+ * now organized under the Roo Code extension.
  */
-@Deprecated("Use extension-specific prompt configurations instead")
-object SupportPromptConfigs {
+object RooCodeSupportPromptConfigs {
     /**
      * Template for enhancing user prompts.
      * Instructs the AI to generate an improved version of the user's input.
      */
-    val ENHANCE = SupportPromptConfig(
+    val ENHANCE = RooCodeSupportPromptConfig(
         """Generate an enhanced version of this prompt (reply with only the enhanced prompt - no conversation, explanations, lead-in, bullet points, placeholders, or surrounding quotes):
 
 ${'$'}{userInput}"""
@@ -100,7 +78,7 @@ ${'$'}{userInput}"""
      * Template for explaining code.
      * Provides structure for code explanation requests with file path and line information.
      */
-    val EXPLAIN = SupportPromptConfig(
+    val EXPLAIN = RooCodeSupportPromptConfig(
         """Explain the following code from file path ${'$'}{filePath}:${'$'}{startLine}-${'$'}{endLine}
 ${'$'}{userInput}
 
@@ -118,7 +96,7 @@ Please provide a clear and concise explanation of what this code does, including
      * Template for fixing code issues.
      * Includes diagnostic information and structured format for issue resolution.
      */
-    val FIX = SupportPromptConfig(
+    val FIX = RooCodeSupportPromptConfig(
         """Fix any issues in the following code from file path ${'$'}{filePath}:${'$'}{startLine}-${'$'}{endLine}
 ${'$'}{diagnosticText}
 ${'$'}{userInput}
@@ -138,7 +116,7 @@ Please:
      * Template for improving code quality.
      * Focuses on readability, performance, best practices, and error handling.
      */
-    val IMPROVE = SupportPromptConfig(
+    val IMPROVE = RooCodeSupportPromptConfig(
         """Improve the following code from file path ${'$'}{filePath}:${'$'}{startLine}-${'$'}{endLine}
 ${'$'}{userInput}
 
@@ -159,7 +137,7 @@ Provide the improved code along with explanations for each enhancement."""
      * Template for adding code to context.
      * Simple format that includes file path, line range, and selected code.
      */
-    val ADD_TO_CONTEXT = SupportPromptConfig(
+    val ADD_TO_CONTEXT = RooCodeSupportPromptConfig(
         """${'$'}{filePath}:${'$'}{startLine}-${'$'}{endLine}
 ```
 ${'$'}{selectedText}
@@ -170,7 +148,7 @@ ${'$'}{selectedText}
      * Template for adding terminal output to context.
      * Includes user input and terminal content.
      */
-    val TERMINAL_ADD_TO_CONTEXT = SupportPromptConfig(
+    val TERMINAL_ADD_TO_CONTEXT = RooCodeSupportPromptConfig(
         """${'$'}{userInput}
 Terminal output:
 ```
@@ -182,7 +160,7 @@ ${'$'}{terminalContent}
      * Template for fixing terminal commands.
      * Structured format for identifying and resolving command issues.
      */
-    val TERMINAL_FIX = SupportPromptConfig(
+    val TERMINAL_FIX = RooCodeSupportPromptConfig(
         """${'$'}{userInput}
 Fix this terminal command:
 ```
@@ -199,7 +177,7 @@ Please:
      * Template for explaining terminal commands.
      * Provides structure for command explanation with focus on functionality and behavior.
      */
-    val TERMINAL_EXPLAIN = SupportPromptConfig(
+    val TERMINAL_EXPLAIN = RooCodeSupportPromptConfig(
         """${'$'}{userInput}
 Explain this terminal command:
 ```
@@ -216,7 +194,7 @@ Please provide:
      * Template for creating a new task.
      * Simple format that passes through user input directly.
      */
-    val NEW_TASK = SupportPromptConfig(
+    val NEW_TASK = RooCodeSupportPromptConfig(
         """${'$'}{userInput}"""
     )
 
@@ -238,14 +216,13 @@ Please provide:
 }
 
 /**
- * Utility object for working with support prompts.
+ * Utility object for working with Roo Code support prompts.
  * Provides methods for creating and customizing prompts based on templates.
  * 
- * @deprecated This object is deprecated in favor of extension-specific prompt utilities.
- * Use RooCodeSupportPrompt for Roo Code extension or Cline-specific prompt utilities for Cline extension.
+ * This is the same functionality that was previously in ActionConstants.kt,
+ * now organized under the Roo Code extension.
  */
-@Deprecated("Use extension-specific prompt utilities instead")
-object SupportPrompt {
+object RooCodeSupportPrompt {
     /**
      * Generates formatted diagnostic text from a list of diagnostic items.
      *
@@ -269,7 +246,7 @@ object SupportPrompt {
      * @param params Map of parameter values to replace placeholders
      * @return The processed prompt with placeholders replaced by actual values
      */
-    private fun createPrompt(template: String, params: PromptParams): String {
+    private fun createPrompt(template: String, params: RooCodePromptParams): String {
         val pattern = Regex("""\$\{(.*?)}""")
         return pattern.replace(template) { matchResult ->
             val key = matchResult.groupValues[1]
@@ -299,8 +276,8 @@ object SupportPrompt {
      * @param type The type of prompt to retrieve
      * @return The template string for the specified prompt type
      */
-    fun get(customSupportPrompts: Map<String, String>?, type: SupportPromptType): String {
-        return customSupportPrompts?.get(type) ?: SupportPromptConfigs.configs[type]?.template ?: ""
+    fun get(customSupportPrompts: Map<String, String>?, type: RooCodeSupportPromptType): String {
+        return customSupportPrompts?.get(type) ?: RooCodeSupportPromptConfigs.configs[type]?.template ?: ""
     }
 
     /**
@@ -311,7 +288,7 @@ object SupportPrompt {
      * @param customSupportPrompts Optional custom prompt templates
      * @return The final prompt with all placeholders replaced
      */
-    fun create(type: SupportPromptType, params: PromptParams, customSupportPrompts: Map<String, String>? = null): String {
+    fun create(type: RooCodeSupportPromptType, params: RooCodePromptParams, customSupportPrompts: Map<String, String>? = null): String {
         val template = get(customSupportPrompts, type)
         return createPrompt(template, params)
     }

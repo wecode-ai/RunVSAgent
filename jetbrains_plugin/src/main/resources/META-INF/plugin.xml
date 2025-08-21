@@ -127,8 +127,8 @@ SPDX-License-Identifier: Apache-2.0
         </group>
 
         <group id="RunVSAgent.RightClickMenu" text="RunVSAgent" description="RunVSAgent main menu"  icon="/icons/weibo_logo_13px.svg" popup="true">
-            <group id="RunVSAgent.RightClick.Chat" class="com.sina.weibo.agent.actions.RightClickChatActionGroup"
-                   text="Chat" description="RunVSAgent chat tool"/>
+            <group id="RunVSAgent.RightClick.Chat" class="com.sina.weibo.agent.extensions.ui.contextmenu.DynamicExtensionContextMenuGroup"
+                   text="Extension Actions" description="Dynamic extension-specific context menu actions"/>
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </group>
 

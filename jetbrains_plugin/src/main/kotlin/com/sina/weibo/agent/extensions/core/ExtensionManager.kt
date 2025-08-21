@@ -185,6 +185,14 @@ class ExtensionManager(private val project: Project) {
                 LOG.warn("Failed to update button configuration", e)
             }
             
+            // Update context menu configuration
+            try {
+                val contextMenuManager = com.sina.weibo.agent.extensions.ui.contextmenu.DynamicContextMenuManager.getInstance(project)
+                contextMenuManager.setCurrentExtension(extensionId)
+            } catch (e: Exception) {
+                LOG.warn("Failed to update context menu configuration", e)
+            }
+            
             // Notify listeners about configuration change
             try {
                 project.messageBus.syncPublisher(ExtensionChangeListener.EXTENSION_CHANGE_TOPIC)

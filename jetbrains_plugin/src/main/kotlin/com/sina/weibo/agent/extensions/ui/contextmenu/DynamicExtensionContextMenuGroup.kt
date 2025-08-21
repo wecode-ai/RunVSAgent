@@ -2,31 +2,28 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package com.sina.weibo.agent.actions
+package com.sina.weibo.agent.extensions.ui.contextmenu
 
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAware
 
 /**
- * Right-click menu code action group, similar to VSCode's code action provider.
- * This class manages the dynamic actions that appear in the context menu when text is selected.
- * 
- * @deprecated This class is deprecated in favor of DynamicExtensionContextMenuGroup.
- * Use the new extension-based context menu system for better extensibility.
+ * Dynamic extension context menu action group.
+ * This class manages the dynamic context menu actions that appear in the right-click menu
+ * when text is selected, based on the current active extension.
  * 
  * Implements DumbAware to ensure the action works during indexing, and ActionUpdateThreadAware
  * to specify which thread should handle action updates.
  */
-@Deprecated("Use DynamicExtensionContextMenuGroup instead for extension-based context menus")
-class RightClickChatActionGroup : DefaultActionGroup(), DumbAware, ActionUpdateThreadAware {
+class DynamicExtensionContextMenuGroup : DefaultActionGroup(), DumbAware, ActionUpdateThreadAware {
 
     /**
-     * Provider that supplies the actual code actions to be displayed in the menu.
+     * Manager that provides the current extension's context menu actions.
      */
-    private val codeActionProvider = CodeActionProvider()
+    private var contextMenuManager: DynamicContextMenuManager? = null
 
     /**
-     * Updates the action group based on the current context.
+     * Updates the action group based on the current context and extension.
      * This method is called each time the menu needs to be displayed.
      *
      * @param e The action event containing context information
@@ -39,7 +36,7 @@ class RightClickChatActionGroup : DefaultActionGroup(), DumbAware, ActionUpdateT
         val hasSelection = editor?.selectionModel?.hasSelection() == true
 
         if (hasSelection) {
-            loadDynamicActions(e)
+            loadDynamicContextMenuActions(e)
         }
 
         // Set the visibility of the action group
@@ -47,13 +44,26 @@ class RightClickChatActionGroup : DefaultActionGroup(), DumbAware, ActionUpdateT
     }
 
     /**
-     * Loads dynamic actions into this action group based on the current context.
+     * Loads dynamic context menu actions into this action group based on the current extension.
      *
      * @param e The action event containing context information
      */
-    private fun loadDynamicActions(e: AnActionEvent) {
-        // Use actions provided by CodeActionProvider
-        val actions = codeActionProvider.provideCodeActions(e)
+    private fun loadDynamicContextMenuActions(e: AnActionEvent) {
+        val project = e.project ?: return
+        
+        // Get or initialize the context menu manager
+        if (contextMenuManager == null) {
+            try {
+                contextMenuManager = DynamicContextMenuManager.getInstance(project)
+                contextMenuManager?.initialize()
+            } catch (e: Exception) {
+                // If the manager is not available, fall back to default actions
+                return
+            }
+        }
+
+        // Get actions from the current extension
+        val actions = contextMenuManager?.getContextMenuActions() ?: emptyList()
         actions.forEach { action ->
             add(action)
         }
