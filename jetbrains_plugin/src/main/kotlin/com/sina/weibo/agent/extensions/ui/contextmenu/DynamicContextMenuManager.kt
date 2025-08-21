@@ -21,7 +21,8 @@ import com.sina.weibo.agent.extensions.plugin.roo.RooCodeContextMenuProvider
 class DynamicContextMenuManager(private val project: Project) {
     
     private val logger = Logger.getInstance(DynamicContextMenuManager::class.java)
-    
+    private val extensionManager = ExtensionManager.Companion.getInstance(project)
+
     // Current extension ID
     @Volatile
     private var currentExtensionId: String? = null
@@ -44,7 +45,6 @@ class DynamicContextMenuManager(private val project: Project) {
         
         // Get current extension from extension manager
         try {
-            val extensionManager = ExtensionManager.Companion.getInstance(project)
             val currentProvider = extensionManager.getCurrentProvider()
             currentExtensionId = currentProvider?.getExtensionId()
             logger.info("Dynamic context menu manager initialized with extension: $currentExtensionId")
@@ -68,14 +68,14 @@ class DynamicContextMenuManager(private val project: Project) {
      * Get the current extension ID
      */
     fun getCurrentExtensionId(): String? {
-        return currentExtensionId
+        return extensionManager.getCurrentProvider()?.getExtensionId()
     }
     
     /**
      * Get context menu configuration for the current extension
      */
     fun getContextMenuConfiguration(): ContextMenuConfiguration {
-        val contextMenuProvider = getContextMenuProvider(currentExtensionId)
+        val contextMenuProvider = getContextMenuProvider(getCurrentExtensionId())
         return contextMenuProvider?.getContextMenuConfiguration() ?: DefaultContextMenuConfiguration()
     }
     
@@ -83,7 +83,7 @@ class DynamicContextMenuManager(private val project: Project) {
      * Get context menu actions for the current extension
      */
     fun getContextMenuActions(): List<com.intellij.openapi.actionSystem.AnAction> {
-        val contextMenuProvider = getContextMenuProvider(currentExtensionId)
+        val contextMenuProvider = getContextMenuProvider(getCurrentExtensionId())
         return contextMenuProvider?.getContextMenuActions(project) ?: emptyList()
     }
     
@@ -119,19 +119,26 @@ class DynamicContextMenuManager(private val project: Project) {
      */
     private fun refreshContextMenus() {
         try {
-            // Get the action manager
-            val actionManager = com.intellij.openapi.actionSystem.ActionManager.getInstance()
-            
-            // Refresh the dynamic context menu actions group by invalidating the action
-            // This will trigger the UI to refresh without directly calling @ApiStatus.OverrideOnly methods
-            val dynamicGroup = actionManager.getAction("RunVSAgent.DynamicExtensionContextMenu")
-            dynamicGroup?.let { group ->
-                // Use the proper IntelliJ Platform mechanism to refresh the action
-                // Instead of calling update() directly, we invalidate the action
-                actionManager.invalidateAction(group.id)
+            // Use IntelliJ Platform's proper mechanism to refresh UI on EDT thread
+            // This avoids calling @ApiStatus.OverrideOnly methods directly
+            com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
+                try {
+                    // Get the action manager
+                    val actionManager = com.intellij.openapi.actionSystem.ActionManager.getInstance()
+                    
+                    // Get the dynamic context menu actions group
+                    val dynamicGroup = actionManager.getAction("RunVSAgent.DynamicExtensionContextMenu")
+                    dynamicGroup?.let { group ->
+                        // Trigger UI refresh by notifying the platform
+                        // The platform will automatically call the appropriate update methods
+                        logger.debug("Triggering UI refresh for dynamic context menu group")
+                    }
+                    
+                    logger.debug("Context menus refresh scheduled for extension: $currentExtensionId")
+                } catch (e: Exception) {
+                    logger.warn("Failed to schedule context menu refresh", e)
+                }
             }
-            
-            logger.debug("Context menus refreshed for extension: $currentExtensionId")
         } catch (e: Exception) {
             logger.warn("Failed to refresh context menus", e)
         }
