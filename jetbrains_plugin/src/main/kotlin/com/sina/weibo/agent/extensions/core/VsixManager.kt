@@ -7,6 +7,7 @@ package com.sina.weibo.agent.extensions.core
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.sina.weibo.agent.theme.ThemeManager.Companion.getThemeResourceDir
+import com.sina.weibo.agent.util.PluginConstants.ConfigFiles.getUserConfigDir
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -23,8 +24,7 @@ class VsixManager {
     
     companion object {
         private val LOG = Logger.getInstance(VsixManager::class.java)
-        private const val BASE_DIR = ".run-vs-agent/plugins"
-        
+
         /**
          * Get VSIX manager instance
          */
@@ -34,8 +34,7 @@ class VsixManager {
          * Get base directory for VSIX installations
          */
         fun getBaseDirectory(): String {
-            val homeDir = System.getProperty("user.home")
-            return "$homeDir/$BASE_DIR"
+            return "${getUserConfigDir()}/plugins"
         }
     }
     

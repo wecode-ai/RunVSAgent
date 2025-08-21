@@ -30,6 +30,8 @@ import com.intellij.openapi.extensions.PluginId
 import com.sina.weibo.agent.extensions.core.ExtensionManager as GlobalExtensionManager
 import com.sina.weibo.agent.extensions.config.ExtensionProvider
 import com.sina.weibo.agent.extensions.config.ExtensionMetadata
+import com.sina.weibo.agent.extensions.core.VsixManager.Companion.getBaseDirectory
+import com.sina.weibo.agent.util.PluginConstants.ConfigFiles.getUserConfigDir
 import java.io.File
 
 /**
@@ -383,7 +385,7 @@ class ExtensionHostManager : Disposable {
         val homeDir = System.getProperty("user.home")
         if (projectPath != null) {
             val possiblePaths = listOf(
-                "$homeDir/.run-vs-agent/plugins/${extensionConfig.getCodeDir()}"
+                "${getBaseDirectory()}/${extensionConfig.getCodeDir()}"
             )
             
             val foundPath = possiblePaths.find { File(it).exists() }

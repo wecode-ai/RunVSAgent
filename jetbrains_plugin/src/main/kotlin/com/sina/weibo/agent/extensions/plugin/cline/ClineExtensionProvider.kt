@@ -11,6 +11,7 @@ import com.sina.weibo.agent.extensions.core.VsixManager
 import com.sina.weibo.agent.extensions.config.ExtensionProvider
 import com.sina.weibo.agent.extensions.common.ExtensionType
 import com.sina.weibo.agent.extensions.config.ExtensionMetadata
+import com.sina.weibo.agent.extensions.core.VsixManager.Companion.getBaseDirectory
 import com.sina.weibo.agent.util.PluginConstants
 import com.sina.weibo.agent.util.PluginResourceUtil
 import java.io.File
@@ -47,9 +48,8 @@ class ClineExtensionProvider : ExtensionProvider {
         val config = extensionConfig.getConfig(ExtensionType.CLINE)
 
         // First check project paths
-        val homeDir = System.getProperty("user.home")
         val possiblePaths = listOf(
-            "$homeDir/.run-vs-agent/plugins/${config.codeDir}"
+            "${getBaseDirectory()}/${config.codeDir}"
         )
 
         if (possiblePaths.any { File(it).exists() }) {

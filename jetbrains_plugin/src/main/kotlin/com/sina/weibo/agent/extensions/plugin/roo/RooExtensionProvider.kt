@@ -11,6 +11,7 @@ import com.sina.weibo.agent.extensions.core.ExtensionManagerFactory
 import com.sina.weibo.agent.extensions.config.ExtensionProvider
 import com.sina.weibo.agent.extensions.config.ExtensionMetadata
 import com.sina.weibo.agent.util.PluginConstants
+import com.sina.weibo.agent.util.PluginConstants.ConfigFiles.getUserConfigDir
 import com.sina.weibo.agent.util.PluginResourceUtil
 import java.io.File
 
@@ -41,9 +42,8 @@ class RooExtensionProvider : ExtensionProvider {
         val config = extensionConfig.getConfig(ExtensionType.ROO_CODE)
         
         // First check project paths
-        val homeDir = System.getProperty("user.home")
         val possiblePaths = listOf(
-            "$homeDir/.run-vs-agent/plugins/${config.codeDir}"
+            "${getUserConfigDir()}/plugins/${config.codeDir}"
         )
 
         if (possiblePaths.any { File(it).exists() }) {

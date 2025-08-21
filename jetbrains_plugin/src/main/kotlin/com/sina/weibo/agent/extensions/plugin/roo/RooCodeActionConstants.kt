@@ -4,47 +4,6 @@
 
 package com.sina.weibo.agent.extensions.plugin.roo
 
-/**
- * Constants for Roo Code extension action names displayed in the UI.
- * These represent the text shown to users in menus and context options.
- * 
- * This file contains all the constants that were previously in ActionConstants.kt
- * for the roo-cline functionality, now organized under the Roo Code extension.
- */
-object RooCodeActionNames {
-    /** Action to explain selected code */
-    const val EXPLAIN = "Explain Code"
-    /** Action to fix issues in selected code */
-    const val FIX = "Fix Code"
-    /** Action to fix logical issues in selected code */
-    const val FIX_LOGIC = "Fix Logic"
-    /** Action to improve selected code */
-    const val IMPROVE = "Improve Code"
-    /** Action to add selected code to context */
-    const val ADD_TO_CONTEXT = "Add to Context"
-    /** Action to create a new task */
-    const val NEW_TASK = "New Task"
-}
-
-/**
- * Command identifiers used for internal command registration and execution.
- * These IDs are used to register commands with the IDE.
- * 
- * All commands use the roo-cline prefix for backward compatibility.
- */
-object RooCodeCommandIds {
-    /** Command ID for explaining code */
-    const val EXPLAIN = "roo-cline.explainCode"
-    /** Command ID for fixing code */
-    const val FIX = "roo-cline.fixCode"
-    /** Command ID for improving code */
-    const val IMPROVE = "roo-cline.improveCode"
-    /** Command ID for adding to context */
-    const val ADD_TO_CONTEXT = "roo-cline.addToContext"
-    /** Command ID for creating a new task */
-    const val NEW_TASK = "roo-cline.newTask"
-}
-
 /** Type alias for prompt type identifiers */
 typealias RooCodeSupportPromptType = String
 /** Type alias for prompt parameters map */
@@ -60,7 +19,6 @@ data class RooCodeSupportPromptConfig(val template: String)
  * Collection of predefined prompt configurations for different use cases.
  * Each configuration contains a template with placeholders for dynamic content.
  * 
- * These are the same templates that were previously in ActionConstants.kt,
  * now organized under the Roo Code extension.
  */
 object RooCodeSupportPromptConfigs {
@@ -219,7 +177,6 @@ Please provide:
  * Utility object for working with Roo Code support prompts.
  * Provides methods for creating and customizing prompts based on templates.
  * 
- * This is the same functionality that was previously in ActionConstants.kt,
  * now organized under the Roo Code extension.
  */
 object RooCodeSupportPrompt {

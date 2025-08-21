@@ -9,7 +9,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.sina.weibo.agent.actions.SupportPrompt
 import com.sina.weibo.agent.extensions.ui.contextmenu.ExtensionContextMenuProvider
 import com.sina.weibo.agent.extensions.ui.contextmenu.ContextMenuConfiguration
 import com.sina.weibo.agent.extensions.ui.contextmenu.ContextMenuActionType
@@ -277,7 +276,7 @@ class RooCodeContextMenuProvider : ExtensionContextMenuProvider {
                     mapOf(
                         "type" to "invoke",
                         "invoke" to "setChatBoxMessage",
-                        "text" to SupportPrompt.create("ADD_TO_CONTEXT", promptParams)
+                        "text" to RooCodeSupportPrompt.create("ADD_TO_CONTEXT", promptParams)
                     )
                 }
                 // Command executed in current task
@@ -292,7 +291,7 @@ class RooCodeContextMenuProvider : ExtensionContextMenuProvider {
                     mapOf(
                         "type" to "invoke",
                         "invoke" to "sendMessage",
-                        "text" to SupportPrompt.create(basePromptType, promptParams)
+                        "text" to RooCodeSupportPrompt.create(basePromptType, promptParams)
                     )
                 }
                 // Command executed in new task
@@ -326,7 +325,7 @@ class RooCodeContextMenuProvider : ExtensionContextMenuProvider {
                     mapOf(
                         "type" to "invoke",
                         "invoke" to "initClineWithTask",
-                        "text" to SupportPrompt.create(basePromptType, promptParams)
+                        "text" to RooCodeSupportPrompt.create(basePromptType, promptParams)
                     )
                 }
             }
