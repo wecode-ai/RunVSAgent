@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.sina.weibo.agent.extensions.core.ExtensionManager
 import com.sina.weibo.agent.extensions.plugin.cline.ClineButtonProvider
 import com.sina.weibo.agent.extensions.plugin.roo.RooCodeButtonProvider
+import com.sina.weibo.agent.extensions.plugin.kilo.KiloCodeButtonProvider
 
 /**
  * Dynamic button manager that controls which buttons are visible based on the current extension type.
@@ -92,6 +93,7 @@ class DynamicButtonManager(private val project: Project) {
         return when (extensionId) {
             "roo-code" -> RooCodeButtonProvider()
             "cline" -> ClineButtonProvider()
+            "kilo-code" -> KiloCodeButtonProvider()
             // TODO: Add other button providers as they are implemented
             // "copilot" -> CopilotButtonProvider()
             // "claude" -> ClaudeButtonProvider()

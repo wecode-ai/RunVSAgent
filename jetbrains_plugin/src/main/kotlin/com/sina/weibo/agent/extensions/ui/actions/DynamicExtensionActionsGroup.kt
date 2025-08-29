@@ -13,6 +13,7 @@ import com.sina.weibo.agent.extensions.config.ExtensionProvider
 import com.sina.weibo.agent.extensions.common.ExtensionChangeListener
 import com.sina.weibo.agent.extensions.plugin.cline.ClineButtonProvider
 import com.sina.weibo.agent.extensions.plugin.roo.RooCodeButtonProvider
+import com.sina.weibo.agent.extensions.plugin.kilo.KiloCodeButtonProvider
 import com.sina.weibo.agent.extensions.ui.buttons.ExtensionButtonProvider
 
 /**
@@ -78,6 +79,7 @@ class DynamicExtensionActionsGroup : DefaultActionGroup(), DumbAware, ActionUpda
         val buttonProvider = when (extensionId) {
             "roo-code" -> RooCodeButtonProvider()
             "cline" -> ClineButtonProvider()
+            "kilo-code" -> KiloCodeButtonProvider()
             else -> null
         }
         
@@ -106,6 +108,7 @@ class DynamicExtensionActionsGroup : DefaultActionGroup(), DumbAware, ActionUpda
         val buttonProvider = when (extensionId) {
             "roo-code" -> RooCodeButtonProvider()
             "cline" -> ClineButtonProvider()
+            "kilo-code" -> KiloCodeButtonProvider()
             else -> null
         }
         // Create actions based on extension type

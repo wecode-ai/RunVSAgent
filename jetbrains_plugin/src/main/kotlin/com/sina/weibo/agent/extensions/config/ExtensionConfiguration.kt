@@ -181,6 +181,19 @@ data class ExtensionConfig(
                     capabilities = emptyMap(),
                     extensionDependencies = emptyList()
                 )
+                ExtensionType.KILO_CODE -> ExtensionConfig(
+                    extensionType = extensionType,
+                    codeDir = "kilo-code",
+                    displayName = "Kilo Code",
+                    description = "AI-powered code assistant with advanced capabilities",
+                    publisher = "Kilo-AI",
+                    version = "1.0.0",
+                    mainFile = "./dist/extension.js",
+                    activationEvents = listOf("onStartupFinished"),
+                    engines = mapOf("vscode" to "^1.0.0"),
+                    capabilities = emptyMap(),
+                    extensionDependencies = emptyList()
+                )
             }
         }
         

@@ -12,6 +12,18 @@ RunVSAgent now supports a modular extension system that allows you to use differ
 - **Publisher**: WeCode-AI
 - **Directory**: `roo-code/`
 
+### 2. Cline AI
+- **ID**: `cline`
+- **Description**: AI-powered coding assistant with advanced features
+- **Publisher**: Cline-AI
+- **Directory**: `cline/`
+
+### 3. Kilo Code
+- **ID**: `kilo-code`
+- **Description**: AI-powered code assistant with advanced capabilities
+- **Publisher**: Kilo-AI
+- **Directory**: `kilo-code/`
+
 ## Quick Start
 
 ### For Users
@@ -28,7 +40,7 @@ RunVSAgent now supports a modular extension system that allows you to use differ
    ```properties
    extension.type=roo-code
    ```
-   - Supported values: `roo-code`
+   - Supported values: `roo-code`, `cline`, `kilo-code`
 
 3. **Extension Directory Structure**:
    ```

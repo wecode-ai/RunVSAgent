@@ -11,6 +11,7 @@ import com.sina.weibo.agent.extensions.common.ExtensionChangeListener
 import com.sina.weibo.agent.extensions.config.ExtensionProvider
 import com.sina.weibo.agent.extensions.plugin.cline.ClineExtensionProvider
 import com.sina.weibo.agent.extensions.plugin.roo.RooExtensionProvider
+import com.sina.weibo.agent.extensions.plugin.kilo.KiloCodeExtensionProvider
 import com.sina.weibo.agent.extensions.ui.buttons.DynamicButtonManager
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
@@ -107,6 +108,7 @@ class ExtensionManager(private val project: Project) {
         return ArrayList<ExtensionProvider>().apply {
             add(RooExtensionProvider())
             add(ClineExtensionProvider())
+            add(KiloCodeExtensionProvider())
         }
     }
     
