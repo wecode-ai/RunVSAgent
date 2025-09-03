@@ -168,20 +168,20 @@ class WeCoderTerminalCustomizer : LocalTerminalCustomizer() {
     envs: MutableMap<String, String>,
     scriptPath: String
   ): Array<String> {
-    // 1) 如果 JetBrains 自带的 zsh shell integration 已经在场，就不要去改 ZDOTDIR，避免冲突
+    // 1) If JetBrains' built-in zsh shell integration is already in place, avoid modifying ZDOTDIR to prevent conflicts.
     val jetbrainsZshDir = envs["JETBRAINS_INTELLIJ_ZSH_DIR"] ?: System.getenv("JETBRAINS_INTELLIJ_ZSH_DIR")
     val shellExeName = File(command[0]).name
     val looksLikeJbZsh = command[0].contains("/plugins/terminal/shell-integrations/zsh")
 
     if (jetbrainsZshDir != null || looksLikeJbZsh) {
       logger.info("🔒 Detected JetBrains Zsh integration (JETBRAINS_INTELLIJ_ZSH_DIR=$jetbrainsZshDir, looksLikeJbZsh=$looksLikeJbZsh). Skip overriding ZDOTDIR.")
-      // 仍然保留用户原始 ZDOTDIR 到环境，便于脚本内按需使用
+      // Still retain the user's original ZDOTDIR in the environment for on-demand use within scripts.
       val userZdotdir = envs["ZDOTDIR"] ?: System.getenv("ZDOTDIR") ?: System.getProperty("user.home")
       envs["USER_ZDOTDIR"] = userZdotdir
       return command
     }
 
-    // 2) 只有当 scriptPath 看起来是一个有效的 ZDOTDIR（至少包含 .zshrc）时才注入
+    // 2) Inject only when `scriptPath` appears to be a valid `ZDOTDIR` (at least containing `.zshrc`).
     val dir = File(scriptPath)
     val hasZshrc = File(dir, ".zshrc").exists()
     if (!dir.isDirectory || !hasZshrc) {
@@ -189,7 +189,7 @@ class WeCoderTerminalCustomizer : LocalTerminalCustomizer() {
       return command
     }
 
-    // 3) 记录并安全覆写
+    // 3) Record and securely overwrite.
     val userZdotdir = envs["ZDOTDIR"] ?: System.getenv("ZDOTDIR") ?: System.getProperty("user.home")
     envs["USER_ZDOTDIR"] = userZdotdir
     envs["ZDOTDIR"] = scriptPath
