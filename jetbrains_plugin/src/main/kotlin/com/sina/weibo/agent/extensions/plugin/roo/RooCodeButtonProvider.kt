@@ -40,6 +40,7 @@ class RooCodeButtonProvider : ExtensionButtonProvider {
             MCPButtonClickAction(),
             HistoryButtonClickAction(),
             MarketplaceButtonClickAction(),
+            CloudButtonClickAction(),
             SettingsButtonClickAction()
         )
     }
@@ -157,6 +158,31 @@ class RooCodeButtonProvider : ExtensionButtonProvider {
          */
         override fun actionPerformed(e: AnActionEvent) {
             logger.info("History button clicked")
+            executeCommand(commandId, e.project)
+        }
+    }
+
+    /**
+     * Action that handles clicks on the Cloud button in the UI.
+     * Executes the corresponding VSCode command when triggered.
+     */
+    class CloudButtonClickAction : AnAction() {
+        private val logger: Logger = Logger.getInstance(CloudButtonClickAction::class.java)
+        private val commandId: String = "roo-cline.cloudButtonClicked"
+
+        init {
+            templatePresentation.icon = AllIcons.Javaee.WebService
+            templatePresentation.text = "Cloud"
+            templatePresentation.description = "Cloud"
+        }
+
+        /**
+         * Performs the action when the Cloud button is clicked.
+         *
+         * @param e The action event containing context information
+         */
+        override fun actionPerformed(e: AnActionEvent) {
+            logger.info("Cloud button clicked")
             executeCommand(commandId, e.project)
         }
     }
