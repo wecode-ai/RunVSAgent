@@ -15,55 +15,66 @@ import java.util.concurrent.ConcurrentHashMap
  */
 object SystemObjectProvider {
     private val logger = Logger.getInstance(SystemObjectProvider::class.java)
-    
-        // Mapping for storing system objects
-        private val systemObjects = ConcurrentHashMap<String, Any>()
 
-    
-        /**
-         * System object keys
-         */
+    // Mapping for storing system objects per project instance
+    private val projectObjects = ConcurrentHashMap<Project, ConcurrentHashMap<String, Any>>()
+
+    /**
+     * System object keys
+     */
     object Keys {
         const val APPLICATION = "application"
-            // More system object keys can be added
+        // More system object keys can be added
     }
-    
-        /**
-         * Initialize the system object provider
-         * @param project current project
-         */
+
+    /**
+     * Initialize the system object provider for a project
+     * @param project current project
+     */
     fun initialize(project: Project) {
         logger.info("Initializing SystemObjectProvider with project: ${project.name}")
 
-        register(Keys.APPLICATION, ApplicationManager.getApplication())
+        val objects = projectObjects.computeIfAbsent(project) { ConcurrentHashMap() }
+        objects[Keys.APPLICATION] = ApplicationManager.getApplication()
     }
-    
-        /**
-         * Register a system object
-         * @param key object key
-         * @param obj object instance
-         */
-    fun register(key: String, obj: Any) {
-        systemObjects[key] = obj
-        logger.debug("Registered system object: $key")
-    }
-    
-        /**
-         * Get a system object
-         * @param key object key
-         * @return object instance or null
-         */
-    @Suppress("UNCHECKED_CAST")
-    fun <T> get(key: String): T? {
-        return systemObjects[key] as? T
-    }
-    
 
-        /**
-         * Clean up resources
-         */
-    fun dispose() {
-        logger.info("Disposing SystemObjectProvider")
-        systemObjects.clear()
+    /**
+     * Register a system object for a project
+     * @param project current project
+     * @param key object key
+     * @param obj object instance
+     */
+    fun register(project: Project, key: String, obj: Any) {
+        val objects = projectObjects.computeIfAbsent(project) { ConcurrentHashMap() }
+        objects[key] = obj
+        logger.debug("Registered system object for project ${project.name}: $key")
     }
-} 
+
+    /**
+     * Get a system object for a project
+     * @param project current project
+     * @param key object key
+     * @return object instance or null
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun <T> get(project: Project, key: String): T? {
+        return projectObjects[project]?.get(key) as? T
+    }
+
+    /**
+     * Clean up resources for a project
+     */
+    fun dispose(project: Project) {
+        logger.info("Disposing SystemObjectProvider for project: ${project.name}")
+        projectObjects.remove(project)?.clear()
+    }
+
+    /**
+     * Clean up resources for all projects
+     */
+    fun disposeAll() {
+        logger.info("Disposing SystemObjectProvider for all projects")
+        projectObjects.clear()
+    }
+}
+ 

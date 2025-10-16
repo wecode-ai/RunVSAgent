@@ -141,7 +141,7 @@ class WecoderPlugin : StartupActivity.DumbAware {
                     LOG.info("Disposing RunVSAgent plugin for project: ${project.name}")
                     pluginService.dispose()
                     extensionManager.dispose()
-                    SystemObjectProvider.dispose()
+                    SystemObjectProvider.dispose(project)
                 })
                 
                 LOG.info("RunVSAgent plugin initialized successfully for project: ${project.name}")
@@ -359,7 +359,7 @@ class WecoderPluginService(private var currentProject: Project) : Disposable {
         udsSocketServer.project = project
         
         // Register to system object provider
-        SystemObjectProvider.register("pluginService", this)
+        SystemObjectProvider.register(project, "pluginService", this)
         
         // Start initialization in background thread
         coroutineScope.launch {

@@ -8,7 +8,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
-import com.sina.weibo.agent.plugin.SystemObjectProvider
 import com.sina.weibo.agent.plugin.WecoderPluginService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

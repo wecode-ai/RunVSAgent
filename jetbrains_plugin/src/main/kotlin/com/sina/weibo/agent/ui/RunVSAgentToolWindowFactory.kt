@@ -1271,7 +1271,7 @@ class RunVSAgentToolWindowFactory : ToolWindowFactory {
                         logger.info("Disposing RunVSAgent plugin for project: ${project.name}")
                         pluginService.dispose()
                         extensionManager.dispose()
-                        SystemObjectProvider.dispose()
+                        SystemObjectProvider.dispose(project)
                         // Reset state when disposing
                         isPluginRunning = false
                         isPluginStarting = false
