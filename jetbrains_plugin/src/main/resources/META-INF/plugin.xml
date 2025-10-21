@@ -68,6 +68,10 @@ SPDX-License-Identifier: Apache-2.0
    
    <!-- Change notes for the plugin -->
    <change-notes><![CDATA[
+        <h3>Version 0.2.4</h3>
+        <ul>
+            <li>Fix Cline theme</li>
+        </ul>
         <h3>Version 0.2.2</h3>
         <ul>
             <li>Support Kilo Code</li>
