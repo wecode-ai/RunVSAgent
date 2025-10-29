@@ -7,17 +7,13 @@ package com.sina.weibo.agent.editor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditor
-import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.testFramework.utils.editor.saveToDisk
 import kotlinx.coroutines.*
 import java.io.File
-import java.lang.ref.WeakReference
 import kotlin.math.max
 import kotlin.math.min
 
@@ -214,7 +210,9 @@ class EditorHolder(
         suspend fun save(): Boolean {
             ApplicationManager.getApplication().invokeLater {
                 ApplicationManager.getApplication().runWriteAction {
-                    editorDocument?.saveToDisk()
+                    if(editorDocument != null) {
+                        FileDocumentManager.getInstance().saveDocument(editorDocument!!)
+                    }
                 }
             }
             val newDoc = ModelAddedData(

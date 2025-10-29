@@ -4,11 +4,8 @@
 
 package com.sina.weibo.agent.actors
 
-import com.google.common.collect.Maps
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.testFramework.utils.vfs.createFile
 import com.sina.weibo.agent.editor.EditorAndDocManager
 import com.sina.weibo.agent.editor.createURI
 import com.sina.weibo.agent.service.DocumentSyncService
@@ -100,11 +97,9 @@ class MainThreadDocuments(var project: Project) : MainThreadDocumentsShape {
         logger.info("tryOpenDocument : ${uri.path}")
 
         val file = File(uri.path)
-        val vfs = LocalFileSystem.getInstance()
         if (!file.exists()) {
             file.parentFile.mkdirs()
-            val vf = vfs.findFileByIoFile(file.parentFile)
-            vf?.createFile(file.name)
+            file.createNewFile()
         }
 
         project.getService(EditorAndDocManager::class.java).openDocument(uri)
