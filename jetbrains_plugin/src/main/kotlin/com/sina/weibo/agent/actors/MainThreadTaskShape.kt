@@ -6,7 +6,6 @@ package com.sina.weibo.agent.actors
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
-import com.sina.weibo.agent.plugin.SystemObjectProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
