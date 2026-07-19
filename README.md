@@ -22,6 +22,7 @@ RunVSAgent is an innovative cross-platform development tool that enables develop
 ## 🤖 Supported Agents
 
 - **[Roo Code](https://roocode.com)**: Advanced AI-powered coding assistant with intelligent code generation and refactoring capabilities
+- **[Zoo Code](https://zoocode.dev/)**: Community successor to Roo Code
 - **[Cline](https://cline.bot)**: Autonomous coding agent right in your IDE, capable of creating/editing files, executing commands, using the browser, and more with your permission every step of the way.
 - **[Kilo Code](https://kilocode.ai)**: Open-source VS Code AI agent
 
